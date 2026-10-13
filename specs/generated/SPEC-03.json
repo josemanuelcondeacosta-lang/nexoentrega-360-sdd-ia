@@ -1,0 +1,59 @@
+{
+  "id": "SPEC-03",
+  "version": "0.1-draft",
+  "title": "Inventario y transiciones",
+  "requirements": {
+    "rf": [
+      "RF04",
+      "RF05",
+      "RF06",
+      "RF07"
+    ],
+    "rnf": [
+      "RNF02"
+    ]
+  },
+  "userStory": "Como coordinador y encargado de bodega, queremos reservar, despachar y entregar solicitudes sin sobreasignar stock.",
+  "inputs": [
+    "Pendiente: detallar campos, tipos y validaciones de todos los endpoints"
+  ],
+  "process": [
+    "Pendiente: secuencia comprobable por escenario"
+  ],
+  "outputs": [
+    "Pendiente: HTTP, cuerpo y efectos persistidos"
+  ],
+  "rules": [
+    "Consultar RF/RNF oficiales y clarification-log"
+  ],
+  "edgeCases": [
+    "Pendiente: ampliar límites, fallos y permisos"
+  ],
+  "acceptanceCriteria": [
+    {
+      "id": "AC-03-01",
+      "expected": "Reservar solicitud ENVIADA con todas las líneas disponibles reserva todas dentro de una transacción.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-03-02",
+      "expected": "Una línea insuficiente produce 409 y estado, reservas y stock quedan inalterados.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-03-03",
+      "expected": "Dos reservas concurrentes sobre stock insuficiente nunca se confirman ambas.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-03-04",
+      "expected": "Repetir clave y contenido de reserva retorna resultado original sin efecto adicional; cambiar contenido con misma clave retorna 409.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-03-05",
+      "expected": "Cancelar RESERVADA libera reserva sin cambiar existencia; despachar descuenta físico y reservado; entregar no cambia ninguno.",
+      "status": "draft"
+    }
+  ]
+}
