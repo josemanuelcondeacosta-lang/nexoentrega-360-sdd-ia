@@ -1,6 +1,6 @@
 # Fuentes y alcance de G1
 
-1. Enunciado oficial y anexos: **NO RECIBIDOS**. Máxima autoridad cuando se proporcionen.
+1. Enunciado oficial y anexos: **ARCHIVOS NO RECIBIDOS** por Codex. El coordinador informa que ya dispone de ellos; el resumen comunicado no sustituye su contenido íntegro. Máxima autoridad cuando se proporcionen. Inventario y cotejo preparado en `docs/reviews/cotejo-oficial-G1.md`.
 2. Misión del usuario «DESARROLLAR Y ENTREGAR NEXOENTREGA 360»: recibida el 2026-10-13. Describe el trabajo y límites; no prueba que sea copia del examen.
 3. Borrador inicial del repositorio: commit `1aeacbf681aa711c78c4a4488f5d7bb2acaf43cd`.
 

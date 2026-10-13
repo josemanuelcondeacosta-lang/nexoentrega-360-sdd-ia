@@ -42,6 +42,8 @@ https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia
 - [Matriz de cobertura por AC](docs/coverage-matrix.md), con pruebas previstas y resultados pendientes.
 - [Fronteras de confianza IA](docs/ai-trust-boundaries.md).
 - [Registro de revisión humana](docs/reviews/gate-review-G1.md) y [descripción de PR preparada](docs/reviews/g1-pr-description.md).
+- [Cotejo oficial preparado](docs/reviews/cotejo-oficial-G1.md): archivos faltantes y comparación pendiente por RF/RNF.
+- [Plan de colaboración](docs/team/plan-colaboracion.md): tareas por integrante, evidencias y pasos en GitHub/VS Code.
 
 Validación documental reproducible (Python 3.11.9 usado; biblioteca estándar):
 
