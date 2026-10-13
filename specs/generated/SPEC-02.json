@@ -1,6 +1,6 @@
 {
   "id": "SPEC-02",
-  "version": "0.1-draft",
+  "version": "0.2-draft",
   "title": "Creación y envío de solicitudes",
   "requirements": {
     "rf": [
@@ -13,19 +13,26 @@
   },
   "userStory": "Como solicitante, quiero crear, editar y enviar una solicitud válida, para solicitar kits de mi organización.",
   "inputs": [
-    "Pendiente: detallar campos, tipos y validaciones de todos los endpoints"
+    "Borrador: zona, prioridad, fecha requerida YYYY-MM-DD, observaciones y líneas {skuId, quantity}.",
+    "Líneas: 1–10 SKU activos distintos; quantity entero 1–500. Código, dueño y organización son generados por servidor.",
+    "Catálogo de zonas, prioridades y límite de observaciones son propuestas CL-01/02/03/07/10."
   ],
   "process": [
-    "Pendiente: secuencia comprobable por escenario"
+    "Validar esquema y catálogo de la organización; persistir cabecera y líneas conjuntamente como BORRADOR.",
+    "Editar únicamente borrador del dueño; al enviar volver a validar líneas y fecha contra fecha local propuesta America/Bogota.",
+    "Persistir transición BORRADOR → ENVIADA y evento de auditoría en una unidad consistente."
   ],
   "outputs": [
-    "Pendiente: HTTP, cuerpo y efectos persistidos"
+    "Creación: 201 con ID, código único, BORRADOR y líneas persistidas; edición/envío: 200.",
+    "422 para datos inválidos, 403 para dueño no autorizado según CL-09, 404 para recurso ajeno, 409 para estado incompatible; sin efectos parciales."
   ],
   "rules": [
-    "Consultar RF/RNF oficiales y clarification-log"
+    "Enviar no reserva inventario; operaciones posteriores se definen en SPEC-03.",
+    "Propuesta de prioridades: ALTA, MEDIA, BAJA; no considerarlas catálogo oficial hasta CL-10.",
+    "No aceptar cambios de código, dueño u organización desde cliente."
   ],
   "edgeCases": [
-    "Pendiente: ampliar límites, fallos y permisos"
+    "0/1/10/11 líneas; cantidad 0/1/500/501, decimal o string; SKU repetido, inactivo o ajeno; fecha inválida, ayer y hoy."
   ],
   "acceptanceCriteria": [
     {
@@ -47,6 +54,44 @@
       "id": "AC-02-04",
       "expected": "Enviar con fecha anterior a la fecha del envío retorna 422 sin transición.",
       "status": "draft"
+    },
+    {
+      "id": "AC-02-05",
+      "expected": "Crear borrador válido retorna 201: cabecera y todas las líneas persisten con código único y dueño/organización del servidor; inventario no cambia.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-02-06",
+      "expected": "Para 0 y 11 líneas, SKU duplicado/inactivo/ajeno, cantidades 0/501/decimal/string: 422, sin cabecera o líneas parciales ni evento de éxito.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-02-07",
+      "expected": "Aceptar límites 1 y 10 líneas y cantidades 1 y 500; rechazar propiedades privilegiadas sin reasignar dueño/organización/código.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-02-08",
+      "expected": "Enviar hoy o fecha futura válida retorna 200 y persiste ENVIADA con un evento; existencia y reservas no cambian.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-02-09",
+      "expected": "Editar solicitud de otro dueño de la misma organización retorna 403 según propuesta CL-09; conservar cabecera, líneas y estado.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-02-10",
+      "expected": "Reenviar ENVIADA o editar estado posterior retorna 409, sin segundo evento de envío ni cambios de inventario.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-02-11",
+      "expected": "Formulario operable con teclado, etiquetas asociadas, errores vinculados a campos y foco visible a 390 y 1366 px; prueba manual/E2E pendiente.",
+      "status": "draft"
     }
-  ]
+  ],
+  "approvalStatus": "pending-human-review",
+  "sourceStatus": "mission-provided-official-exam-missing",
+  "userStoryId": "HU-02"
 }

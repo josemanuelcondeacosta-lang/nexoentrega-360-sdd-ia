@@ -14,7 +14,8 @@ Sistema académico para distribución comunitaria de kits en dos organizaciones 
 
 ## Estado
 - G1: **BORRADOR, SIN APROBACIÓN**.
-- No se ha implementado código, ejecutado pruebas, abierto PR ni revisado el proyecto.
+- G1 ampliado a cinco historias y 57 AC; aplicación y pruebas de producto pendientes de aprobación.
+- Se ejecutaron nueve pruebas del verificador documental; ver `docs/evidence/g1-validation.md`. No equivale a aprobación G1 ni cumplimiento de RF/RNF.
 - Enunciado vinculante: plataforma oficial del examen. No sustituir por este README.
 
 ## Estructura
@@ -34,3 +35,21 @@ Sistema académico para distribución comunitaria de kits en dos organizaciones 
 
 ## Enlace del repositorio
 https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia
+
+## Paquete de revisión G1
+
+- [Auditoría inicial](docs/reviews/initial-audit.md) y [fuentes/supuestos](docs/requirements-source.md).
+- [Matriz de cobertura por AC](docs/coverage-matrix.md), con pruebas previstas y resultados pendientes.
+- [Fronteras de confianza IA](docs/ai-trust-boundaries.md).
+- [Registro de revisión humana](docs/reviews/gate-review-G1.md) y [descripción de PR preparada](docs/reviews/g1-pr-description.md).
+
+Validación documental reproducible (Python 3.11.9 usado; biblioteca estándar):
+
+```sh
+python scripts/export_specs.py
+python scripts/export_specs.py --check
+python scripts/build_coverage.py
+python -m unittest discover -s scripts -p 'test_*.py' -v
+```
+
+Enunciado/anexos y revisión de un integrante faltan. Mantener `main` como integración; revisar rama `docs/g1-specifications` antes de fusionar. No crear tags de aplicación o entrega sin aplicación verificada.
