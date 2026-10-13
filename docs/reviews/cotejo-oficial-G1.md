@@ -12,6 +12,8 @@ No se conocen todavía los nombres exactos de los anexos. Revisar cada referenci
 
 ## Inventario de fuentes por completar
 
+Registro central de disponibilidad y recepción: [docs/examen-oficial/inventario.md](../examen-oficial/inventario.md). Guardar originales en `docs/examen-oficial/` cuando se reciban; esta tabla sigue como referencia preparada y no acredita recepción.
+
 | ID | Nombre original / versión | Procedencia y fecha oficial | SHA-256 del archivo recibido | Páginas/secciones | Disponible para revisores |
 |---|---|---|---|---|---|
 | OF-01 | Enunciado completo: pendiente | Pendiente | Pendiente | Pendiente | No recibido |

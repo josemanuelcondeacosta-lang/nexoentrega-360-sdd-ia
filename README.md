@@ -44,6 +44,8 @@ https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia
 - [Registro de revisión humana](docs/reviews/gate-review-G1.md) y [descripción de PR preparada](docs/reviews/g1-pr-description.md).
 - [Cotejo oficial preparado](docs/reviews/cotejo-oficial-G1.md): archivos faltantes y comparación pendiente por RF/RNF.
 - [Plan de colaboración](docs/team/plan-colaboracion.md): tareas por integrante, evidencias y pasos en GitHub/VS Code.
+- [Material oficial pendiente](docs/examen-oficial/README.md) e [inventario de disponibilidad](docs/examen-oficial/inventario.md).
+- Instrucciones individuales: [Carolina](docs/team/instrucciones-carolina.md), [Edier](docs/team/instrucciones-edier.md) y [Vega](docs/team/instrucciones-vega.md).
 
 Validación documental reproducible (Python 3.11.9 usado; biblioteca estándar):
 

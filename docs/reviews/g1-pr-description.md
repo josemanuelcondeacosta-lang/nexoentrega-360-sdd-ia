@@ -29,3 +29,5 @@ No fusionar mientras la revisión humana esté pendiente; no declarar G1 aprobad
 Se conserva PR #1 y se agrega una comparación preparada por RF/RNF, inventario de archivos oficiales faltantes, lista verificable de revisión, plantilla personal con UTC/SHA/observaciones/decisión y plan de colaboración con instrucciones GitHub/VS Code. Carolina es la revisora G1 principal propuesta, apoyada por Edier, Conde José y Vega José. No acredita contribuciones ni aprobaciones realizadas.
 
 El coordinador informa que dispone del enunciado; sus archivos y anexos aún no fueron recibidos por Codex. No se inicia implementación. Las pruebas documentales listadas arriba pertenecen a la ejecución anterior conservada; este cambio es documental y no declara nuevas pruebas de producto.
+
+Se prepara `docs/examen-oficial/` con inventario de disponibilidad y recepción, instrucciones individuales para Carolina/Edier/Vega y preparación común. El plan añade un circuito explícito de aportes y revisiones cruzadas documentales para los cuatro integrantes, con PR futuros sin números inventados. PR #1 sigue en borrador y las cinco SPEC pendientes de revisión humana.

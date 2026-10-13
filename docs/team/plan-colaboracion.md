@@ -26,6 +26,21 @@ Cada integrante deberá aportar código o pruebas reales y revisar al menos un P
 
 Una revisión de documentos G1 no sustituye el aporte obligatorio de código/pruebas posterior. No crear commits con identidad de otro integrante; cada persona trabaja desde su cuenta y confirma la revisión que realizó.
 
+## Revisión del reparto y circuito cruzado G1
+
+El reparto contempla aportes propios de los cuatro y una revisión ajena por persona. Para hacerlo verificable desde esta etapa, cada uno prepara su archivo documental personal en una rama propia y PR con base `docs/g1-specifications`. Los PR de aportes todavía no existen; no asignar números ni acreditarlos antes de crearlos.
+
+| Autor del aporte futuro G1 | Aporte propio | Revisor independiente propuesto |
+|---|---|---|
+| Carolina | Cotejo de requisitos y revisión de historias/AC | Conde José |
+| Edier | Escenarios de inventario/transacciones/idempotencia | Carolina |
+| Vega José | Casos adversariales y evidencia de validación documental | Edier |
+| Conde José | Inventario de fuentes, seguimiento de correcciones y checklist UI/integración, elaborado personalmente | Vega José |
+
+Este circuito complementa la revisión principal de PR #1 por Carolina. Una revisión del aporte de Carolina por Conde José no constituye autoaprobación de PR #1: Carolina conserva la revisión independiente del paquete. Si una persona cambia una SPEC, otra revisa el cambio. Los commits generados por Codex bajo la cuenta del coordinador no acreditan automáticamente su trabajo personal.
+
+Guías listas para compartir: [Carolina](instrucciones-carolina.md), [Edier](instrucciones-edier.md), [Vega](instrucciones-vega.md) y [preparación común](preparacion-G1.md). Inventario de fuentes: [examen oficial](../examen-oficial/inventario.md). Ninguna actividad de la tabla se marca completada hasta recibir enlaces, commits o evidencia real.
+
 ## Pasos sencillos en GitHub para G1
 
 1. Entrar con cuenta personal al repositorio y abrir PR #1. Conde José concede acceso como colaborador si hace falta; no compartir cuentas ni tokens.
