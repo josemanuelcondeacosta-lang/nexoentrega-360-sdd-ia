@@ -1,6 +1,6 @@
 {
   "id": "SPEC-01",
-  "version": "0.1-draft",
+  "version": "0.2-draft",
   "title": "Identidad y permisos",
   "requirements": {
     "rf": [
@@ -14,19 +14,24 @@
   },
   "userStory": "Como usuario de una organización, quiero autenticarme y acceder únicamente a operaciones autorizadas, para proteger sus recursos.",
   "inputs": [
-    "Pendiente: detallar campos, tipos y validaciones de todos los endpoints"
+    "Login: identificador de cuenta ficticia y contraseña; logout: sesión vigente.",
+    "Identidad, organización y rol se obtienen del servidor; no confiar en campos de cliente."
   ],
   "process": [
-    "Pendiente: secuencia comprobable por escenario"
+    "Validar credenciales contra hash, crear sesión revocable y resolver identidad por petición.",
+    "Autorizar operación y filtrar recurso por organización y alcance del rol antes de devolver datos."
   ],
   "outputs": [
-    "Pendiente: HTTP, cuerpo y efectos persistidos"
+    "Login válido: 200 e identidad sin hash; logout: 204 y sesión revocada.",
+    "401 sin sesión válida, 403 para operación prohibida, 404 para recurso ajeno o inexistente; sin cambios de negocio."
   ],
   "rules": [
-    "Consultar RF/RNF oficiales y clarification-log"
+    "Cuatro roles propuestos: SOLICITANTE, COORDINADOR, BODEGA y AUDITOR; confirmar matriz CL-09.",
+    "Dos organizaciones y una cuenta ficticia por rol en cada una; hash con algoritmo y parámetros a decidir en ADR-003.",
+    "No devolver ni registrar contraseñas, hashes o tokens."
   ],
   "edgeCases": [
-    "Pendiente: ampliar límites, fallos y permisos"
+    "Contraseña errónea, sesión revocada, rol adulterado, ID ajeno, login inexistente y acceso directo sin pasar por UI."
   ],
   "acceptanceCriteria": [
     {
@@ -48,6 +53,39 @@
       "id": "AC-01-04",
       "expected": "Iniciar sesión con contraseña sembrada válida permite operar según el rol; cerrar sesión revoca acceso.",
       "status": "draft"
+    },
+    {
+      "id": "AC-01-05",
+      "expected": "El seed produce ocho cuentas distintas, cuatro por organización; la base contiene hashes y ninguna contraseña en claro.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-01-06",
+      "expected": "Credenciales erróneas o cuenta inexistente retornan el mismo error 401, sin crear sesión ni revelar existencia de cuenta.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-01-07",
+      "expected": "Alterar rol u organización en el cuerpo no concede permisos: identidad del servidor prevalece y no cambia el recurso.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-01-08",
+      "expected": "Tras logout, reutilizar la sesión retorna 401; comprobar revocación persistida y ausencia de cambios de negocio.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-01-09",
+      "expected": "Realizar dos lecturas y dos escrituras cruzadas ORG-A/ORG-B: 404 sin filtrar datos ni alterar solicitudes, reservas o eventos de éxito.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-01-10",
+      "expected": "Inspeccionar respuestas y logs de login, errores y consultas: no contienen contraseña, hash ni token.",
+      "status": "draft"
     }
-  ]
+  ],
+  "approvalStatus": "pending-human-review",
+  "sourceStatus": "mission-provided-official-exam-missing",
+  "userStoryId": "HU-01"
 }

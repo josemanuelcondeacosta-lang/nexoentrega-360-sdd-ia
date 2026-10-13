@@ -1,25 +1,70 @@
 # SPEC-05: Asistente IA
 
-**Versión:** 0.1-draft — **no aprobada para implementar**
+**Versión:** 0.2-draft — **no aprobada para implementar**
+
+Fuente: misión del usuario y borrador inicial. Enunciado oficial y anexos NO recibidos. RF/RNF conservan identificadores iniciales; significado de RNF pendiente de cotejo. HTTP, roles, catálogos y campos propuestos requieren revisión.
 
 **RF:** RF10, RF11, RF12; **RNF:** RNF01, RNF06
 
-## Historia de usuario
+## Historia de usuario HU-05
+
 Como coordinador, quiero obtener un resumen revisable de solicitudes enviadas, para orientar mi revisión sin delegar decisiones.
 
-## Criterios iniciales de aceptación (requieren ampliación)
+## Entradas
+
+- Coordinador autenticado; servidor selecciona máximo 20 ENVIADA de su organización con orden estable propuesto fecha/ID.
+- Seis campos propuestos CL-12: requestId, zone, priority, requiredDate, observations, lines (skuId, quantity). Sin nombres, credenciales ni organización ajena.
+- Salida propuesta: {summary, recommendations:[{requestId, reason, evidenceFields}]}; campos exactos sujetos a anexo oficial.
+
+## Procesos
+
+- Proyectar whitelist de campos, tratar observaciones como datos no confiables y llamar adaptador con deadline de 5 segundos.
+- Validar JSON estricto y semántica: IDs del conjunto enviado, únicos; evidenceFields en whitelist y respaldando razón.
+- Ante error, indisponibilidad, timeout o salida inválida generar summary determinista y recommendations=[] (CL-08).
+- Persistir borrador/origen y aprobación humana con auditoría; sin privilegios de escritura de inventario, estado o prioridad.
+
+## Salidas y efectos persistidos
+
+- 200 con borrador válido y origen explícito: proveedor, reproducción declarada o fallback; metadatos fuera del contrato del modelo.
+- summary ≤600 caracteres, ≤5 recomendaciones, reason ≤240 caracteres, evidenceFields 1–3 claves permitidas; sin propiedades adicionales en ningún nivel.
+- 401/403/404 según acceso; no presentar reproducción o fallback como respuesta de LLM real.
+
+## Reglas y supuestos
+
+- Modelo sin herramientas privilegiadas ni acceso directo a base; validación de esquema no sustituye comprobación de pertenencia.
+- Aprobación de coordinador afecta exclusivamente borrador y evento; nunca prioridad, inventario ni estado de solicitud.
+- Persistencia/retención y whitelist definitiva pendientes CL-05/12; no aprobar contrato hasta recibir anexos.
+
+## Límites y escenarios adversariales
+
+- 0/20/21 solicitudes, JSON roto, summary 601, 6 recomendaciones, reason 241, evidenceFields 0/4, ID duplicado/ajeno e instrucciones maliciosas.
+
+## Criterios de aceptación
+
+Todos son resultados ESPERADOS; ninguna prueba de producto ejecutada. Conservar snapshots de base antes/después y evidencias según matriz.
+
 - **AC-05-01:** El adaptador recibe máximo 20 solicitudes ENVIADA de la organización y solo seis campos autorizados.
 - **AC-05-02:** La salida con ID ajeno, duplicado o propiedad extra es inválida y provoca fallback controlado.
 - **AC-05-03:** Timeout a 5 s o fallo del proveedor genera resumen determinista sin bloquear flujo principal.
 - **AC-05-04:** Solo coordinador aprueba borrador; se audita aprobación sin modificar inventario ni prioridad.
+- **AC-05-05:** Con 21 ENVIADA y solicitudes de otra organización, capturar payload del adaptador: exactamente 20 autorizadas y solo whitelist; cero nombres/tokens/hashes.
+- **AC-05-06:** Para summary 601, seis recomendaciones, reason 241, evidenceFields 0/4 o clave no permitida: fallback con origen y motivo sanitizados; no guardar salida inválida como válida.
+- **AC-05-07:** Aceptar límites 600/5/240 y 1–3 evidenceFields solo si IDs únicos pertenecen a las solicitudes enviadas y evidencias son comprobables.
+- **AC-05-08:** Inyectar instrucciones en observaciones y HTML en salida: no se ejecutan instrucciones, herramientas ni markup; no cambian inventario, estado, prioridad o permisos.
+- **AC-05-09:** Proveedor responde después de 5s, falla o no está configurado: abortar espera a 5s con tolerancia instrumental declarada y generar fallback repetible para igual snapshot.
+- **AC-05-10:** Sin solicitudes ENVIADA: resumen determinista de conjunto vacío, recomendaciones vacías y sin llamada innecesaria al proveedor.
+- **AC-05-11:** Aprobar borrador ajeno retorna 404; rol distinto a coordinador retorna 403; no altera borrador, stock ni prioridades.
+- **AC-05-12:** Aprobación válida persiste actor, UTC y evento junto al borrador aprobado; snapshot de solicitudes e inventario permanece idéntico.
+- **AC-05-13:** Adaptador de reproducción identifica origen reproducción, fixture y versión; no reportar acceso a LLM real sin evidencia.
 
 ## Fuente única estructurada
-El bloque `spec-json` se exporta automáticamente; no editar el JSON derivado.
+
+El bloque se exporta automáticamente; no editar JSON derivado.
 
 ```spec-json
 {
   "id": "SPEC-05",
-  "version": "0.1-draft",
+  "version": "0.2-draft",
   "title": "Asistente IA",
   "requirements": {
     "rf": [
@@ -34,19 +79,28 @@ El bloque `spec-json` se exporta automáticamente; no editar el JSON derivado.
   },
   "userStory": "Como coordinador, quiero obtener un resumen revisable de solicitudes enviadas, para orientar mi revisión sin delegar decisiones.",
   "inputs": [
-    "Pendiente: detallar campos, tipos y validaciones de todos los endpoints"
+    "Coordinador autenticado; servidor selecciona máximo 20 ENVIADA de su organización con orden estable propuesto fecha/ID.",
+    "Seis campos propuestos CL-12: requestId, zone, priority, requiredDate, observations, lines (skuId, quantity). Sin nombres, credenciales ni organización ajena.",
+    "Salida propuesta: {summary, recommendations:[{requestId, reason, evidenceFields}]}; campos exactos sujetos a anexo oficial."
   ],
   "process": [
-    "Pendiente: secuencia comprobable por escenario"
+    "Proyectar whitelist de campos, tratar observaciones como datos no confiables y llamar adaptador con deadline de 5 segundos.",
+    "Validar JSON estricto y semántica: IDs del conjunto enviado, únicos; evidenceFields en whitelist y respaldando razón.",
+    "Ante error, indisponibilidad, timeout o salida inválida generar summary determinista y recommendations=[] (CL-08).",
+    "Persistir borrador/origen y aprobación humana con auditoría; sin privilegios de escritura de inventario, estado o prioridad."
   ],
   "outputs": [
-    "Pendiente: HTTP, cuerpo y efectos persistidos"
+    "200 con borrador válido y origen explícito: proveedor, reproducción declarada o fallback; metadatos fuera del contrato del modelo.",
+    "summary ≤600 caracteres, ≤5 recomendaciones, reason ≤240 caracteres, evidenceFields 1–3 claves permitidas; sin propiedades adicionales en ningún nivel.",
+    "401/403/404 según acceso; no presentar reproducción o fallback como respuesta de LLM real."
   ],
   "rules": [
-    "Consultar RF/RNF oficiales y clarification-log"
+    "Modelo sin herramientas privilegiadas ni acceso directo a base; validación de esquema no sustituye comprobación de pertenencia.",
+    "Aprobación de coordinador afecta exclusivamente borrador y evento; nunca prioridad, inventario ni estado de solicitud.",
+    "Persistencia/retención y whitelist definitiva pendientes CL-05/12; no aprobar contrato hasta recibir anexos."
   ],
   "edgeCases": [
-    "Pendiente: ampliar límites, fallos y permisos"
+    "0/20/21 solicitudes, JSON roto, summary 601, 6 recomendaciones, reason 241, evidenceFields 0/4, ID duplicado/ajeno e instrucciones maliciosas."
   ],
   "acceptanceCriteria": [
     {
@@ -68,12 +122,62 @@ El bloque `spec-json` se exporta automáticamente; no editar el JSON derivado.
       "id": "AC-05-04",
       "expected": "Solo coordinador aprueba borrador; se audita aprobación sin modificar inventario ni prioridad.",
       "status": "draft"
+    },
+    {
+      "id": "AC-05-05",
+      "expected": "Con 21 ENVIADA y solicitudes de otra organización, capturar payload del adaptador: exactamente 20 autorizadas y solo whitelist; cero nombres/tokens/hashes.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-05-06",
+      "expected": "Para summary 601, seis recomendaciones, reason 241, evidenceFields 0/4 o clave no permitida: fallback con origen y motivo sanitizados; no guardar salida inválida como válida.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-05-07",
+      "expected": "Aceptar límites 600/5/240 y 1–3 evidenceFields solo si IDs únicos pertenecen a las solicitudes enviadas y evidencias son comprobables.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-05-08",
+      "expected": "Inyectar instrucciones en observaciones y HTML en salida: no se ejecutan instrucciones, herramientas ni markup; no cambian inventario, estado, prioridad o permisos.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-05-09",
+      "expected": "Proveedor responde después de 5s, falla o no está configurado: abortar espera a 5s con tolerancia instrumental declarada y generar fallback repetible para igual snapshot.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-05-10",
+      "expected": "Sin solicitudes ENVIADA: resumen determinista de conjunto vacío, recomendaciones vacías y sin llamada innecesaria al proveedor.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-05-11",
+      "expected": "Aprobar borrador ajeno retorna 404; rol distinto a coordinador retorna 403; no altera borrador, stock ni prioridades.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-05-12",
+      "expected": "Aprobación válida persiste actor, UTC y evento junto al borrador aprobado; snapshot de solicitudes e inventario permanece idéntico.",
+      "status": "draft"
+    },
+    {
+      "id": "AC-05-13",
+      "expected": "Adaptador de reproducción identifica origen reproducción, fixture y versión; no reportar acceso a LLM real sin evidencia.",
+      "status": "draft"
     }
-  ]
+  ],
+  "approvalStatus": "pending-human-review",
+  "sourceStatus": "mission-provided-official-exam-missing",
+  "userStoryId": "HU-05"
 }
 ```
 
 ## Pendientes de revisión
-- Completar todos los AC y entradas/procesos/salidas/errores específicos que exige el enunciado.
-- Resolver o registrar supuestos de aclaraciones.
-- Enlazar tareas, contratos, pruebas, PR y evidencias reales.
+
+- Cotejar con enunciado/anexos y resolver aclaraciones relacionadas.
+- Revisar criterios, matriz de permisos y asignación RNF por una persona distinta al autor.
+- Registrar revisión con SHA en docs/reviews/gate-review-G1.md.
+- Código, pruebas de producto, PR revisado y evidencias: PENDIENTES; implementación bloqueada por G1.

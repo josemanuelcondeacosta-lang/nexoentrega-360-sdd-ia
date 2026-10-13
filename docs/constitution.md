@@ -12,3 +12,17 @@
 8. **Verificación:** checks reproducibles, pruebas de API, base real, E2E, regresión, rendimiento y accesibilidad manual; jamás reportar pruebas no ejecutadas.
 9. **Revisión independiente:** cada PR lleva revisión de otro integrante y evidencia; discrepancias documentadas.
 10. **Entrega:** tags `baseline-v1` y `release-examen`, SHA, instrucciones de clon limpio y PDF idéntico para todo el equipo.
+
+## Controles de aplicación — ampliación 0.2-draft
+
+| Principio | Evidencia requerida antes de declararlo cumplido |
+|---|---|
+| 1 y 9 | Fuente oficial, SHA revisado, revisor humano distinto, hallazgos y decisión G1/G2; no usar autoría asistida como aprobación |
+| 2 y 7 | Pruebas de rol/sesión/aislamiento y revisión de logs, respuestas, seed ficticio y secretos |
+| 3 y 4 | Snapshots de PostgreSQL antes/después, rollback, reservas concurrentes, cancelación y despacho |
+| 5 | Matriz por AC con esperado, observado, módulo, test, PR, SHA y artefacto real |
+| 6 | Whitelist, schema, pertenencia de IDs, pruebas maliciosas, timeout/fallback y origen de respuestas |
+| 8 | Comandos reproducibles y salidas de ejecución; «pendiente» cuando no se ejecutó |
+| 10 | Clon limpio, mismo SHA probado/tagueado, PDF con brechas y contribuciones verificadas |
+
+No fusionar PR sujeto a revisión pendiente. No suplantar integrantes ni atribuirles commits/revisiones. Sin fuente oficial o aprobación, preparar documentación y verificadores de SPEC; no implementar funcionalidades.

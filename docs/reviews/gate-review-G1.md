@@ -10,3 +10,88 @@
 - Estado final: **NO APROBADO / PENDIENTE**
 
 No completar aprobaciones ficticias. Guardar enlace a PR/commit real.
+
+## Paquete candidato 0.2-draft
+
+Autor de la ampliación: asistente Codex bajo instrucciones del usuario. No atribuir elaboración ni revisión a integrantes sin evidencia. Rama `docs/g1-specifications`; el SHA candidato debe obtenerse del commit de esta rama, no del commit inicial.
+
+Artefactos: cinco SPEC y JSON derivados, constitution.md, requirements-source.md, clarification-log.md, risk-register.md, ai-trust-boundaries.md, coverage-matrix.md, initial-audit.md y evidencia documental en evidence/g1-validation.md.
+
+## Lista de revisión humana
+
+- [ ] Se recibió enunciado oficial/anexos y se cotejaron RF01–RF12 y RNF01–RNF06.
+- [ ] Cinco historias y 57 AC con entradas/proceso/salidas, escenarios negativos y persistencia.
+- [ ] Se revisaron rol, permisos, fecha, catálogos, TTL y whitelist IA; supuestos pendientes visibles.
+- [ ] Reglas de concurrencia, reserva atómica, cancelación, despacho y auditoría son consistentes.
+- [ ] Contrato IA y degradación no permiten escrituras privilegiadas ni datos ajenos.
+- [ ] Se comprobó exportación JSON y matriz; los tests documentales no se confunden con pruebas de aplicación.
+- [ ] Hallazgos resueltos o explícitamente bloqueantes, sin aprobaciones ficticias.
+- [ ] Revisor humano distinto del autor registrado con fecha UTC, identidad, SHA y evidencia/enlace.
+
+## Registro de hallazgos para el revisor
+
+| ID | Hallazgo | Severidad | Disposición | Resolución humana |
+|---|---|---|---|---|
+| G1-H01 | Enunciado/anexos ausentes | Bloqueante para cierre | Solicitar y cotejar | Pendiente |
+| G1-H02 | Semántica y asignación RNF provisional | Bloqueante para cobertura definitiva | Confirmar CL-13 | Pendiente |
+| G1-H03 | Matriz de roles/HTTP/cancelación propuesta | Bloqueante para funcionalidades afectadas | Confirmar CL-09 | Pendiente |
+| G1-H04 | Whitelist y contrato IA sin anexo | Bloqueante para SPEC-05 | Confirmar CL-12 | Pendiente |
+| G1-H05 | TTL, errores y retención idempotente propuestos | Bloqueante para SPEC-03 | Confirmar CL-04/11 | Pendiente |
+
+Decisión por SPEC: SPEC-01 pendiente; SPEC-02 pendiente; SPEC-03 pendiente; SPEC-04 pendiente; SPEC-05 pendiente. No basta una reacción informal sin identificar artefactos y SHA. La revisión no acredita que pruebas futuras hayan sido ejecutadas.
+
+## Organización propuesta de revisión
+
+Revisora principal propuesta: **Cantillo Carolina**. Apoyo: **Castro Edier** (inventario/transacciones), **Conde José** (coordinación/UI/integración) y **Vega José** (IA/seguridad/calidad). Asignación pendiente de aceptación personal; ninguna revisión se ha registrado por esa propuesta. Detalle: `docs/team/plan-colaboracion.md`.
+
+PR existente: https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/1. El coordinador comunica el SHA actual tras cada corrección. No usar automáticamente el SHA inicial de G1 como si incluyera cambios posteriores.
+
+## Criterios verificables para el equipo
+
+| Comprobación | Responsable propuesto | Evidencia mínima para marcar cumplida |
+|---|---|---|
+| Inventario completo de enunciado, anexos y versiones | Conde José prepara; Carolina coteja | Nombre/procedencia/hash y referencias; inventario sin documentos faltantes |
+| Cada condición RF01–12/RNF01–06 tiene correspondencia o brecha | Carolina | Fila de cotejo por condición con página/sección y SPEC/AC; sin cobertura solo por número |
+| Cinco historias; entradas, proceso, salidas y AC positivos/negativos | Carolina | Revisión de cada SPEC y efectos observables/persistidos; ningún supuesto presentado como acuerdo |
+| Reglas de stock, transiciones y rollback completas | Edier | Escenarios con stock inicial/final y estado; revisión de reserva parcial, doble reserva y fallo de auditoría |
+| Idempotencia 24h, conflicto, ámbito y conservación definidos | Edier | Comparación de CL-04/11 con texto oficial y resultados esperados en SPEC-03 |
+| Permisos, 8 cuentas ficticias, 2 organizaciones y respuestas seguras | Vega José y Conde José | Matriz oficial confrontada, pruebas negativas previstas y campos de identidad del servidor |
+| Contrato IA estricto, whitelist, pertenencia IDs, límites y fallback | Vega José | Contraste con anexo y escenarios inválidos/timeout/inyección; aprobación sin efectos privilegiados |
+| Formularios/estados, accesibilidad y resolución móvil/escritorio | Conde José | Flujo previsto y criterios específicos contrastados con RNF; no afirmar UI probada |
+| Markdown/JSON coherentes y matriz por AC consistente | Carolina y Vega José | Comandos ejecutados personalmente y salida, SHA y revisión de vínculos de cada AC |
+| Hallazgos bloqueantes resueltos y cambios revisados | Carolina coordina; otro revisa cambios propios | Enlaces a correcciones y revisión sobre SHA final; decisiones por SPEC |
+
+## Plantilla de registro individual — completar solo tras revisar
+
+Copiar en una revisión/comentario de GitHub publicado desde la cuenta personal y enlazarlo aquí. No sustituir evidencia personal por un registro escrito en su nombre por Codex.
+
+```text
+Autor(es) del artefacto revisado / asistencia utilizada:
+Revisor: nombre y cuenta GitHub:
+Fecha/hora UTC (YYYY-MM-DDTHH:mm:ssZ):
+PR y SHA completo revisado:
+Fuentes oficiales usadas: archivo, versión, página/sección:
+SPEC / AC / archivos revisados:
+Comprobaciones realizadas y comandos efectivamente ejecutados:
+Observaciones y hallazgos (requisito, evidencia y corrección propuesta):
+Resultado por SPEC: pendiente / requiere cambios / aprobada:
+Bloqueos restantes y razones:
+Enlaces a revisión, commit propio y evidencia:
+```
+
+| Integrante | Autor del artefacto | SHA / UTC revisados | Observaciones / evidencia GitHub | Decisión real |
+|---|---|---|---|---|
+| Carolina | Por identificar según artefacto | Pendiente | Pendiente | Sin revisión recibida |
+| Edier | Por identificar según artefacto | Pendiente | Pendiente | Sin revisión recibida |
+| Conde José | Por identificar según artefacto | Pendiente | Pendiente | Sin revisión independiente recibida; no autoaprobar PR propio |
+| Vega José | Por identificar según artefacto | Pendiente | Pendiente | Sin revisión recibida |
+
+## Condiciones para desbloquear G1 y continuar
+
+1. Recibir y cotejar texto completo/anexos mediante `cotejo-oficial-G1.md`; el resumen del coordinador no los sustituye.
+2. Corregir diferencias verificadas y regenerar JSON/matriz sin atribuir esas correcciones a otra persona.
+3. Obtener revisión real independiente y decisión explícita por SPEC sobre el SHA corregido; registrar quién revisó y cuándo en UTC.
+4. Si un cambio posterior afecta una SPEC aprobada, renovar su revisión; no implementar mientras su aprobación esté pendiente.
+5. Completar PR #1 y mantener evidencia de revisión antes de integrar. Después comenzar G2 (arquitectura, cuatro ADR, diagramas, OpenAPI y planificación) y preparar su revisión independiente.
+
+Estado actual: **G1 PENDIENTE**. No se genera PDF final ni tag de entrega; no hay nueva prueba de aplicación declarada.
