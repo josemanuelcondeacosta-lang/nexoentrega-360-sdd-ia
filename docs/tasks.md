@@ -1,9 +1,9 @@
-# Control y AsignaciÛn de Tareas (G2)
+# Control y Asignaci√≥n de Tareas (G2)
 
-| ID | Cobertura RF / AC | MÛdulo / Funcionalidad | Responsable | Estado | Rama / PR |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **TSK-01** | RF01, RF02, RNF01 | AutenticaciÛn, Sesiones y Middleware Tenant (ADR-003) | Carolina Cantillo | Pendiente | docs/g2-carolina |
-| **TSK-02** | RF03, RF04, SPEC-02 | Flujo de Solicititudes y Reglas de CancelaciÛn | Edier Castro | Pendiente | docs/g2-carolina |
-| **TSK-03** | RF05, RF06, SPEC-03 | Control de Inventario, Transacciones e Idempotencia | JosÈ Conde | Pendiente | docs/g2-carolina |
-| **TSK-04** | RF08, RF09, RNF03 | Consultas, Filtro por OrganizaciÛn y AuditorÌa | Carolina Cantillo | Pendiente | docs/g2-carolina |
-| **TSK-05** | RF11, RNF05, SPEC-05 | MÛdulo de Asistente de IA y Respuestas de Respaldo | JosÈ Vega | Pendiente | docs/g2-carolina |
+| ID | Cobertura RF / AC | M√≥dulo / Funcionalidad | Dependencias | Pruebas | Responsable | Estado | Condici√≥n de T√©rmino | PR |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **TSK-01** | RF01, RF02, RNF01, AC-01-01..13 | Autenticaci√≥n, Sesiones y Middleware Tenant (ADR-003) | Ninguna | 	est_auth.php | Carolina Cantillo | Pendiente | Login/Logout y aislamiento por Org validados | PR G2 |
+| **TSK-02** | RF03, RF04, SPEC-02, AC-02-01..12 | Flujo de Solicitudes y Cancelaci√≥n por Propietario | TSK-01 | 	est_solicitudes.php | Carolina Cantillo | Pendiente | Peticiones BORRADOR‚ÜíENVIADA y cancelaci√≥n probadas | PR G2 |
+| **TSK-03** | RF05, RF06, SPEC-03, AC-03-01..15 | Control de Inventario, Transacciones e Idempotencia | TSK-01 | 	est_inventario.php | Edier Castro | Pendiente | Reserva at√≥mica de stock con Idempotency-Key | PR G2 |
+| **TSK-04** | RF08, RF09, RNF03, AC-04-01..10 | Consultas, Filtro por Organizaci√≥n y Auditor√≠a | TSK-01, TSK-02 | 	est_auditoria.php | Jos√© Conde | Pendiente | Logs de auditor√≠a y consultas cross-tenant con 404 | PR G2 |
+| **TSK-05** | RF11, RNF05, SPEC-05, AC-05-01..18 | M√≥dulo de Asistente de IA y Respuestas de Respaldo | TSK-01 | 	est_ia_fallback.php | Jos√© Vega | Pendiente | Respuestas sanitizadas y fallback activo | PR G2 |

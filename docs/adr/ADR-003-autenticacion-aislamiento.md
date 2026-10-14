@@ -1,29 +1,31 @@
-# ADR-003: Esquema de Autenticación, Permisos y Aislamiento Multitenant (ORG-A / ORG-B)
+# ADR-003: AutenticaciÃ³n, Sesiones y Aislamiento Multitenant (ORG-A / ORG-B)
 
 * **Estado:** Propuesto
 * **Fecha:** 2026-10-14
 * **Autora:** Carolina Cantillo
-* **Revisión Humana:** Pendiente
+* **RevisiÃ³n Humana:** Pendiente
 * **Requisitos:** RF01, RF02, RNF01, SPEC-01 (AC-01-01 a AC-01-13)
-* **Atención a Hallazgos:** H-V05 (mensajes genéricos en errores de credenciales) y H-V06 (aislamiento estricto multitenant en consultas).
+* **AtenciÃ³n a Hallazgos:** 
+  - **H-V05:** PrecisiÃ³n de respuestas HTTP 403 vs 404 para evitar enumeraciÃ³n y fuga de datos cross-tenant.
+  - **H-V06:** ProtecciÃ³n estricta contra ataques CSRF mediante verificaciÃ³n de tokens y cookies SameSite/SameOrigin.
 
 ## Contexto y Problema
-El sistema NexoEntrega 360 da soporte a dos organizaciones independientes (ORG-A y ORG-B) bajo cuatro roles bien definidos (Solicitante, Coordinador, Bodega y Auditor). El reto principal es asegurar un aislamiento completo de la información entre ambas entidades, impidiendo que usuarios de una organización consulten o manipulen registros pertenecientes a la otra. Asimismo, la aplicación debe responder de forma limpia (HTTP 401, 403 y 404) sin filtrar pistas sobre la existencia de datos ajenos.
+NexoEntrega 360 requiere aislar completamente los recursos entre ORG-A y ORG-B bajo cuatro roles (Solicitante, Coordinador, Bodega, Auditor). Se deben precisar los parÃ¡metros de sesiÃ³n, logout, hashing y protecciÃ³n contra vulnerabilidades de enumeraciÃ³n y CSRF.
 
 ## Opciones Evaluadas
-1. **Manejo de Sesiones nativo en Laravel (Cookies HTTP-Only) + Middleware de Tenant.**
-2. **Tokens de Acceso con Laravel Sanctum (Bearer Tokens en Cabecera).**
-3. **Bases de datos independientes o esquemas separados por organización.**
+1. **Laravel Sessions (Cookie HTTP-Only, SameSite=Lax/Strict) + Scope Tenant en Eloquent.**
+2. **Tokens Sanctum SPA / API Bearer Tokens.**
+3. **Multi-tenancy con esquemas de BD separados.**
 
-## Decisión Seleccionada
-Adoptamos la **Opción 1: Sesiones basadas en cookies HTTP-Only con Middleware de Organización**, apoyadas por el ORM Eloquent con un alcance global (*Global Scope*) vinculado a Auth::user()->organization_id.
+## DecisiÃ³n Seleccionada
+Adoptamos la **OpciÃ³n 1: Sesiones basadas en cookies HTTP-Only con Middleware de OrganizaciÃ³n**, con las siguientes precisiones tÃ©cnicas:
 
-### Justificación
-- **Determinación en Servidor:** La organización y el rol del usuario se resuelven de forma obligatoria en el backend a partir de la sesión autenticada. No se confía en ningún parámetro enviado desde el cliente (organization_id o ole_id en cuerpo o URL), cerrando cualquier intento de suplantación.
-- **Respuesta 404 para Prevenir Enumeración:** Al buscar un recurso que no corresponde a la organización del usuario autenticado, el backend devolverá 404 Not Found en lugar de 403 Forbidden. Esto responde directamente al hallazgo H-V06 e impide que usuarios malintencionados deduzcan si un recurso existe en la otra organización.
-- **Respuesta Segura en Credenciales (H-V05):** Ante cualquier fallo de autenticación, el mensaje de retorno será unívoco (*"Credenciales incorrectas"*), sin detallar si el correo o la contraseña fueron el factor de error.
-- **Manejo de Contraseñas y CSRF:** Se utiliza hashing nativo con Bcrypt/Argon2id y protección activada contra CSRF mediante middleware de verificación de tokens.
+### EspecificaciÃ³n TÃ©cnica
+- **SesiÃ³n y Cookie:** DuraciÃ³n de sesiÃ³n configurable (config/session.php: lifetime = 120 minutos), expire_on_close = true, http_only = true, secure = true, same_site = lax.
+- **Logout:** InvalidaciÃ³n explÃ­cita de sesiÃ³n (Auth::logout(), session()->invalidate(), session()->regenerateToken()).
+- **Hashing de ContraseÃ±as:** Algoritmo **Bcrypt** (costo 12) o **Argon2id** nativo de Laravel.
+- **ProtecciÃ³n CSRF (H-V06):** VerificaciÃ³n activa de token CSRF mediante ValidateCsrfToken en todas las peticiones de mutaciÃ³n (POST, PUT, DELETE).
+- **Manejo de Errores 403 vs 404 (H-V05):** Si un recurso existe pero pertenece a otra organizaciÃ³n, el servidor retornarÃ¡ HTTP 404 Not Found en lugar de 403 Forbidden para evitar la enumeraciÃ³n maliciosa de identificadores.
 
-## Consecuencias y Validación
-- **Impacto:** Alta seguridad y separación lógica sólida sin la sobrecarga de mantener múltiples esquemas de base de datos.
-- **Verificación:** Pruebas automatizadas sobre los criterios AC-01-01 a AC-01-13 y validación de respuestas en endpoints mediante middleware.
+## Consecuencias y ValidaciÃ³n
+- Aislamiento multitenant robusto a nivel de backend. Evaluado contra criterios AC-01-01 a AC-01-13.
