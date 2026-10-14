@@ -30,15 +30,15 @@ Instrucción del coordinador del equipo, entregada por Edier junto con el PDF y 
 
 ## Decisión humana
 
-**PENDIENTE.** Edier debe revisar la salida y registrar aquí, por cada grupo de cambios, si se acepta, se corrige o se descarta, con su motivo:
+Registrada por Edier tras revisar la salida:
 
 | Cambio | Decisión de Edier (aceptada / corregida / descartada) | Motivo | Fecha UTC |
 |---|---|---|---|
-| Inventario y originales oficiales | Pendiente | | |
-| Diferencias D-01 a D-24 y su clasificación | Pendiente | | |
-| SPEC-03 (área asignada a Edier): actores, oráculos, AC-03-14 a AC-03-16 | Pendiente | | |
-| Migración de formato (D-15) y nuevo exportador | Pendiente | | |
-| Supuestos de equipo (CL-02, CL-04, CL-11, CL-19) | Pendiente | | |
+| Inventario y originales oficiales | Aceptada | Los archivos son los que descargó de la plataforma oficial | 2026-10-14 |
+| Diferencias D-01 a D-24 y su clasificación | Aceptada | Revisó las diferencias contra el PDF y está de acuerdo | 2026-10-14 |
+| SPEC-03 (área asignada a Edier): actores, oráculos, AC-03-14 a AC-03-16 | Aceptada | Coinciden con la p. 4 del PDF y con `acceptance-oracles.md` | 2026-10-14 |
+| Migración de formato (D-15) y nuevo exportador | Aceptada | Revisada junto con SPEC-03 | 2026-10-14 |
+| Supuestos de equipo (CL-02, CL-04, CL-11, CL-19) | Aceptada como propuesta | Quedan como propuesta; el equipo debe acordarlos | 2026-10-14 |
 
 La aprobación de G1 la hace además una persona distinta del autor; esta intervención no aprueba sus propias salidas.
 
