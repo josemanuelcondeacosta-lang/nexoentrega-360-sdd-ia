@@ -5,7 +5,7 @@ Formato del anexo oficial `06_adr-template.md`.
 - **Estado:** propuesto
 - **Fecha y versión:** 2026-10-14, v0.1 (G2)
 - **Autor:** Vega José, con asistencia de IA (registro AI-004)
-- **Depende de:** ADR-001 (estructura y tecnología; el equipo acordó Laravel el 2026-10-14, motor PostgreSQL o MySQL por fijar en ADR-001) y ADR-003 (identidad y sesión)
+- **Depende de:** ADR-001 (estructura y tecnología; el equipo acordó Laravel con PostgreSQL el 2026-10-14; falta registrarlo en ADR-001) y ADR-003 (identidad y sesión)
 
 ## Contexto y restricciones
 

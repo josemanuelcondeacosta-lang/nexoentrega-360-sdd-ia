@@ -2,13 +2,13 @@
 
 - **Versión:** 0.1 (2026-10-14)
 - **Autor:** Vega José, con asistencia de IA (AI-004)
-- **Base:** enunciado §9 (CI), §11 (plan mínimo de pruebas), anexo `10_test-report-template.md`, SPEC 0.3-draft, ADR-004. Tecnología según ADR-001: Laravel con PostgreSQL o MySQL; las herramientas se ajustan si ADR-001 cambia.
+- **Base:** enunciado §9 (CI), §11 (plan mínimo de pruebas), anexo `10_test-report-template.md`, SPEC 0.3-draft, ADR-004. Tecnología acordada por el equipo (2026-10-14): Laravel con PostgreSQL; se registra en ADR-001.
 - **Estado:** propuesta pendiente de revisión G2.
 
 ## Principios
 
 1. Cada prueba nace de un AC aprobado y lleva su ID en el nombre (por ejemplo, `test_AC_03_08_reservas_concurrentes`).
-2. **Base real**: integración y concurrencia contra el mismo motor de producción (PostgreSQL o MySQL en contenedor), nunca SQLite en memoria ni mocks de inventario (§11).
+2. **Base real**: integración y concurrencia contra PostgreSQL en contenedor, el mismo motor de producción, nunca SQLite en memoria ni mocks de inventario (§11).
 3. **Oráculos independientes**: el estado y las cantidades esperadas se escriben antes de ejecutar, como constantes del test, sin reutilizar el código de producción (anexo `acceptance-oracles.md`).
 4. **Efectos persistidos**: además del código HTTP, se consulta la base (estado, físico, reservado, eventos, resultado idempotente).
 5. **Datos limpios**: cada escenario restablece el seed de `fixture-scenarios.json`; ninguna prueba depende de otra.
@@ -55,7 +55,7 @@ Pasos según el checklist CI-01 a CI-12 de `vega-G1.md`. Primer workflow previst
 | Instalación | `composer install --no-interaction --prefer-dist` (con `composer.lock`) y `npm ci` |
 | SPEC | `python scripts/export_specs.py --check` y `python scripts/build_coverage.py --check` (sin regenerar antes) |
 | Formato y análisis | `vendor/bin/pint --test` y `vendor/bin/phpstan analyse` |
-| Pruebas | `php artisan test` con servicio `postgres` (o `mysql`) del runner; `AI_PROVIDER=fixture` y sin `AI_API_KEY` |
+| Pruebas | `php artisan test` con servicio `postgres` del runner; `AI_PROVIDER=fixture` y sin `AI_API_KEY` |
 | Contrato | Validación de `contracts/openapi.yaml` y del esquema de IA |
 | Build | `npm run build` |
 | Dependencias y secretos | `composer audit`, `npm audit` y gitleaks |

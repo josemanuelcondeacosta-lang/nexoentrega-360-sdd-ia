@@ -17,7 +17,7 @@ Iniciar la parte de Vega en G2: ADR de integración de IA y degradación, secuen
 
 > Ayudame a empezar con el dia dos
 
-Decisiones dadas por Vega antes de redactar, ante dos preguntas de la IA: tecnología del equipo **Laravel con PostgreSQL o MySQL**; salida de LLM real mediante **API con plan gratuito**.
+Decisiones dadas por Vega antes de redactar, ante dos preguntas de la IA: tecnología del equipo **Laravel** (después el equipo eligió **PostgreSQL**); salida de LLM real mediante **API con plan gratuito**.
 
 ## Salida relevante
 
@@ -51,6 +51,6 @@ Verificación humana pendiente: Vega debe repetir la revisión del diagrama (vis
 
 ## Límites
 
-- El equipo acordó Laravel el 2026-10-14; falta registrarlo en ADR-001 y elegir el motor (PostgreSQL o MySQL).
+- El equipo acordó Laravel con PostgreSQL el 2026-10-14; falta registrarlo en ADR-001.
 - Los límites del plan gratuito de Gemini o Groq cambian; se verifican al implementar.
 - Nada se implementó ni se ejecutó contra un proveedor real. Sin claves ni datos reales.
