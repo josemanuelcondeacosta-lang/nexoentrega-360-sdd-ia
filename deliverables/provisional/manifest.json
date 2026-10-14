@@ -4,12 +4,13 @@
   "pdfFile": "deliverables/provisional/Examen_SDD_IA_Equipo_NexoEntrega360.pdf",
   "pdfSha256": "a8552432a06e1d0642a2598248546df3cc3ee98db0accbf6ccb85673b24a3843",
   "pdfPages": 123,
-  "provisionalTag": "provisional-ui-v0.1",
+  "provisionalTag": "provisional-ui-v0.2",
   "examReleaseTag": "NOT_CREATED",
   "verifiedChecks": [
     "PDF opens and contains candidate SHA, five SPECS, four ADR and provisional marking",
     "Playwright 4 expected, 0 unexpected",
     "CI PostgreSQL JUnit 7 tests, 57 assertions, 0 failures"
   ],
-  "limits": "No full AC acceptance, human gates, real LLM or load compliance."
+  "limits": "No full AC acceptance, human gates, real LLM or load compliance.",
+  "supersedes": "provisional-ui-v0.1 (use v0.2 for binary-safe checkout)"
 }
