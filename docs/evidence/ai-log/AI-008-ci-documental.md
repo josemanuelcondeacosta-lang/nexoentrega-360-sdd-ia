@@ -40,7 +40,7 @@ Ejecutada por el asistente en su espacio de trabajo el 2026-10-14:
   - `docs/consolidated-review`: lo mismo, más `requirements-docs.lock` instalado, «Contrato integrado coherente con base y fragmento IA» y «OpenAPI 3.1.1 válido: 19 rutas, 21 operaciones».
 - gitleaks 8.24.2 sobre el historial completo (30 commits, todas las ramas): «no leaks found».
 
-Primera ejecución real en GitHub (2026-10-14): ambos jobs en verde, «SPEC, matriz, contrato e integridad» (12 s) y «Detección de secretos» (13 s, «No leaks detected»). Dos advertencias: checkout@v4, setup-python@v5 y gitleaks-action@v2 usan Node.js 20, obsoleto. Enlace: PEGA_AQUÍ_LA_URL
+Primera ejecución real en GitHub (2026-10-14): ambos jobs en verde, «SPEC, matriz, contrato e integridad» (12 s) y «Detección de secretos» (13 s, «No leaks detected»). Dos advertencias: checkout@v4, setup-python@v5 y gitleaks-action@v2 usan Node.js 20, obsoleto. Enlace: https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/11/checks
 
 ## Límites
 
