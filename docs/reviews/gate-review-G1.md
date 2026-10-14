@@ -1,5 +1,7 @@
 # Gate review G1 — plantilla sin aprobación
 
+Estado actualizado por alcance: Carolina aprueba SPEC-04 0.3.2 en c70e431 (enlace en su aporte); SPEC-01/03/05 0.4-draft y confirmación coherente de SPEC-02 pendientes. Correcciones H-V/H-E preparadas en `coordinacion-cierre-G1-G2.md`; G1 global no aprobado.
+
 - Fecha y hora UTC: PENDIENTE
 - Artefactos, versiones y SHA: PENDIENTE
 - Autor(es): PENDIENTE
@@ -105,6 +107,8 @@ Enlaces a revisión, commit propio y evidencia:
 Estado actual: **G1 PENDIENTE**. No se genera PDF final ni tag de entrega; no hay nueva prueba de aplicación declarada.
 
 ## Corrección documental de constitución preparada en G2
+
+Nueva corrección R-V02: SPEC-04 pasa a 0.3.2-draft con AC-04-11 precisando 403 para otro dueño de la misma organización y 404 para inexistente/interorganización. Carolina debe revisar el SHA de esta corrección; ninguna aprobación previa se extiende automáticamente. El informe/evidencia de correcciones distingue verificación documental de pruebas de aplicación.
 
 Actualización CL-16/17/18: Conde José reporta respuesta afirmativa de la profesora en esta conversación (2026-10-14); no se registra mensaje directo ni UTC/canal original. SPEC-01/04 pasan a 0.3.1-draft y sus permisos/AC se actualizan junto al contrato. Las revisiones previas sobre `cf9d5f5` no aprueban esta versión nueva: Carolina/Vega deben revisar el nuevo SHA. G1 sigue pendiente y otros hallazgos no se cierran automáticamente.
 

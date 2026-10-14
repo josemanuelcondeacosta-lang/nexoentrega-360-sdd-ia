@@ -1,6 +1,6 @@
 {
   "id": "SPEC-03",
-  "version": "0.3-draft",
+  "version": "0.4-draft",
   "name": "Inventario y transiciones",
   "status": "Borrador cotejado con el enunciado oficial; pendiente de revisión humana independiente",
   "story": {
@@ -258,7 +258,7 @@
       "kind": "fallo",
       "given": "A-001 ENVIADA y un fallo inducido al escribir el evento de auditoría antes del commit",
       "when": "el coordinador reserva A-001",
-      "then": "la petición falla de forma controlada; A-001 sigue ENVIADA, reservado sigue en 0, no hay resultado idempotente almacenado ni evento; nunca existe una reserva sin su evento"
+      "then": "recibe 500 con correlationId sanitizado; la transacción revierte estado, stock y auditoría; no se conserva resultado idempotente, permitiendo reintento con la misma clave"
     },
     {
       "id": "AC-03-10",
@@ -335,6 +335,19 @@
       "given": "las pantallas con las acciones reservar, despachar, entregar y cancelar a 390 y 1366 px de ancho",
       "when": "cada rol ejecuta su acción solo con teclado, provocando también un rechazo 409",
       "then": "no hay desbordamiento horizontal; los controles tienen nombre visible; el rechazo se muestra asociado a la acción; la verificación manual se registra sin afirmar conformidad WCAG total"
+    },
+    {
+      "id": "AC-03-17",
+      "requirements": [
+        "RF04",
+        "RF06",
+        "RNF02",
+        "RF09"
+      ],
+      "kind": "fallo",
+      "given": "A-001 RESERVADA, físico 10/reservado 7/disponible 3, dos procesos PostgreSQL reales y barrera",
+      "when": "Bodega despacha y Solicitante dueño cancela simultáneamente la misma solicitud",
+      "then": "una petición recibe 200 y la otra 409; si gana despacho queda DESPACHADA con 3/0/3, si gana cancelación queda CANCELADA con 10/0/10; exactamente un evento exitoso nuevo, sin efectos parciales"
     }
   ]
 }

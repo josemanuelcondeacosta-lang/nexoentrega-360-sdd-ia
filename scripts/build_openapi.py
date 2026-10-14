@@ -30,9 +30,9 @@ def build():
     doc['info'] = {'title': 'NexoEntrega 360 — contrato integrado', 'version': '0.1.0-draft',
         'description': 'Diseño G2 propuesto, no API implementada. SPEC 0.3-draft; G1/G2 pendientes. '
         'Laravel + PostgreSQL. Sesión/CSRF pendientes ADR-003. CL-16/17/18: respuesta afirmativa reportada por coordinador; evidencia original pendiente. '
-        'Rutas y componentes IA copiados sin cambios desde openapi-ia.yaml.'}
+        'Rutas y componentes IA copiados sin cambios desde openapi-ia.yaml v0.2.0 (CSRF corregido por Vega).'}
     doc['x-status'] = 'pending-human-review'
-    doc['x-source-ia'] = 'contracts/openapi-ia.yaml; rama docs/g2-vega-ia; a13aa17'
+    doc['x-source-ia'] = 'contracts/openapi-ia.yaml v0.2.0; rama docs/g2-vega-ia; 833e9b9'
     comp = doc['components']
     text = {'type': 'string', 'minLength': 1}
     instant = {'type': 'string', 'format': 'date-time'}
@@ -78,9 +78,12 @@ def build():
         'description':'Reserva. Autenticar y autorizar antes de replay. Ámbito usuario/org/operación; hash canónico de requestId+cuerpo. '
         'Guardar 200 y 409 de negocio al menos 24h; no guardar 401/403/404/422/500. TTL exacto/retención pendiente ADR-002 y acuerdo CL-04/11.',
         'schema':{'type':'string','minLength':1,'maxLength':128}}
-    comp['parameters']['CsrfToken'] = {'name':'X-XSRF-TOKEN','in':'header','required':True,
+    csrf = {'name':'X-XSRF-TOKEN','in':'header','required':True,
         'description':'Propuesta CSRF para sesión cookie; obtener cookie XSRF-TOKEN desde bootstrap y enviar token correspondiente. Pendiente ADR-003.',
         'schema':text}
+    if 'CsrfToken' in comp['parameters'] and comp['parameters']['CsrfToken'] != csrf:
+        raise ValueError('CSRF base/IA divergente: revisar ADR-003 y ambos contratos')
+    comp['parameters']['CsrfToken'] = csrf
     pagination = [ {'name':name,'in':'query','schema':schema} for name,schema in [
         ('page',{'type':'integer','minimum':1,'default':1}),
         ('pageSize',{'type':'integer','minimum':1,'maximum':100,'default':20})]]
@@ -134,7 +137,7 @@ def build():
         params = id_param + ([{'$ref':'#/components/parameters/IdempotencyKey'}] if action=='reserve' else [])
         add('/api/requests/{requestId}/'+action,'post',operation_id,action+' solicitud',ref('Solicitud'),obj({}),
             errors=('401','403','404','409','422','500'),roles=[role],parameters=params,
-            description=desc+' Cuerpo requerido {} sin propiedades extra. Rechazo sin cambios de negocio ni evento exitoso. Audit atómico. Misma reserva con otra clave devuelve 409.')
+            description=desc+' Cuerpo requerido {} sin propiedades extra. Rechazo sin cambios de negocio ni evento exitoso. Audit atómico.' + (' Misma reserva con otra clave devuelve 409.' if action=='reserve' else ''))
     add('/api/inventory','get','listarInventario','Consultar inventario',ref('PaginaInventario'),errors=('401','403','422'),
         roles=['Coordinador','Bodega','Auditor'],parameters=pagination,
         description='Solo lectura de organización autenticada. físico/reservado/disponible no negativos. Coordinador incluido por CL-16 según respuesta docente reportada por coordinador.')
@@ -144,13 +147,14 @@ def build():
     for path in ['/api/audit','/api/requests/{requestId}/audit']:
         add(path,'get','listarAuditoria' if path=='/api/audit' else 'historialSolicitud','Consultar auditoría inmutable',
             ref('PaginaAuditoria'),roles=['Auditor','Coordinador','Solicitante'],parameters=pagination + ([] if path=='/api/audit' else id_param),
-            description='Auditor y Coordinador: organización; Solicitante: solo eventos de sus solicitudes (CL-17 según reporte del coordinador). Bodega sin acceso. Por solicitud validar pertenencia y dueño; recursos fuera del alcance retornan 404. Orden UTC+id. Sin rutas de edición o borrado.')
+            description='Auditor y Coordinador: organización; Solicitante: solo eventos de sus solicitudes (CL-17). Bodega sin acceso. Sin identidad: 401; recurso inexistente o de otra organización: 404; recurso de la misma organización pero lectura prohibida por rol o dueño: 403. Listados filtran el alcance antes de paginar y contar. Orden UTC+id. Sin rutas de edición o borrado.')
+        doc['paths'][path]['get']['x-error-policy'] = {'unauthenticated':401,'missingOrOtherOrganization':404,'sameOrganizationForbiddenRoleOrOwner':403}
     add('/health','get','health','Liveness del proceso',ref('Health'),errors=(),public=True,
         description='200 si proceso responde; no depende de DB o LLM. Sin detalles internos.')
     add('/ready','get','readiness','Readiness de persistencia',ref('Readiness'),errors=(),public=True,
         description='200 si PostgreSQL accesible y migraciones esperadas aplicadas; 503 en otro caso. No depende de IA; sin secretos.')
     doc['paths']['/ready']['get']['responses']['503'] = response('Base no disponible o migraciones pendientes.',ref('Readiness'))
-    # Fragmento IA intacto: el contrato de sesión/CSRF común se concretará en ADR-003.
+    # Fragmento IA v0.2.0 intacto: protege las dos escrituras con CSRF como la base.
     assert all(doc['paths'][p] == item for p,item in ia['paths'].items())
     return doc
 

@@ -1,6 +1,6 @@
 {
   "id": "SPEC-01",
-  "version": "0.3.1-draft",
+  "version": "0.4-draft",
   "name": "Identidad y permisos",
   "status": "Borrador cotejado con el enunciado oficial; pendiente de revisión humana independiente",
   "story": {
@@ -217,8 +217,8 @@
       ],
       "kind": "permiso",
       "given": "un solicitante de ORG-A autenticado",
-      "when": "envía organizationId ORG-B o role COORDINADOR en el cuerpo, parámetros o encabezados de una operación",
-      "then": "la API usa la identidad del servidor; el valor enviado no concede permisos ni cambia la organización del recurso; la operación no permitida responde 403 o 404 según corresponda y no persiste cambios"
+      "when": "intenta reservar A-001 de su organización y B-001 de ORG-B enviando organizationId ORG-B y role COORDINADOR adulterados, con sesión y token CSRF válidos",
+      "then": "la identidad del servidor prevalece: A-001 recibe 403 por rol prohibido y B-001 recibe 404 por organización ajena; ninguna solicitud, stock o evento de éxito cambia"
     },
     {
       "id": "AC-01-08",
@@ -281,6 +281,17 @@
       "given": "la pantalla de inicio y cierre de sesión a 390 y 1366 px de ancho",
       "when": "se opera solo con teclado, incluido un intento con credenciales erróneas",
       "then": "no hay desbordamiento horizontal; los campos tienen etiqueta; el error queda asociado al formulario y visible; la verificación manual se registra con navegador y fecha sin afirmar conformidad WCAG total"
+    },
+    {
+      "id": "AC-01-14",
+      "requirements": [
+        "RF01",
+        "RNF01"
+      ],
+      "kind": "negativo",
+      "given": "sesión cookie válida y solicitud propia BORRADOR; token CSRF ausente o inválido",
+      "when": "intenta editar por PATCH o enviar por POST sin CSRF válido; repite con token válido y datos correctos",
+      "then": "sin token válido recibe 419 sin cambio de solicitud/inventario/eventos; con token válido supera CSRF y se aplican validación/autorización normales; también login/logout y escrituras IA exigen CSRF"
     }
   ]
 }

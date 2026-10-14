@@ -1,6 +1,6 @@
 # SPEC-01: Identidad y permisos
 
-- **Versión:** 0.3.1-draft — **no aprobada para implementar**.
+- **Versión:** 0.4-draft — **no aprobada para implementar**.
 - **Fuente vinculante:** `docs/examen-oficial/originales/Examen_Estudiantes_SDD_IA.pdf` §2 (p. 3), §5 RNF01/RNF05/RNF06 (p. 6); anexo `fixture-scenarios.json` (cuentas).
 - **Estado y aprobación:** versión 0.3 elaborada con asistencia de IA a solicitud de Castro Edier (registro `docs/evidence/ai-log/AI-001-cotejo-oficial-g1.md`). Revisor humano distinto del autor: **PENDIENTE**. Fecha UTC y commit revisado: **PENDIENTE**.
 
@@ -10,7 +10,7 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-01.json` se gener
 ```json
 {
   "id": "SPEC-01",
-  "version": "0.3.1-draft",
+  "version": "0.4-draft",
   "name": "Identidad y permisos",
   "status": "Borrador cotejado con el enunciado oficial; pendiente de revisión humana independiente",
   "story": {
@@ -21,21 +21,9 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-01.json` se gener
   },
   "requirements": ["RF01", "RF02", "RNF01", "RNF05", "RNF06"],
   "description": "Autenticación con cuentas sembradas, resolución de identidad en el servidor, matriz de permisos por rol aplicada en cada operación y aislamiento por organización con respuestas 401, 403 y 404 que no revelan datos. Enunciado §2.",
-  "actors": [
-    "Solicitante, Coordinador, Bodega y Auditor de ORG-A u ORG-B",
-    "API del sistema, que resuelve identidad, organización y rol"
-  ],
-  "scope": [
-    "Inicio y cierre de sesión con cuentas sembradas; sesión o token justificado en ADR-003",
-    "Hash apropiado de contraseñas y ausencia de secretos en el repositorio",
-    "Ocho cuentas ficticias: una por rol en cada organización, regenerables por seed",
-    "Matriz de permisos aplicada en el servidor y aislamiento por organización en toda operación",
-    "Respuestas, errores y logs sin datos de otra organización ni secretos"
-  ],
-  "exclusions": [
-    "Creación masiva de usuarios, recuperación de contraseña y proveedores de identidad externos (no exigidos, enunciado §2)",
-    "Selector de rol como reemplazo del inicio de sesión (prohibido por RF01)"
-  ],
+  "actors": ["Solicitante, Coordinador, Bodega y Auditor de ORG-A u ORG-B", "API del sistema, que resuelve identidad, organización y rol"],
+  "scope": ["Inicio y cierre de sesión con cuentas sembradas; sesión o token justificado en ADR-003", "Hash apropiado de contraseñas y ausencia de secretos en el repositorio", "Ocho cuentas ficticias: una por rol en cada organización, regenerables por seed", "Matriz de permisos aplicada en el servidor y aislamiento por organización en toda operación", "Respuestas, errores y logs sin datos de otra organización ni secretos"],
+  "exclusions": ["Creación masiva de usuarios, recuperación de contraseña y proveedores de identidad externos (no exigidos, enunciado §2)", "Selector de rol como reemplazo del inicio de sesión (prohibido por RF01)"],
   "inputs": [
     {
       "field": "login",
@@ -63,58 +51,38 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-01.json` se gener
       "validation": ["Se busca solo dentro de la organización autenticada", "Inexistente o de otra organización produce 404"]
     }
   ],
-  "process": [
-    "Recibir login y contraseña, buscar la cuenta y verificar la contraseña contra su hash",
-    "Si son válidas, crear una sesión o token revocable; si no, responder 401 genérico sin crear sesión",
-    "En cada petición resolver identidad, organización y rol desde la credencial; sin credencial válida responder 401",
-    "Resolver el recurso filtrando por la organización de la identidad; si no existe en ella responder 404",
-    "Evaluar el permiso del rol sobre la operación según la matriz del enunciado; si está prohibida responder 403 sin efectos",
-    "Ejecutar la operación autorizada y registrar logs estructurados con correlationId, sin contraseñas, hashes ni tokens",
-    "En logout revocar la credencial; cualquier uso posterior recibe 401"
-  ],
+  "process": ["Recibir login y contraseña, buscar la cuenta y verificar la contraseña contra su hash", "Si son válidas, crear una sesión o token revocable; si no, responder 401 genérico sin crear sesión", "En cada petición resolver identidad, organización y rol desde la credencial; sin credencial válida responder 401", "Resolver el recurso filtrando por la organización de la identidad; si no existe en ella responder 404", "Evaluar el permiso del rol sobre la operación según la matriz del enunciado; si está prohibida responder 403 sin efectos", "Ejecutar la operación autorizada y registrar logs estructurados con correlationId, sin contraseñas, hashes ni tokens", "En logout revocar la credencial; cualquier uso posterior recibe 401"],
   "outputs": [
-    {"condition": "Credenciales válidas", "result": "200 con cuenta, rol y organización, sin hash; se crea sesión o token"},
-    {"condition": "Contraseña errónea o cuenta inexistente", "result": "401 con el mismo mensaje en ambos casos; no se crea sesión"},
-    {"condition": "Logout", "result": "204; la credencial queda revocada de forma persistente"},
-    {"condition": "Petición sin identidad válida", "result": "401 sin datos de negocio"},
-    {"condition": "Recurso inexistente o de otra organización", "result": "404 sin revelar existencia ni datos"},
-    {"condition": "Acción prohibida para el rol sobre un recurso de su organización", "result": "403 sin cambios persistidos"}
+    {
+      "condition": "Credenciales válidas",
+      "result": "200 con cuenta, rol y organización, sin hash; se crea sesión o token"
+    },
+    {
+      "condition": "Contraseña errónea o cuenta inexistente",
+      "result": "401 con el mismo mensaje en ambos casos; no se crea sesión"
+    },
+    {
+      "condition": "Logout",
+      "result": "204; la credencial queda revocada de forma persistente"
+    },
+    {
+      "condition": "Petición sin identidad válida",
+      "result": "401 sin datos de negocio"
+    },
+    {
+      "condition": "Recurso inexistente o de otra organización",
+      "result": "404 sin revelar existencia ni datos"
+    },
+    {
+      "condition": "Acción prohibida para el rol sobre un recurso de su organización",
+      "result": "403 sin cambios persistidos"
+    }
   ],
-  "businessRules": [
-    "Matriz oficial, enunciado §2. Solicitante: crear y editar sus borradores, enviar su solicitud, consultar las propias y cancelar las propias en ENVIADA o RESERVADA",
-    "Coordinador: consultar solicitudes de su organización, reservar ENVIADA, registrar ENTREGADA sobre DESPACHADA, usar y aprobar resúmenes de IA",
-    "Bodega: consultar inventario y solicitudes de su organización y despachar RESERVADA",
-    "Auditor: consultar solicitudes, inventario y auditoría de su organización; no modifica datos ni invoca el asistente",
-    "Una operación no listada para un rol se deniega: 403 si el recurso es de su organización. Según respuesta afirmativa de la profesora reportada por Conde José (CL-16/17/18), el Coordinador lee inventario e historial de su organización y el Solicitante lee historial/tablero de sus propias solicitudes sin inventario. Bodega no recibe auditoría. Evidencia original pendiente; revisión renovada requerida",
-    "Los permisos se comprueban en el servidor en cada operación; ocultar un botón no es autorización",
-    "La organización y el rol provienen de la identidad autenticada; un valor enviado por el navegador no autoriza cambiar de organización",
-    "No se admite un selector de rol como reemplazo del inicio de sesión",
-    "Contraseñas guardadas con hash apropiado; sin claves privadas ni secretos en el repositorio",
-    "Una cuenta por rol en cada organización con credenciales ficticias publicadas para evaluación y forma documentada de regenerarlas",
-    "Las reglas 401, 403 y 404 se aplican también al contenido de respuestas, errores y logs"
-  ],
-  "edgeCases": [
-    "Contraseña errónea y login inexistente con respuesta indistinguible",
-    "Credencial revocada o expirada reutilizada",
-    "Rol u organización adulterados en cuerpo, parámetros o encabezados",
-    "Usuario de ORG-A que conoce el identificador B-001 de ORG-B",
-    "Llamadas directas a la API sin pasar por la interfaz",
-    "Auditor que intenta una escritura dentro de su organización",
-    "Solicitante que consulta la solicitud de otro solicitante de su organización: 403 por la regla de acción prohibida sobre recurso propio de la organización"
-  ],
-  "assumptions": [
-    "Sesión de servidor revocable como propuesta; la elección sesión o token se justifica en ADR-003 (G2)",
-    "Algoritmo y parámetros de hash se fijan en ADR-003",
-    "Los logins de las ocho cuentas son los del anexo fixture-scenarios.json"
-  ],
-  "openQuestions": [
-    "CL-14: expiración de sesión, protección CSRF y política de contraseña (decisión del equipo en ADR-003)",
-    "CL-16, CL-17 y CL-18: respuesta afirmativa reportada por el coordinador; fecha/canal y evidencia original pendientes, nueva revisión humana requerida"
-  ],
-  "dependencies": [
-    "Seed de cuentas y migraciones (RNF04, SPEC-04)",
-    "Las SPEC-02 a SPEC-05 aplican esta matriz de permisos a sus operaciones"
-  ],
+  "businessRules": ["Matriz oficial, enunciado §2. Solicitante: crear y editar sus borradores, enviar su solicitud, consultar las propias y cancelar las propias en ENVIADA o RESERVADA", "Coordinador: consultar solicitudes de su organización, reservar ENVIADA, registrar ENTREGADA sobre DESPACHADA, usar y aprobar resúmenes de IA", "Bodega: consultar inventario y solicitudes de su organización y despachar RESERVADA", "Auditor: consultar solicitudes, inventario y auditoría de su organización; no modifica datos ni invoca el asistente", "Una operación no listada para un rol se deniega: 403 si el recurso es de su organización. Según respuesta afirmativa de la profesora reportada por Conde José (CL-16/17/18), el Coordinador lee inventario e historial de su organización y el Solicitante lee historial/tablero de sus propias solicitudes sin inventario. Bodega no recibe auditoría. Evidencia original pendiente; revisión renovada requerida", "Los permisos se comprueban en el servidor en cada operación; ocultar un botón no es autorización", "La organización y el rol provienen de la identidad autenticada; un valor enviado por el navegador no autoriza cambiar de organización", "No se admite un selector de rol como reemplazo del inicio de sesión", "Contraseñas guardadas con hash apropiado; sin claves privadas ni secretos en el repositorio", "Una cuenta por rol en cada organización con credenciales ficticias publicadas para evaluación y forma documentada de regenerarlas", "Las reglas 401, 403 y 404 se aplican también al contenido de respuestas, errores y logs"],
+  "edgeCases": ["Contraseña errónea y login inexistente con respuesta indistinguible", "Credencial revocada o expirada reutilizada", "Rol u organización adulterados en cuerpo, parámetros o encabezados", "Usuario de ORG-A que conoce el identificador B-001 de ORG-B", "Llamadas directas a la API sin pasar por la interfaz", "Auditor que intenta una escritura dentro de su organización", "Solicitante que consulta la solicitud de otro solicitante de su organización: 403 por la regla de acción prohibida sobre recurso propio de la organización"],
+  "assumptions": ["Sesión de servidor revocable como propuesta; la elección sesión o token se justifica en ADR-003 (G2)", "Algoritmo y parámetros de hash se fijan en ADR-003", "Los logins de las ocho cuentas son los del anexo fixture-scenarios.json"],
+  "openQuestions": ["CL-14: expiración de sesión, protección CSRF y política de contraseña (decisión del equipo en ADR-003)", "CL-16, CL-17 y CL-18: respuesta afirmativa reportada por el coordinador; fecha/canal y evidencia original pendientes, nueva revisión humana requerida"],
+  "dependencies": ["Seed de cuentas y migraciones (RNF04, SPEC-04)", "Las SPEC-02 a SPEC-05 aplican esta matriz de permisos a sus operaciones"],
   "acceptanceCriteria": [
     {
       "id": "AC-01-01",
@@ -169,8 +137,8 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-01.json` se gener
       "requirements": ["RF02", "RNF01"],
       "kind": "permiso",
       "given": "un solicitante de ORG-A autenticado",
-      "when": "envía organizationId ORG-B o role COORDINADOR en el cuerpo, parámetros o encabezados de una operación",
-      "then": "la API usa la identidad del servidor; el valor enviado no concede permisos ni cambia la organización del recurso; la operación no permitida responde 403 o 404 según corresponda y no persiste cambios"
+      "when": "intenta reservar A-001 de su organización y B-001 de ORG-B enviando organizationId ORG-B y role COORDINADOR adulterados, con sesión y token CSRF válidos",
+      "then": "la identidad del servidor prevalece: A-001 recibe 403 por rol prohibido y B-001 recibe 404 por organización ajena; ninguna solicitud, stock o evento de éxito cambia"
     },
     {
       "id": "AC-01-08",
@@ -219,6 +187,14 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-01.json` se gener
       "given": "la pantalla de inicio y cierre de sesión a 390 y 1366 px de ancho",
       "when": "se opera solo con teclado, incluido un intento con credenciales erróneas",
       "then": "no hay desbordamiento horizontal; los campos tienen etiqueta; el error queda asociado al formulario y visible; la verificación manual se registra con navegador y fecha sin afirmar conformidad WCAG total"
+    },
+    {
+      "id": "AC-01-14",
+      "requirements": ["RF01", "RNF01"],
+      "kind": "negativo",
+      "given": "sesión cookie válida y solicitud propia BORRADOR; token CSRF ausente o inválido",
+      "when": "intenta editar por PATCH o enviar por POST sin CSRF válido; repite con token válido y datos correctos",
+      "then": "sin token válido recibe 419 sin cambio de solicitud/inventario/eventos; con token válido supera CSRF y se aplican validación/autorización normales; también login/logout y escrituras IA exigen CSRF"
     }
   ]
 }
@@ -243,3 +219,5 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-01.json` se gener
 - 0.3.1-draft: cotejo con el enunciado oficial; matriz oficial de permisos; formato del anexo 13 con entradas tipadas y AC dado/cuando/entonces; nuevos AC-01-11 a AC-01-13 (selector de rol, secretos, RNF05).
 
 Cambio 0.3.1-draft: CL-16/17/18 confirmadas según reporte del coordinador; sin aprobación humana de esta nueva versión. Otros hallazgos G1 siguen pendientes.
+
+Actualización 0.4-draft por Codex a solicitud del coordinador: hallazgos H-V/H-E atendidos documentalmente; los AC nuevos no son pruebas ejecutadas. Revisión humana sobre nuevo SHA PENDIENTE.

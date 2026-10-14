@@ -1,5 +1,7 @@
 # NexoEntrega 360 — SDD con IA
 
+Paquete documental reunido para revisión: [índice](docs/README.md) y [revisión completa con procedencia y pendientes](docs/reviews/revision-completa.md). Rama de consolidación propuesta; no implica merge de PR ni aprobación G1/G2.
+
 Sistema académico para distribución comunitaria de kits en dos organizaciones de Barranquilla.
 
 ## Equipo
