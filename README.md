@@ -14,17 +14,19 @@ Sistema académico para distribución comunitaria de kits en dos organizaciones 
 
 ## Estado
 - G1: **BORRADOR, SIN APROBACIÓN**.
-- G1 ampliado a cinco historias y 57 AC; aplicación y pruebas de producto pendientes de aprobación.
-- Se ejecutaron nueve pruebas del verificador documental; ver `docs/evidence/g1-validation.md`. No equivale a aprobación G1 ni cumplimiento de RF/RNF.
-- Enunciado vinculante: plataforma oficial del examen. No sustituir por este README.
+- SPEC 0.3-draft cotejadas con el enunciado oficial: cinco historias y 68 AC en el formato del anexo 13; aplicación y pruebas de producto pendientes de aprobación.
+- Se ejecutaron 14 pruebas del verificador documental; ver `docs/evidence/g1-validation.md`. No equivale a aprobación G1 ni cumplimiento de RF/RNF.
+- Enunciado vinculante: `docs/examen-oficial/originales/Examen_Estudiantes_SDD_IA.pdf` y sus anexos. No sustituir por este README.
 
 ## Estructura
+- `docs/examen-oficial/`: enunciado y anexos oficiales sin modificar, con inventario y SHA-256.
 - `docs/constitution.md`: principios comprobables.
 - `docs/clarifications/clarification-log.md`: preguntas y supuestos pendientes.
 - `docs/risks/risk-register.md`: riesgos iniciales.
 - `docs/reviews/gate-review-G1.md`: plantilla de revisión humana.
-- `specs/SPEC-01.md` a `SPEC-05.md`: borradores basados en RF/RNF.
-- `scripts/export_specs.py`: genera JSON derivado (nunca editar a mano).
+- `specs/SPEC-01.md` a `SPEC-05.md`: fuente única de cada SPEC (bloque `spec-data` del starter oficial).
+- `scripts/export_specs.py`: valida y genera `specs/generated/*.json` (nunca editar a mano).
+- `scripts/build_coverage.py`: genera `docs/coverage-matrix.md` y `docs/evidence/traceability.csv` desde las SPEC.
 
 ## Antes de programar
 1. Confirmar responsabilidades y resolver o asumir provisionalmente las aclaraciones.
@@ -42,18 +44,20 @@ https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia
 - [Matriz de cobertura por AC](docs/coverage-matrix.md), con pruebas previstas y resultados pendientes.
 - [Fronteras de confianza IA](docs/ai-trust-boundaries.md).
 - [Registro de revisión humana](docs/reviews/gate-review-G1.md) y [descripción de PR preparada](docs/reviews/g1-pr-description.md).
-- [Cotejo oficial preparado](docs/reviews/cotejo-oficial-G1.md): archivos faltantes y comparación pendiente por RF/RNF.
+- [Cotejo oficial](docs/reviews/cotejo-oficial-G1.md): RF01–RF12 y RNF01–RNF06 contra las SPEC, diferencias D-01 a D-24 y correcciones.
 - [Plan de colaboración](docs/team/plan-colaboracion.md): tareas por integrante, evidencias y pasos en GitHub/VS Code.
-- [Material oficial pendiente](docs/examen-oficial/README.md) e [inventario de disponibilidad](docs/examen-oficial/inventario.md).
+- [Material oficial](docs/examen-oficial/README.md) e [inventario con hashes](docs/examen-oficial/inventario.md).
+- [Bitácora de IA](docs/evidence/ai-log/): intervenciones registradas con el formato del anexo 08.
 - Instrucciones individuales: [Carolina](docs/team/instrucciones-carolina.md), [Edier](docs/team/instrucciones-edier.md) y [Vega](docs/team/instrucciones-vega.md).
 
-Validación documental reproducible (Python 3.11.9 usado; biblioteca estándar):
+Validación documental reproducible (Python 3.11 o superior; biblioteca estándar):
 
 ```sh
-python scripts/export_specs.py
 python scripts/export_specs.py --check
-python scripts/build_coverage.py
-python -m unittest discover -s scripts -p 'test_*.py' -v
+python scripts/build_coverage.py --check
+python -m unittest discover -s scripts -p "test_*.py" -v
 ```
 
-Enunciado/anexos y revisión de un integrante faltan. Mantener `main` como integración; revisar rama `docs/g1-specifications` antes de fusionar. No crear tags de aplicación o entrega sin aplicación verificada.
+Si una SPEC cambia: `python scripts/export_specs.py` y `python scripts/build_coverage.py`, y versionar los archivos generados.
+
+Falta la revisión humana independiente. Mantener `main` como integración; revisar las ramas `docs/g1-specifications` y `docs/g1-edier-cotejo-oficial` antes de fusionar. No crear tags de aplicación o entrega sin aplicación verificada.

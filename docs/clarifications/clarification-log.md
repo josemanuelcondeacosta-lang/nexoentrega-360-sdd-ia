@@ -1,32 +1,43 @@
-# Registro de aclaraciones — borrador v0.1
+# Registro de aclaraciones — v0.3
 
-**Estado:** todas PENDIENTES de respuesta docente o aprobación de supuesto por equipo. Las propuestas no son decisiones del cliente.
+Formato del anexo oficial `02_clarification-log.md`. Cotejado con el enunciado oficial (`docs/examen-oficial/originales/Examen_Estudiantes_SDD_IA.pdf`) el 2026-10-14.
 
-| ID | RF | Pregunta para docente | Riesgo | Propuesta provisional | Estado | Responsable |
-|---|---|---|---|---|---|---|
-| CL-01 | RF03 | ¿Cuáles son las zonas válidas y cómo se rechaza una zona desconocida? | Datos inválidos o reportes inconsistentes | Catálogo configurable por organización; desconocida → 422. | Pendiente | Por asignar |
-| CL-02 | RF03 | ¿La fecha requerida es fecha local sin hora o instante UTC? ¿Qué zona horaria muestra la interfaz? | Solicitudes válidas rechazadas por diferencias horarias | Almacenar fecha calendario YYYY-MM-DD; mostrar America/Bogota; comparar con fecha local al enviar. | Pendiente | Por asignar |
-| CL-03 | RF03/RF10 | ¿Cuál es la longitud máxima de observaciones y se permiten saltos de línea? | Cargas excesivas y salida IA incontrolable | Máximo 1000 caracteres, texto plano y escape al mostrar. | Pendiente | Por asignar |
-| CL-04 | RF07 | ¿Qué errores de reserva se guardan en la clave idempotente y con qué política se reintentan? | Respuestas contradictorias y doble reserva | Guardar respuestas completadas (incluido 409 de negocio), no 401/403/500; TTL ≥24h; reintentar falla temporal con la misma clave. | Pendiente | Por asignar |
-| CL-05 | RF10-RF12 | ¿Deben persistirse intentos fallidos de IA y borradores alternativos? ¿Cuánto tiempo? | Ausencia de trazabilidad y almacenamiento innecesario | Guardar metadatos sanitizados de intento y borradores válidos; nunca prompts con secretos. | Pendiente | Por asignar |
-| CL-06 | RF05/RF06 | ¿Puede existir ajuste externo de existencia física o solo seed durante el examen? | Cambios de stock fuera de transacciones previstas | Sin ajuste por API; stock inicial por seed; operaciones de reserva/despacho/cancelación. | Pendiente | Por asignar |
-| CL-07 | RF03 | ¿Qué formato y obligatoriedad tiene el campo zona por organización? | Validación ambigua | String de catálogo por organización, obligatorio. | Pendiente | Por asignar |
-| CL-08 | RF12 | ¿Debe el fallback producir recommendations vacías o deterministas? | Resultado no verificable en fallo de proveedor | Resumen determinista, recommendations vacías, origen fallback explícito. | Pendiente | Por asignar |
+Clasificación del estado:
 
-**Registro de respuesta:** fecha UTC, autor de respuesta, canal/enlace, decisión, SPEC/contrato/prueba actualizados.
+- **Resuelta por enunciado:** el texto oficial responde la pregunta; se cita la sección.
+- **Decisión del equipo:** el enunciado §5 («Puntos que debe concretar el equipo») o §3 asigna la decisión al equipo. No se envía al docente; requiere acuerdo del equipo registrado en revisión.
+- **Requiere docente:** decisión del cliente. Debe enviarse al docente; mientras no responda rige el supuesto provisional.
 
-## Ampliación G1 — preguntas adicionales pendientes
+Una respuesta de IA es una propuesta; no es decisión del cliente. **Ninguna pregunta ha sido enviada todavía al docente.** Quien la envíe debe registrar fecha UTC, canal y respuesta en la columna «Respuesta y autoridad».
 
-Las propuestas de ambas tablas son supuestos provisionales, no decisiones del cliente. Responsables propuestos: Carolina para requisitos; Edier para stock/idempotencia; José Conde para permisos/UI; José Vega para IA/verificación. No acredita aportes reales.
+| ID | Fecha | RF o RNF | Pregunta | Riesgo | Propuesta | Respuesta y autoridad | Supuesto provisional | Impacto | Estado |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| CL-01 | 2026-10-13 | RF03, RF08 | ¿Cuáles son las zonas válidas y cómo se trata una zona desconocida? | Datos inválidos y filtros inconsistentes | Catálogo por organización con NORTE, SUR y CENTRO (valores del anexo `fixture-scenarios.json`); zona desconocida → 422 | Enunciado §5 lo asigna al equipo | Igual a la propuesta | SPEC-02, SPEC-04, seed y contrato | Decisión del equipo |
+| CL-02 | 2026-10-13 | RF03 | ¿Formato de la fecha requerida y zona horaria de visualización? | Rechazos indebidos por diferencias horarias | Instante RFC 3339 en UTC, como el anexo de datos; se compara con el instante de envío; se muestra en America/Bogota | Enunciado §5 lo asigna al equipo; RF03 habla de «momento de envío» | Igual a la propuesta (en 0.2 era fecha sin hora) | SPEC-02, contrato y pruebas con reloj controlado | Decisión del equipo |
+| CL-03 | 2026-10-13 | RF03, RF10 | ¿Longitud máxima de observaciones y saltos de línea? | Cargas excesivas y salida IA incontrolable | Máximo 1000 caracteres, texto plano, escape al mostrar | Enunciado §5 lo asigna al equipo | Igual a la propuesta | SPEC-02 y SPEC-05 | Decisión del equipo |
+| CL-04 | 2026-10-13 | RF07 | ¿Qué respuestas de reserva se guardan con la clave y cuáles se reintentan? | Respuestas contradictorias o doble reserva | Guardar respuestas completadas (200 y 409 de negocio); no guardar 401, 403, 422 ni 500, que pueden reintentarse con la misma clave | Enunciado §3: el contrato debe establecerlo, documentarlo y probarlo | Igual a la propuesta | SPEC-03, contrato G2 y pruebas | Decisión del equipo |
+| CL-05 | 2026-10-13 | RF10–RF12 | ¿Se persisten intentos fallidos de IA y por cuánto tiempo? | Falta de trazabilidad o almacenamiento innecesario | Guardar borradores válidos y metadatos sanitizados de intentos; nunca prompts con secretos | Enunciado §5 lo asigna al equipo | Igual a la propuesta; retención por definir en G2 | SPEC-05 y modelo de datos | Decisión del equipo |
+| CL-06 | 2026-10-13 | RF05, RF06 | ¿Existe ajuste externo de existencia física? | Cambios de stock fuera de las transacciones | Sin API de ajuste; stock inicial por seed | El enunciado solo define cambios por reserva, despacho y cancelación | Igual a la propuesta | SPEC-03 | Decisión del equipo coherente con el enunciado |
+| CL-07 | 2026-10-13 | RF03 | ¿Formato y obligatoriedad de la zona? | Validación ambigua | Obligatoria, string de catálogo | RF03 incluye la zona como dato de la solicitud | Fusionada con CL-01 | SPEC-02 | Fusionada con CL-01 |
+| CL-08 | 2026-10-13 | RF12 | ¿El resumen alternativo incluye recomendaciones? | Resultado no verificable ante fallo | Resumen determinista con recommendations vacío y origen fallback | RF12 exige «resumen determinista alternativo»; el contenido lo decide el equipo | Igual a la propuesta | SPEC-05 | Decisión del equipo |
+| CL-09 | 2026-10-13 | RF01, RF02, RF04, RF08, RF09 | ¿Nombres de roles, permisos y precedencia 401/403/404? | Autorizar de más o de menos | Matriz propuesta en 0.2 | **Enunciado §2, p. 3:** cuatro roles, operaciones permitidas y semántica 401/403/404 | Matriz oficial | SPEC-01 a SPEC-05 | Resuelta por enunciado, salvo CL-16, CL-17 y CL-18 |
+| CL-10 | 2026-10-13 | RF03 | ¿Catálogo de prioridades y formato del código? | Valores incompatibles | Prioridad ALTA/MEDIA/BAJA (0.2); código único generado | **RF03:** prioridad NORMAL o ALTA. Formato del código: equipo | Código con prefijo de organización y correlativo, por ejemplo A-001 como el anexo | SPEC-02 | Prioridad resuelta por enunciado; código, decisión del equipo |
+| CL-11 | 2026-10-13 | RF07 | ¿Expiración exacta, operaciones cubiertas y longitud de la clave? | Doble ejecución o borrado indebido | Solo reserva; 1 a 128 caracteres; ámbito usuario, organización y operación; retención 24 h | **RF07:** cada petición de reserva incluye la clave; conservar el resultado al menos 24 h. Resto: equipo | Retención exacta de 24 h desde la creación; longitud 1 a 128 | SPEC-03 y contrato | Parcialmente resuelta; resto decisión del equipo |
+| CL-12 | 2026-10-13 | RF10–RF12 | ¿Campos autorizados, claves evidenceFields, contrato y selección de las 20 solicitudes? | Filtración y contrato inválido | Seis campos y orden por fecha (0.2) | **RF10, RF11 y anexo `ai-output.schema.json`:** requestId, zona, prioridad, fecha requerida, estado y observaciones; evidenceFields zona, prioridad, fechaRequerida u observaciones; selección por identificador hecha por el coordinador | Contrato oficial | SPEC-05 | Resuelta por enunciado |
+| CL-13 | 2026-10-13 | RNF01–RNF06 | ¿Textos exactos de los RNF? | Cobertura nominal sin cumplimiento | Asignación provisional | **Enunciado §5, p. 6** | Textos oficiales | Todas las SPEC | Resuelta por enunciado |
+| CL-14 | 2026-10-13 | RF01 | ¿Política de sesión, CSRF, expiración y contraseñas? | Autenticación incompleta | Sesión de servidor revocable | **RF01:** sesiones o tokens con elección justificada; hash apropiado. Detalles: equipo en ADR-003 | Sesión revocable; parámetros en ADR-003 | SPEC-01 y ADR-003 | Parcialmente resuelta; resto decisión del equipo |
+| CL-15 | 2026-10-13 | RF09 | ¿Auditar login, rechazos e intentos de IA? ¿Retención? | Evidencia insuficiente o exceso de datos | Eventos de negocio; logs de rechazo separados | **RF09:** cada transición exitosa y cada aprobación de resumen; un rechazo solo log técnico. Login no exigido. Retención: equipo | Igual al enunciado; retención por definir | SPEC-04 | Resuelta por enunciado salvo retención |
+| CL-16 | 2026-10-14 | RF08, §2 | La matriz otorga «consultar inventario» a Bodega y Auditor, no al Coordinador, que reserva. ¿Puede el Coordinador consultar el inventario de su organización? | Reservar sin ver disponibilidad, o conceder un permiso no autorizado | Permitir al Coordinador solo lectura del inventario de su organización | Pendiente | Lectura permitida al Coordinador, sin escritura | SPEC-01 y SPEC-04 (AC-04-10) | **Requiere docente** |
+| CL-17 | 2026-10-14 | RF09, §1 | El recorrido incluye «consultar su auditoría», pero la matriz solo da la auditoría al Auditor. ¿Qué otros roles consultan historial? | Recorrido incompleto o exposición indebida | Coordinador: historial de solicitudes de su organización; Solicitante: historial de las propias | Pendiente | Solo el Auditor (lectura literal de la matriz) | SPEC-01, SPEC-04 y E2E | **Requiere docente** |
+| CL-18 | 2026-10-14 | RF08 | ¿El Solicitante accede al tablero, limitado a sus solicitudes? | Exponer conteos de la organización | Tablero del Solicitante con conteos de sus solicitudes, sin inventario | Pendiente | Igual a la propuesta | SPEC-04 | **Requiere docente** |
+| CL-19 | 2026-10-14 | RF10 | ¿Qué responde la API si la selección del resumen está vacía, repetida, supera 20 o incluye una solicitud fuera de ENVIADA? | Llamadas inválidas al proveedor | 422 para vacía, repetida o mayor de 20; 409 fuera de ENVIADA; 404 ajena | El enunciado fija «hasta 20 ENVIADA de su organización»; códigos: equipo | Igual a la propuesta | SPEC-05 y contrato | Decisión del equipo |
 
-| ID | Requisito | Pregunta | Riesgo | Propuesta / supuesto provisional | Estado |
-|---|---|---|---|---|---|
-| CL-09 | RF01/02/04/08/09 | ¿Cuáles son los nombres exactos de los cuatro roles y permisos de cancelación, entrega, tablero e inventario? ¿Qué precedencia aplica entre 403 y 404? | Autorizar de más o incumplir examen | Matriz en requirements-source.md; alcance por organización antes de entregar recursos | Pendiente docente y revisión equipo |
-| CL-10 | RF03 | ¿Catálogo exacto de prioridades y formato/únicidad de código? | Valores incompatibles | ALTA/MEDIA/BAJA; código único generado por servidor, formato por confirmar | Pendiente |
-| CL-11 | RF07 | ¿La clave expira exactamente a 24h? ¿Cómo se conservan claves vencidas, qué operaciones cubre y límite de longitud? | Doble ejecución o borrado indebido | Reserva; 1–128 caracteres; ámbito usuario/org/operación; frontera >=24h y archivo histórico separado | Pendiente |
-| CL-12 | RF10/11/12 | ¿Cuáles son los seis campos autorizados, claves evidenceFields y nombres exactos del contrato? ¿Qué orden selecciona las 20 solicitudes? | Filtración y contrato inválido | requestId/zone/priority/requiredDate/observations/lines; fecha+ID; contrato SPEC-05 | Pendiente anexos |
-| CL-13 | RNF01–RNF06 | ¿Pueden facilitar los textos exactos de todos los RNF y criterios de rendimiento/accesibilidad? | Cobertura nominal sin cumplimiento real | Asignación provisional de coverage-matrix.md, no cerrar requisitos | Pendiente enunciado |
-| CL-14 | RF01/RNF seguridad | ¿Política exigida de sesión, CSRF, expiración y contraseñas? | Autenticación incompleta | Sesión revocable de servidor; parámetros y controles en ADR-003 después de aclaración | Pendiente |
-| CL-15 | RF09 | ¿Auditar login, rechazos e intentos IA además de transiciones? ¿Retención obligatoria? | Evidencia insuficiente o exceso de datos | Eventos de negocio atómicos; logs sanitizados de rechazos separados; retención por confirmar | Pendiente |
+## Envío al docente
 
-Ninguna pregunta ha sido enviada al docente por el asistente. Registrar la respuesta real y quién la recibió antes de cambiar estado a resuelta.
+Preguntas que requieren decisión del cliente: **CL-16, CL-17 y CL-18**. Responsable propuesto del envío: coordinador (Conde José). Al recibir respuesta, actualizar SPEC, contrato, matriz y pruebas afectados y renovar su revisión humana.
+
+## Registro de respuestas
+
+| ID | Fecha UTC | Autor de la respuesta | Canal o enlace | Decisión | Artefactos actualizados |
+| --- | --- | --- | --- | --- | --- |
+| — | — | — | — | Sin respuestas registradas | — |
