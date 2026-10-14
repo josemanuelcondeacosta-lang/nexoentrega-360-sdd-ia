@@ -29,14 +29,14 @@ Decisiones dadas por Vega antes de redactar, ante dos preguntas de la IA: tecnol
 
 ## Decisión humana
 
-**PENDIENTE.** Vega debe revisar cada archivo y anotar si lo acepta, corrige o descarta, con su motivo y fecha UTC.
+Registrada por Vega tras comprobar cada archivo:
 
 | Cambio | Decisión de Vega (aceptada / corregida / descartada) | Motivo | Fecha UTC |
 |---|---|---|---|
-| ADR-004 (decisión y alternativas) | Pendiente | | |
-| Secuencia de IA con fallo | Pendiente | | |
-| Contrato `openapi-ia.yaml` | Pendiente | | |
-| Estrategia de pruebas | Pendiente | | |
+| ADR-004 (decisión y alternativas) | Aceptada | Se elige la opción B (adaptador + validador + fallback); la C se descarta por seguridad porque expone la clave y el servidor no valida la pertenencia | 2026-10-14 |
+| Secuencia de IA con fallo | Aceptada | `FallbackSummarizer` se invoca en las dos ramas exigidas, salida inválida y timeout o error (líneas 41 y 48) | 2026-10-14 |
+| Contrato `openapi-ia.yaml` | Aceptada | Límites comparados con RF10 y RF11 (p. 5): `maxItems` 20 (l. 155), `maxLength` 240 (l. 171), `maxItems` 3 (l. 175), `maxLength` 600 (l. 211) y `maxItems` 5 (l. 214); coinciden | 2026-10-14 |
+| Estrategia de pruebas | Aceptada | AI-FOREIGN-ID y AI-INJECTION pasan el esquema y se rechazan por pertenencia; la estrategia prohíbe SQLite y mocks de inventario (§11) | 2026-10-14 |
 
 ## Verificación
 
