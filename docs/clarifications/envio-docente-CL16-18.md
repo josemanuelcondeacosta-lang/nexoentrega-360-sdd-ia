@@ -20,11 +20,13 @@ Registraremos su respuesta como decisión del cliente, con fecha y canal, y actu
 
 | Campo | Valor |
 |---|---|
-| Responsable propuesto | Conde José, coordinador |
-| Profesor / dirección / canal | Pendiente de proporcionar |
-| Fecha UTC de envío | Pendiente; no enviado por Codex |
-| Enlace o identificador del mensaje | Pendiente |
-| Respuesta textual y autoridad | Pendiente |
-| SPEC / AC / contrato corregidos | Pendiente de respuesta y revisión |
+| Responsable del envío observado | Conde José, coordinador |
+| Profesor / dirección / canal | Contacto «PROSEFORA ARQUITECTURA», WhatsApp; nombre completo no visible |
+| Fecha UTC de envío | Fecha/zona no visibles; captura muestra 12:17 p. m.; no enviado por Codex |
+| Enlace o identificador del mensaje | Captura adjunta en conversación; inspección en `docs/evidence/respuesta-docente-CL16-18.md` |
+| Respuesta textual y autoridad | «Las respuesta es sí», 12:22 p. m., citando las consultas; respaldo visual del reporte de José |
+| SPEC / AC / contrato corregidos | SPEC-01/04 0.3.1-draft y contrato, commit f9106a5; revisión independiente pendiente |
+
+La captura recibida el 2026-10-14 respalda envío y respuesta; esta fecha es recepción de evidencia, no fecha inferida del chat WhatsApp. El texto inicial y estado previo de este archivo se conservan como historial de preparación.
 
 Enviar requiere destinatario y canal accesible (o envío por el coordinador). No marcar «enviado» por preparar el texto ni «resuelto» por respuesta de IA.
