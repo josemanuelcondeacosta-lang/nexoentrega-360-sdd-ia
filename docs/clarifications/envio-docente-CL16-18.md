@@ -1,0 +1,28 @@
+# Preguntas CL-16, CL-17 y CL-18 — mensaje listo para enviar
+
+Estado: **NO ENVIADO POR CODEX**. Destinatario/canal no proporcionados y sin respuesta registrada. Este archivo preserva las preguntas publicadas en el clarification-log v0.3; no añade decisiones del cliente.
+
+Asunto sugerido: NexoEntrega 360 — aclaración de permisos RF08/RF09 (CL-16 a CL-18)
+
+Profesor/a:
+
+Al cotejar el enunciado, necesitamos confirmar estos permisos para cerrar G1:
+
+1. **CL-16 (RF08, §2):** La matriz permite consultar inventario a Bodega y Auditor, pero no al Coordinador, que reserva. ¿Puede el Coordinador consultar el inventario de su organización? Riesgo: conceder acceso no autorizado o reservar sin disponibilidad visible. Propuesta del equipo por confirmar: permitir solo lectura al Coordinador, sin escritura.
+2. **CL-17 (RF09, §1):** El recorrido incluye consultar su auditoría, pero la matriz da auditoría solo al Auditor. ¿Qué otros roles pueden consultar historial? Riesgo: recorrido incompleto o exposición indebida. Propuesta por confirmar: Coordinador consulta historial de su organización y Solicitante el de sus propias solicitudes. Mientras tanto, el contrato conserva acceso literal solo para Auditor.
+3. **CL-18 (RF08):** ¿El Solicitante puede acceder al tablero limitado a sus solicitudes? Riesgo: exponer conteos de toda la organización. Propuesta por confirmar: tablero con conteos propios, sin inventario.
+
+Registraremos su respuesta como decisión del cliente, con fecha y canal, y actualizaremos SPEC, contrato y pruebas afectados. Gracias.
+
+## Seguimiento de envío real
+
+| Campo | Valor |
+|---|---|
+| Responsable propuesto | Conde José, coordinador |
+| Profesor / dirección / canal | Pendiente de proporcionar |
+| Fecha UTC de envío | Pendiente; no enviado por Codex |
+| Enlace o identificador del mensaje | Pendiente |
+| Respuesta textual y autoridad | Pendiente |
+| SPEC / AC / contrato corregidos | Pendiente de respuesta y revisión |
+
+Enviar requiere destinatario y canal accesible (o envío por el coordinador). No marcar «enviado» por preparar el texto ni «resuelto» por respuesta de IA.

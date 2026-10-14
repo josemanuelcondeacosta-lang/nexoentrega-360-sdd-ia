@@ -1,0 +1,1444 @@
+openapi: 3.1.1
+info:
+  title: NexoEntrega 360 — contrato integrado
+  version: 0.1.0-draft
+  description: Diseño G2 propuesto, no API implementada. SPEC 0.3-draft; G1/G2 pendientes.
+    Laravel + PostgreSQL. Sesión/CSRF pendientes ADR-003. CL-16/17/18 no resueltas.
+    Rutas y componentes IA copiados sin cambios desde openapi-ia.yaml.
+servers:
+- url: http://localhost:8000
+  description: Ejecución local
+security:
+- sesion: []
+paths:
+  /api/ai/summaries:
+    post:
+      operationId: crearResumenIA
+      summary: Solicitar un resumen asistido por IA
+      description: 'Solo el rol Coordinador. Selección de 1 a 20 solicitudes ENVIADA
+        de su organización (RF10).
+
+        Orden de validación: 422 (formato) → 404 (pertenencia) → 409 (estado); si
+        falla, el proveedor
+
+        no se invoca. Con salida inválida, timeout de 5 s o fallo del proveedor responde
+        200 con
+
+        mensaje controlado y resumen determinista (RF12).
+
+        '
+      tags:
+      - Asistente IA
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SolicitudResumen'
+            example:
+              requestIds:
+              - A-001
+              - A-002
+      responses:
+        '200':
+          description: Borrador generado por el proveedor o resumen alternativo
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BorradorResumen'
+              examples:
+                proveedor:
+                  summary: Salida válida del proveedor
+                  value:
+                    id: 3f6b1c2e-0d1a-4c7e-9f00-1a2b3c4d5e6f
+                    status: BORRADOR
+                    aiAssisted: true
+                    origin:
+                      type: provider
+                      provider: gemini
+                      model: flash
+                    message: null
+                    summary: Dos solicitudes pendientes requieren revisión.
+                    recommendations:
+                    - requestId: A-001
+                      reason: Prioridad ALTA y fecha requerida más próxima.
+                      evidenceFields:
+                      - prioridad
+                      - fechaRequerida
+                    requestIds:
+                    - A-001
+                    - A-002
+                    createdAt: '2030-01-10T14:00:00Z'
+                    approvedBy: null
+                    approvedAt: null
+                fallback:
+                  summary: Timeout o salida inválida
+                  value:
+                    id: 7a1d2e3f-4b5c-6d7e-8f90-0a1b2c3d4e5f
+                    status: BORRADOR
+                    aiAssisted: true
+                    origin:
+                      type: fallback
+                    message: El asistente no respondió a tiempo; se muestra un resumen
+                      automático.
+                    summary: '2 solicitudes: 1 ALTA, 1 NORMAL; zonas NORTE y SUR;
+                      fecha más próxima 2030-01-11.'
+                    recommendations: []
+                    requestIds:
+                    - A-001
+                    - A-002
+                    createdAt: '2030-01-10T14:00:05Z'
+                    approvedBy: null
+                    approvedAt: null
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/Prohibido'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/Invalido'
+  /api/ai/summaries/{summaryId}/approve:
+    post:
+      operationId: aprobarResumenIA
+      summary: Aprobar un borrador de resumen
+      description: 'Solo el Coordinador de la organización del borrador. Registra
+        aprobador, fecha UTC y un evento
+
+        de auditoría (RF09) en la misma transacción. No reserva, no despacha ni cambia
+        prioridades (RF12).
+
+        Un resumen alternativo también se puede aprobar. Una segunda aprobación devuelve
+        409.
+
+        '
+      tags:
+      - Asistente IA
+      parameters:
+      - name: summaryId
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: Borrador aprobado
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BorradorResumen'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/Prohibido'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+  /api/auth/csrf:
+    get:
+      operationId: bootstrapCsrf
+      summary: Inicializar protección CSRF
+      tags:
+      - Base
+      description: Emite cookie XSRF-TOKEN, sin login ni conceder rol. Ruta de diseño
+        pendiente ADR-003.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '204':
+          description: Inicializar protección CSRF
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+      security: []
+  /api/auth/login:
+    post:
+      operationId: login
+      summary: Iniciar sesión
+      tags:
+      - Base
+      description: Verificar hash, regenerar sesión y emitir nexo_session HttpOnly;
+        Secure bajo HTTPS y SameSite. No retorna token/hash. Parámetros pendientes
+        ADR-003.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      - $ref: '#/components/parameters/CsrfToken'
+      responses:
+        '200':
+          description: Iniciar sesión
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Identidad'
+        '401':
+          $ref: '#/components/responses/Base401'
+        '422':
+          $ref: '#/components/responses/Base422'
+        '419':
+          description: Token CSRF ausente o inválido; sesión cookie propuesta.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credenciales'
+      security: []
+  /api/auth/logout:
+    post:
+      operationId: logout
+      summary: Revocar sesión
+      tags:
+      - Base
+      description: Revocar sesión y eliminar cookie; reutilización obtiene 401. No
+        cambia datos de negocio.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      - $ref: '#/components/parameters/CsrfToken'
+      responses:
+        '204':
+          description: Revocar sesión
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+        '401':
+          $ref: '#/components/responses/Base401'
+        '419':
+          description: Token CSRF ausente o inválido; sesión cookie propuesta.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/auth/me:
+    get:
+      operationId: identidadActual
+      summary: Consultar identidad del servidor
+      tags:
+      - Base
+      description: ''
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: Consultar identidad del servidor
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Identidad'
+        '401':
+          $ref: '#/components/responses/Base401'
+      x-roles: &id001
+      - Solicitante
+      - Coordinador
+      - Bodega
+      - Auditor
+  /api/requests:
+    post:
+      operationId: crearSolicitud
+      summary: Crear borrador propio
+      tags:
+      - Base
+      description: Organización, dueño y código generados por servidor. SKU activo
+        y distinto; rechazar duplicados por validación semántica. Cabecera+líneas
+        atómicas; stock inalterado.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      - $ref: '#/components/parameters/CsrfToken'
+      responses:
+        '201':
+          description: Crear borrador propio
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Solicitud'
+        '401':
+          $ref: '#/components/responses/Base401'
+        '403':
+          $ref: '#/components/responses/Base403'
+        '422':
+          $ref: '#/components/responses/Base422'
+        '500':
+          $ref: '#/components/responses/Base500'
+        '419':
+          description: Token CSRF ausente o inválido; sesión cookie propuesta.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BorradorSolicitud'
+      x-roles:
+      - Solicitante
+    get:
+      operationId: listarSolicitudes
+      summary: Listar solicitudes paginadas
+      tags:
+      - Base
+      description: Solicitante solo propias; otros roles organización. Filtrar alcance
+        antes de total/paginación; orden estable createdAt+id. Máximo 100. Vacío retorna
+        items=[].
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      - &id003
+        name: page
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - &id004
+        name: pageSize
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - &id005
+        name: estado
+        in: query
+        schema: &id010
+          type: string
+          enum:
+          - BORRADOR
+          - ENVIADA
+          - RESERVADA
+          - DESPACHADA
+          - ENTREGADA
+          - CANCELADA
+      - &id006
+        name: prioridad
+        in: query
+        schema: &id009
+          type: string
+          enum:
+          - NORMAL
+          - ALTA
+      - &id007
+        name: zona
+        in: query
+        schema: &id008
+          type: string
+          minLength: 1
+      responses:
+        '200':
+          description: Listar solicitudes paginadas
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaSolicitudes'
+        '401':
+          $ref: '#/components/responses/Base401'
+        '422':
+          $ref: '#/components/responses/Base422'
+      x-roles: *id001
+  /api/requests/{requestId}:
+    get:
+      operationId: consultarSolicitud
+      summary: Consultar solicitud
+      tags:
+      - Base
+      description: Solicitante solo propia; búsqueda con alcance evita revelar recursos
+        ajenos.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      - &id002
+        $ref: '#/components/parameters/RequestId'
+      responses:
+        '200':
+          description: Consultar solicitud
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Solicitud'
+        '401':
+          $ref: '#/components/responses/Base401'
+        '403':
+          $ref: '#/components/responses/Base403'
+        '404':
+          $ref: '#/components/responses/Base404'
+        '422':
+          $ref: '#/components/responses/Base422'
+      x-roles: *id001
+    patch:
+      operationId: editarSolicitud
+      summary: Editar borrador propio
+      tags:
+      - Base
+      description: Reemplazo completo de campos editables, no merge parcial; solo
+        BORRADOR del dueño. Nunca modificar código/dueño/org. No cambia stock.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      - *id002
+      - $ref: '#/components/parameters/CsrfToken'
+      responses:
+        '200':
+          description: Editar borrador propio
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Solicitud'
+        '401':
+          $ref: '#/components/responses/Base401'
+        '403':
+          $ref: '#/components/responses/Base403'
+        '404':
+          $ref: '#/components/responses/Base404'
+        '409':
+          $ref: '#/components/responses/Base409'
+        '422':
+          $ref: '#/components/responses/Base422'
+        '500':
+          $ref: '#/components/responses/Base500'
+        '419':
+          description: Token CSRF ausente o inválido; sesión cookie propuesta.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BorradorSolicitud'
+      x-roles:
+      - Solicitante
+  /api/requests/{requestId}/send:
+    post:
+      operationId: enviarSolicitud
+      summary: send solicitud
+      tags:
+      - Base
+      description: BORRADOR → ENVIADA; validar fechaRequerida >= instante de envío.
+        No cambia stock. Cuerpo requerido {} sin propiedades extra. Rechazo sin cambios
+        de negocio ni evento exitoso. Audit atómico. Misma reserva con otra clave
+        devuelve 409.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      - *id002
+      - $ref: '#/components/parameters/CsrfToken'
+      responses:
+        '200':
+          description: send solicitud
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Solicitud'
+        '401':
+          $ref: '#/components/responses/Base401'
+        '403':
+          $ref: '#/components/responses/Base403'
+        '404':
+          $ref: '#/components/responses/Base404'
+        '409':
+          $ref: '#/components/responses/Base409'
+        '422':
+          $ref: '#/components/responses/Base422'
+        '500':
+          $ref: '#/components/responses/Base500'
+        '419':
+          description: Token CSRF ausente o inválido; sesión cookie propuesta.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: []
+              properties: {}
+      x-roles:
+      - Solicitante
+  /api/requests/{requestId}/reserve:
+    post:
+      operationId: reservarSolicitud
+      summary: reserve solicitud
+      tags:
+      - Base
+      description: ENVIADA → RESERVADA; todas las líneas o ninguna. Disponible=físico−reservado.
+        Aumenta reservado; stock/estado/auditoría/resultado idempotente atómicos.
+        Cuerpo requerido {} sin propiedades extra. Rechazo sin cambios de negocio
+        ni evento exitoso. Audit atómico. Misma reserva con otra clave devuelve 409.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      responses:
+        '200':
+          description: reserve solicitud
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Solicitud'
+        '401':
+          $ref: '#/components/responses/Base401'
+        '403':
+          $ref: '#/components/responses/Base403'
+        '404':
+          $ref: '#/components/responses/Base404'
+        '409':
+          $ref: '#/components/responses/Base409'
+        '422':
+          $ref: '#/components/responses/Base422'
+        '500':
+          $ref: '#/components/responses/Base500'
+        '419':
+          description: Token CSRF ausente o inválido; sesión cookie propuesta.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: []
+              properties: {}
+      x-roles:
+      - Coordinador
+  /api/requests/{requestId}/dispatch:
+    post:
+      operationId: despacharSolicitud
+      summary: dispatch solicitud
+      tags:
+      - Base
+      description: RESERVADA → DESPACHADA; disminuyen físico y reservado por las cantidades
+        de solicitud. Cuerpo requerido {} sin propiedades extra. Rechazo sin cambios
+        de negocio ni evento exitoso. Audit atómico. Misma reserva con otra clave
+        devuelve 409.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      - *id002
+      - $ref: '#/components/parameters/CsrfToken'
+      responses:
+        '200':
+          description: dispatch solicitud
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Solicitud'
+        '401':
+          $ref: '#/components/responses/Base401'
+        '403':
+          $ref: '#/components/responses/Base403'
+        '404':
+          $ref: '#/components/responses/Base404'
+        '409':
+          $ref: '#/components/responses/Base409'
+        '422':
+          $ref: '#/components/responses/Base422'
+        '500':
+          $ref: '#/components/responses/Base500'
+        '419':
+          description: Token CSRF ausente o inválido; sesión cookie propuesta.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: []
+              properties: {}
+      x-roles:
+      - Bodega
+  /api/requests/{requestId}/deliver:
+    post:
+      operationId: entregarSolicitud
+      summary: deliver solicitud
+      tags:
+      - Base
+      description: DESPACHADA → ENTREGADA; sin cambio de inventario. Cuerpo requerido
+        {} sin propiedades extra. Rechazo sin cambios de negocio ni evento exitoso.
+        Audit atómico. Misma reserva con otra clave devuelve 409.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      - *id002
+      - $ref: '#/components/parameters/CsrfToken'
+      responses:
+        '200':
+          description: deliver solicitud
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Solicitud'
+        '401':
+          $ref: '#/components/responses/Base401'
+        '403':
+          $ref: '#/components/responses/Base403'
+        '404':
+          $ref: '#/components/responses/Base404'
+        '409':
+          $ref: '#/components/responses/Base409'
+        '422':
+          $ref: '#/components/responses/Base422'
+        '500':
+          $ref: '#/components/responses/Base500'
+        '419':
+          description: Token CSRF ausente o inválido; sesión cookie propuesta.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: []
+              properties: {}
+      x-roles:
+      - Coordinador
+  /api/requests/{requestId}/cancel:
+    post:
+      operationId: cancelarSolicitud
+      summary: cancel solicitud
+      tags:
+      - Base
+      description: Dueño únicamente. ENVIADA o RESERVADA → CANCELADA. Liberar reserva
+        solo desde RESERVADA; físico inalterado. Cuerpo requerido {} sin propiedades
+        extra. Rechazo sin cambios de negocio ni evento exitoso. Audit atómico. Misma
+        reserva con otra clave devuelve 409.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      - *id002
+      - $ref: '#/components/parameters/CsrfToken'
+      responses:
+        '200':
+          description: cancel solicitud
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Solicitud'
+        '401':
+          $ref: '#/components/responses/Base401'
+        '403':
+          $ref: '#/components/responses/Base403'
+        '404':
+          $ref: '#/components/responses/Base404'
+        '409':
+          $ref: '#/components/responses/Base409'
+        '422':
+          $ref: '#/components/responses/Base422'
+        '500':
+          $ref: '#/components/responses/Base500'
+        '419':
+          description: Token CSRF ausente o inválido; sesión cookie propuesta.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: []
+              properties: {}
+      x-roles:
+      - Solicitante
+  /api/inventory:
+    get:
+      operationId: listarInventario
+      summary: Consultar inventario
+      tags:
+      - Base
+      description: 'Solo organización autenticada. físico/reservado/disponible no
+        negativos. Coordinador pendiente CL-16: no habilitado como permiso confirmado.'
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      - *id003
+      - *id004
+      responses:
+        '200':
+          description: Consultar inventario
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaInventario'
+        '401':
+          $ref: '#/components/responses/Base401'
+        '403':
+          $ref: '#/components/responses/Base403'
+        '422':
+          $ref: '#/components/responses/Base422'
+      x-roles:
+      - Bodega
+      - Auditor
+  /api/dashboard:
+    get:
+      operationId: consultarTablero
+      summary: Consultar cantidades por estado
+      tags:
+      - Base
+      description: Alcance propio para Solicitante (provisional CL-18); organización
+        para otros. Sin inventario ni datos ajenos. Decisión docente pendiente.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      - *id005
+      - *id006
+      - *id007
+      responses:
+        '200':
+          description: Consultar cantidades por estado
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tablero'
+        '401':
+          $ref: '#/components/responses/Base401'
+        '403':
+          $ref: '#/components/responses/Base403'
+        '422':
+          $ref: '#/components/responses/Base422'
+      x-roles: *id001
+  /api/audit:
+    get:
+      operationId: listarAuditoria
+      summary: Consultar auditoría inmutable
+      tags:
+      - Base
+      description: Acceso literal Auditor; otros roles pendientes CL-17. Organización
+        filtrada; por solicitud validar pertenencia. Orden UTC+id. Sin rutas de edición
+        o borrado.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      - *id003
+      - *id004
+      responses:
+        '200':
+          description: Consultar auditoría inmutable
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaAuditoria'
+        '401':
+          $ref: '#/components/responses/Base401'
+        '403':
+          $ref: '#/components/responses/Base403'
+        '404':
+          $ref: '#/components/responses/Base404'
+        '422':
+          $ref: '#/components/responses/Base422'
+      x-roles:
+      - Auditor
+  /api/requests/{requestId}/audit:
+    get:
+      operationId: historialSolicitud
+      summary: Consultar auditoría inmutable
+      tags:
+      - Base
+      description: Acceso literal Auditor; otros roles pendientes CL-17. Organización
+        filtrada; por solicitud validar pertenencia. Orden UTC+id. Sin rutas de edición
+        o borrado.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      - *id003
+      - *id004
+      - *id002
+      responses:
+        '200':
+          description: Consultar auditoría inmutable
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaAuditoria'
+        '401':
+          $ref: '#/components/responses/Base401'
+        '403':
+          $ref: '#/components/responses/Base403'
+        '404':
+          $ref: '#/components/responses/Base404'
+        '422':
+          $ref: '#/components/responses/Base422'
+      x-roles:
+      - Auditor
+  /health:
+    get:
+      operationId: health
+      summary: Liveness del proceso
+      tags:
+      - Base
+      description: 200 si proceso responde; no depende de DB o LLM. Sin detalles internos.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: Liveness del proceso
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+      security: []
+  /ready:
+    get:
+      operationId: readiness
+      summary: Readiness de persistencia
+      tags:
+      - Base
+      description: 200 si PostgreSQL accesible y migraciones esperadas aplicadas;
+        503 en otro caso. No depende de IA; sin secretos.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: Readiness de persistencia
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Readiness'
+        '503':
+          description: Base no disponible o migraciones pendientes.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Readiness'
+      security: []
+components:
+  securitySchemes:
+    sesion:
+      type: apiKey
+      in: cookie
+      name: nexo_session
+      description: Provisional hasta ADR-003 (sesión de servidor revocable propuesta
+        en CL-14).
+  parameters:
+    CorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      description: Si falta o es inválido, el servidor genera uno.
+      schema:
+        type: string
+        format: uuid
+    RequestId:
+      name: requestId
+      in: path
+      required: true
+      schema: *id008
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Reserva. Autenticar y autorizar antes de replay. Ámbito usuario/org/operación;
+        hash canónico de requestId+cuerpo. Guardar 200 y 409 de negocio al menos 24h;
+        no guardar 401/403/404/422/500. TTL exacto/retención pendiente ADR-002 y acuerdo
+        CL-04/11.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 128
+    CsrfToken:
+      name: X-XSRF-TOKEN
+      in: header
+      required: true
+      description: Propuesta CSRF para sesión cookie; obtener cookie XSRF-TOKEN desde
+        bootstrap y enviar token correspondiente. Pendiente ADR-003.
+      schema: *id008
+  headers:
+    CorrelationId:
+      description: correlationId de la petición, igual al registrado en logs y auditoría.
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    SolicitudResumen:
+      type: object
+      additionalProperties: false
+      required:
+      - requestIds
+      properties:
+        requestIds:
+          type: array
+          minItems: 1
+          maxItems: 20
+          uniqueItems: true
+          items:
+            type: string
+            minLength: 1
+    Recomendacion:
+      type: object
+      additionalProperties: false
+      required:
+      - requestId
+      - reason
+      - evidenceFields
+      properties:
+        requestId:
+          type: string
+          minLength: 1
+        reason:
+          type: string
+          minLength: 1
+          maxLength: 240
+        evidenceFields:
+          type: array
+          minItems: 1
+          maxItems: 3
+          uniqueItems: true
+          items:
+            enum:
+            - zona
+            - prioridad
+            - fechaRequerida
+            - observaciones
+    Origen:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      properties:
+        type:
+          enum:
+          - provider
+          - replay
+          - fixture
+          - fallback
+        provider:
+          type:
+          - string
+          - 'null'
+        model:
+          type:
+          - string
+          - 'null'
+        fixtureId:
+          type:
+          - string
+          - 'null'
+    BorradorResumen:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - status
+      - aiAssisted
+      - origin
+      - message
+      - summary
+      - recommendations
+      - requestIds
+      - createdAt
+      - approvedBy
+      - approvedAt
+      properties:
+        id:
+          type: string
+        status:
+          enum:
+          - BORRADOR
+          - APROBADO
+        aiAssisted:
+          const: true
+        origin:
+          $ref: '#/components/schemas/Origen'
+        message:
+          description: Mensaje controlado cuando se usa el resumen alternativo; null
+            en otro caso.
+          type:
+          - string
+          - 'null'
+        summary:
+          type: string
+          minLength: 1
+          maxLength: 600
+        recommendations:
+          type: array
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/Recomendacion'
+        requestIds:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        approvedBy:
+          type:
+          - string
+          - 'null'
+        approvedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+    Error:
+      type: object
+      additionalProperties: false
+      required:
+      - code
+      - message
+      - correlationId
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        field:
+          type:
+          - string
+          - 'null'
+        correlationId:
+          type: string
+    LineaSolicitud:
+      type: object
+      additionalProperties: false
+      required:
+      - sku
+      - cantidad
+      properties:
+        sku: *id008
+        cantidad:
+          type: integer
+          minimum: 1
+          maximum: 500
+    Credenciales:
+      type: object
+      additionalProperties: false
+      required:
+      - login
+      - password
+      properties:
+        login:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 1
+          writeOnly: true
+    Identidad:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - organizationId
+      - role
+      properties:
+        id: *id008
+        organizationId: *id008
+        role:
+          type: string
+          enum:
+          - Solicitante
+          - Coordinador
+          - Bodega
+          - Auditor
+    BorradorSolicitud:
+      type: object
+      additionalProperties: false
+      required:
+      - zona
+      - prioridad
+      - fechaRequerida
+      - lineas
+      properties:
+        zona: *id008
+        prioridad: *id009
+        fechaRequerida: &id011
+          type: string
+          format: date-time
+        observaciones:
+          type: string
+          maxLength: 1000
+        lineas:
+          type: array
+          minItems: 1
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/LineaSolicitud'
+    Solicitud:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - codigo
+      - solicitanteId
+      - organizationId
+      - estado
+      - zona
+      - prioridad
+      - fechaRequerida
+      - observaciones
+      - lineas
+      - createdAt
+      - updatedAt
+      properties:
+        id: *id008
+        codigo: *id008
+        solicitanteId: *id008
+        organizationId: *id008
+        estado: *id010
+        zona: *id008
+        prioridad: *id009
+        fechaRequerida: *id011
+        observaciones:
+          type:
+          - string
+          - 'null'
+          maxLength: 1000
+        lineas:
+          type: array
+          minItems: 1
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/LineaSolicitud'
+        createdAt: *id011
+        updatedAt: *id011
+    InventarioItem:
+      type: object
+      additionalProperties: false
+      required:
+      - sku
+      - activo
+      - fisico
+      - reservado
+      - disponible
+      properties:
+        sku: *id008
+        activo:
+          type: boolean
+        fisico: &id012
+          type: integer
+          minimum: 0
+        reservado: *id012
+        disponible: *id012
+    EventoAuditoria:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - actorId
+      - organizationId
+      - resourceId
+      - action
+      - occurredAt
+      - correlationId
+      properties:
+        id: *id008
+        actorId: *id008
+        organizationId: *id008
+        resourceId: *id008
+        action: *id008
+        occurredAt: *id011
+        correlationId: *id008
+    Tablero:
+      type: object
+      additionalProperties: false
+      required:
+      - cantidadesPorEstado
+      properties:
+        cantidadesPorEstado:
+          type: object
+          additionalProperties: false
+          required:
+          - BORRADOR
+          - ENVIADA
+          - RESERVADA
+          - DESPACHADA
+          - ENTREGADA
+          - CANCELADA
+          properties:
+            BORRADOR: *id012
+            ENVIADA: *id012
+            RESERVADA: *id012
+            DESPACHADA: *id012
+            ENTREGADA: *id012
+            CANCELADA: *id012
+    Health:
+      type: object
+      additionalProperties: false
+      required:
+      - status
+      properties:
+        status:
+          const: ok
+    Readiness:
+      type: object
+      additionalProperties: false
+      required:
+      - status
+      - database
+      properties:
+        status:
+          enum:
+          - ready
+          - not_ready
+        database:
+          enum:
+          - up
+          - down
+    PaginaSolicitudes:
+      type: object
+      additionalProperties: false
+      required:
+      - items
+      - page
+      - pageSize
+      - total
+      properties:
+        items:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/Solicitud'
+        page:
+          type: integer
+          minimum: 1
+        pageSize:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total: *id012
+    PaginaInventario:
+      type: object
+      additionalProperties: false
+      required:
+      - items
+      - page
+      - pageSize
+      - total
+      properties:
+        items:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/InventarioItem'
+        page:
+          type: integer
+          minimum: 1
+        pageSize:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total: *id012
+    PaginaAuditoria:
+      type: object
+      additionalProperties: false
+      required:
+      - items
+      - page
+      - pageSize
+      - total
+      properties:
+        items:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/EventoAuditoria'
+        page:
+          type: integer
+          minimum: 1
+        pageSize:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total: *id012
+  responses:
+    NoAutenticado:
+      description: Sin sesión válida
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Prohibido:
+      description: Rol distinto de Coordinador
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NoEncontrado:
+      description: Solicitud o borrador inexistente o de otra organización (no revela
+        existencia)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Conflicto:
+      description: Solicitud seleccionada fuera de ENVIADA, o borrador ya aprobado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Invalido:
+      description: Selección vacía, con más de 20 IDs, con IDs repetidos o con propiedades
+        extra
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Base401:
+      description: Sin identidad válida; no revela existencia de cuenta.
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Base403:
+      description: Acción prohibida por rol o dueño sobre recurso de la organización.
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Base404:
+      description: Recurso inexistente o de otra organización; sin revelar existencia.
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Base409:
+      description: Estado incompatible, stock insuficiente o contenido idempotente
+        conflictivo; sin efectos de negocio.
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Base422:
+      description: Formato o datos inválidos; code/message y field cuando corresponda,
+        sin escrituras parciales.
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Base500:
+      description: Fallo interno sanitizado; rollback antes de commit.
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+x-status: pending-human-review
+x-source-ia: contracts/openapi-ia.yaml; rama docs/g2-vega-ia; a13aa17
