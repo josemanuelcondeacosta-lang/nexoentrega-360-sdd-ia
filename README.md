@@ -38,6 +38,16 @@ Sistema académico para distribución comunitaria de kits en dos organizaciones 
 ## Enlace del repositorio
 https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia
 
+## Diseño G2 parcial, pendiente de revisión
+
+- [ADR-001: estructura y límites](docs/adr/ADR-001-estructura-limites.md): Laravel + PostgreSQL, monolito modular propuesto.
+- [Contexto](docs/architecture/contexto.md) y [componentes/fronteras](docs/architecture/componentes.md), Mermaid.
+- [Contrato integrado OpenAPI](contracts/openapi.yaml) y [comandos/pendientes](contracts/README.md).
+- [Preguntas preparadas para el docente](docs/clarifications/envio-docente-CL16-18.md): no enviadas por Codex.
+- [Revisión parcial G2](docs/reviews/gate-review-G2.md) y [evidencia documental](docs/evidence/g2-arquitectura-validacion.md).
+
+G1 y G2 siguen pendientes; diseño no equivale a implementación aprobada.
+
 ## Paquete de revisión G1
 
 - [Auditoría inicial](docs/reviews/initial-audit.md) y [fuentes/supuestos](docs/requirements-source.md).

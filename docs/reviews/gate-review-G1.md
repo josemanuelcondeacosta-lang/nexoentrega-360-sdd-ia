@@ -103,3 +103,9 @@ Enlaces a revisión, commit propio y evidencia:
 5. Completar PR #1 y mantener evidencia de revisión antes de integrar. Después comenzar G2 (arquitectura, cuatro ADR, diagramas, OpenAPI y planificación) y preparar su revisión independiente.
 
 Estado actual: **G1 PENDIENTE**. No se genera PDF final ni tag de entrega; no hay nueva prueba de aplicación declarada.
+
+## Corrección documental de constitución preparada en G2
+
+Actualización CL-16/17/18: Conde José reporta respuesta afirmativa de la profesora en esta conversación (2026-10-14); no se registra mensaje directo ni UTC/canal original. SPEC-01/04 pasan a 0.3.1-draft y sus permisos/AC se actualizan junto al contrato. Las revisiones previas sobre `cf9d5f5` no aprueban esta versión nueva: Carolina/Vega deben revisar el nuevo SHA. G1 sigue pendiente y otros hallazgos no se cierran automáticamente.
+
+D-21 / parte de G1-H07: `docs/constitution.md` ahora incluye motivo, evidencia, responsable propuesto y criterio de excepción, según anexo 01. Preparado por Codex a solicitud de Conde José, 2026-10-14; **revisión humana pendiente**, no cierre aprobado. D-20 (CI de SPEC) permanece abierto. CL-16/17/18 tienen mensaje preparado en `docs/clarifications/envio-docente-CL16-18.md`, pero Codex no las ha enviado: destinatario/canal pendientes.

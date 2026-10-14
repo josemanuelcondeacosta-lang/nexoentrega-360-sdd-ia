@@ -1,6 +1,6 @@
 # SPEC-01: Identidad y permisos
 
-- **Versión:** 0.3-draft — **no aprobada para implementar**.
+- **Versión:** 0.3.1-draft — **no aprobada para implementar**.
 - **Fuente vinculante:** `docs/examen-oficial/originales/Examen_Estudiantes_SDD_IA.pdf` §2 (p. 3), §5 RNF01/RNF05/RNF06 (p. 6); anexo `fixture-scenarios.json` (cuentas).
 - **Estado y aprobación:** versión 0.3 elaborada con asistencia de IA a solicitud de Castro Edier (registro `docs/evidence/ai-log/AI-001-cotejo-oficial-g1.md`). Revisor humano distinto del autor: **PENDIENTE**. Fecha UTC y commit revisado: **PENDIENTE**.
 
@@ -10,7 +10,7 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-01.json` se gener
 ```json
 {
   "id": "SPEC-01",
-  "version": "0.3-draft",
+  "version": "0.3.1-draft",
   "name": "Identidad y permisos",
   "status": "Borrador cotejado con el enunciado oficial; pendiente de revisión humana independiente",
   "story": {
@@ -85,7 +85,7 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-01.json` se gener
     "Coordinador: consultar solicitudes de su organización, reservar ENVIADA, registrar ENTREGADA sobre DESPACHADA, usar y aprobar resúmenes de IA",
     "Bodega: consultar inventario y solicitudes de su organización y despachar RESERVADA",
     "Auditor: consultar solicitudes, inventario y auditoría de su organización; no modifica datos ni invoca el asistente",
-    "Una operación no listada para un rol se deniega: 403 si el recurso es de su organización. Quedan para confirmación docente la consulta de inventario por el Coordinador (CL-16), la consulta de auditoría por roles distintos del Auditor (CL-17) y el tablero del Solicitante (CL-18)",
+    "Una operación no listada para un rol se deniega: 403 si el recurso es de su organización. Según respuesta afirmativa de la profesora reportada por Conde José (CL-16/17/18), el Coordinador lee inventario e historial de su organización y el Solicitante lee historial/tablero de sus propias solicitudes sin inventario. Bodega no recibe auditoría. Evidencia original pendiente; revisión renovada requerida",
     "Los permisos se comprueban en el servidor en cada operación; ocultar un botón no es autorización",
     "La organización y el rol provienen de la identidad autenticada; un valor enviado por el navegador no autoriza cambiar de organización",
     "No se admite un selector de rol como reemplazo del inicio de sesión",
@@ -109,7 +109,7 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-01.json` se gener
   ],
   "openQuestions": [
     "CL-14: expiración de sesión, protección CSRF y política de contraseña (decisión del equipo en ADR-003)",
-    "CL-16, CL-17 y CL-18: permisos no listados en la matriz oficial (requieren docente)"
+    "CL-16, CL-17 y CL-18: respuesta afirmativa reportada por el coordinador; fecha/canal y evidencia original pendientes, nueva revisión humana requerida"
   ],
   "dependencies": [
     "Seed de cuentas y migraciones (RNF04, SPEC-04)",
@@ -229,7 +229,7 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-01.json` se gener
 
 - Precedencia de respuestas resuelta por el enunciado §2: 401 sin identidad; 404 para recurso inexistente o de otra organización; 403 para acción prohibida sobre recurso de su organización. Por eso se resuelve primero el recurso dentro de la organización y después el permiso del rol.
 - Matriz de permisos tomada del enunciado; sustituye la matriz propuesta en 0.2 (ver diferencias D-01 y D-02 del cotejo).
-- Pendientes: CL-14 (equipo), CL-16, CL-17 y CL-18 (docente).
+- Pendientes: CL-14 (equipo); fecha/canal y evidencia original de CL-16/17/18, cuya respuesta afirmativa fue reportada por el coordinador. Cambio de permisos requiere nueva revisión.
 
 ## Riesgos y plan de prueba
 
@@ -240,4 +240,6 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-01.json` se gener
 
 - 0.1: borrador inicial (commit `1aeacbf`).
 - 0.2-draft: ampliación a 10 AC sin fuente oficial.
-- 0.3-draft: cotejo con el enunciado oficial; matriz oficial de permisos; formato del anexo 13 con entradas tipadas y AC dado/cuando/entonces; nuevos AC-01-11 a AC-01-13 (selector de rol, secretos, RNF05).
+- 0.3.1-draft: cotejo con el enunciado oficial; matriz oficial de permisos; formato del anexo 13 con entradas tipadas y AC dado/cuando/entonces; nuevos AC-01-11 a AC-01-13 (selector de rol, secretos, RNF05).
+
+Cambio 0.3.1-draft: CL-16/17/18 confirmadas según reporte del coordinador; sin aprobación humana de esta nueva versión. Otros hallazgos G1 siguen pendientes.

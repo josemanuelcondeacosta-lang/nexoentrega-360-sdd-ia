@@ -1,6 +1,6 @@
 {
   "id": "SPEC-01",
-  "version": "0.3-draft",
+  "version": "0.3.1-draft",
   "name": "Identidad y permisos",
   "status": "Borrador cotejado con el enunciado oficial; pendiente de revisión humana independiente",
   "story": {
@@ -114,7 +114,7 @@
     "Coordinador: consultar solicitudes de su organización, reservar ENVIADA, registrar ENTREGADA sobre DESPACHADA, usar y aprobar resúmenes de IA",
     "Bodega: consultar inventario y solicitudes de su organización y despachar RESERVADA",
     "Auditor: consultar solicitudes, inventario y auditoría de su organización; no modifica datos ni invoca el asistente",
-    "Una operación no listada para un rol se deniega: 403 si el recurso es de su organización. Quedan para confirmación docente la consulta de inventario por el Coordinador (CL-16), la consulta de auditoría por roles distintos del Auditor (CL-17) y el tablero del Solicitante (CL-18)",
+    "Una operación no listada para un rol se deniega: 403 si el recurso es de su organización. Según respuesta afirmativa de la profesora reportada por Conde José (CL-16/17/18), el Coordinador lee inventario e historial de su organización y el Solicitante lee historial/tablero de sus propias solicitudes sin inventario. Bodega no recibe auditoría. Evidencia original pendiente; revisión renovada requerida",
     "Los permisos se comprueban en el servidor en cada operación; ocultar un botón no es autorización",
     "La organización y el rol provienen de la identidad autenticada; un valor enviado por el navegador no autoriza cambiar de organización",
     "No se admite un selector de rol como reemplazo del inicio de sesión",
@@ -138,7 +138,7 @@
   ],
   "openQuestions": [
     "CL-14: expiración de sesión, protección CSRF y política de contraseña (decisión del equipo en ADR-003)",
-    "CL-16, CL-17 y CL-18: permisos no listados en la matriz oficial (requieren docente)"
+    "CL-16, CL-17 y CL-18: respuesta afirmativa reportada por el coordinador; fecha/canal y evidencia original pendientes, nueva revisión humana requerida"
   ],
   "dependencies": [
     "Seed de cuentas y migraciones (RNF04, SPEC-04)",

@@ -1,6 +1,6 @@
 {
   "id": "SPEC-04",
-  "version": "0.3-draft",
+  "version": "0.3.1-draft",
   "name": "Consultas y auditoría",
   "status": "Borrador cotejado con el enunciado oficial; pendiente de revisión humana independiente",
   "story": {
@@ -21,7 +21,7 @@
   "description": "Listados paginados con filtros, tablero de cantidades por estado e inventario, historial de auditoría inmutable vía API y condiciones operativas de consulta: rendimiento, arranque reproducible, logs con correlationId y health y readiness. Enunciado §4 y §5.",
   "actors": [
     "Solicitante: solo sus solicitudes",
-    "Coordinador y Bodega: solicitudes de su organización; Bodega también inventario",
+    "Coordinador: solicitudes, inventario e historial de su organización (CL-16/17 reportadas); Bodega: solicitudes e inventario sin auditoría",
     "Auditor: solicitudes, inventario y auditoría de su organización",
     "Operador o evaluador: arranque, health y readiness"
   ],
@@ -149,9 +149,9 @@
     "RNF03, RNF04 y health y readiness se ubican en esta SPEC porque cubren consultas y operación; ninguna otra SPEC trata la operación"
   ],
   "openQuestions": [
-    "CL-16: ¿el Coordinador consulta inventario? (docente)",
-    "CL-17: ¿qué roles, además del Auditor, consultan el historial de auditoría? (docente)",
-    "CL-18: ¿el Solicitante ve el tablero limitado a sus solicitudes? (docente)",
+    "CL-16: respuesta afirmativa docente reportada por el coordinador; evidencia original pendiente",
+    "CL-17: Coordinador consulta historial de su organización y Solicitante de sus solicitudes según respuesta reportada; evidencia original pendiente",
+    "CL-18: tablero propio sin inventario para Solicitante según respuesta reportada; evidencia original pendiente",
     "CL-15: retención de auditoría y de logs técnicos (equipo)"
   ],
   "dependencies": [
@@ -261,8 +261,8 @@
       ],
       "kind": "permiso",
       "given": "inventario sembrado de ORG-A y ORG-B",
-      "when": "la bodega y el auditor de ORG-A consultan inventario o tablero, y el solicitante de ORG-A intenta consultar el inventario",
-      "then": "bodega y auditor ven físico, reservado y disponible consistentes, con disponible igual a físico menos reservado, solo de ORG-A; el solicitante recibe 403; el acceso del coordinador queda según CL-16"
+      "when": "bodega, auditor y coordinador de ORG-A consultan inventario, y el solicitante de ORG-A intenta consultarlo y consulta su tablero",
+      "then": "bodega, auditor y coordinador ven físico, reservado y disponible consistentes solo de ORG-A; disponible igual a físico menos reservado; el solicitante recibe 403 en inventario y su tablero muestra solo conteos de solicitudes propias, sin inventario ni conteos ajenos (CL-16/18 reportadas)"
     },
     {
       "id": "AC-04-11",
@@ -272,8 +272,8 @@
       ],
       "kind": "permiso",
       "given": "eventos de auditoría de ORG-A y de ORG-B",
-      "when": "el auditor de ORG-A consulta el historial y luego pide un evento o el historial de una solicitud de ORG-B",
-      "then": "solo ve eventos de ORG-A; lo de ORG-B recibe 404 sin datos"
+      "when": "auditor y coordinador de ORG-A consultan historial; solicitante consulta historial propio y ajeno; bodega consulta historial; todos intentan acceder al historial de una solicitud de ORG-B",
+      "then": "auditor y coordinador ven solo eventos de ORG-A; solicitante solo eventos de sus solicitudes y obtiene 404 para las ajenas; bodega recibe 403 para recurso de ORG-A; identificadores de ORG-B reciben 404 sin datos (CL-17 reportada)"
     },
     {
       "id": "AC-04-12",
