@@ -1,6 +1,6 @@
 # Estrategia de pruebas — G2
 
-- **Versión:** 0.1 (2026-10-14)
+- **Versión:** 0.2 (2026-10-14). Cambio respecto a 0.1: fila de concurrencia corregida por el hallazgo R-E01 de la revisión de Edier en el PR #4.
 - **Autor:** Vega José, con asistencia de IA (AI-004)
 - **Base:** enunciado §9 (CI), §11 (plan mínimo de pruebas), anexo `10_test-report-template.md`, SPEC 0.3-draft, ADR-004. Tecnología acordada por el equipo (2026-10-14): Laravel con PostgreSQL; se registra en ADR-001.
 - **Estado:** propuesta pendiente de revisión G2.
@@ -21,7 +21,7 @@
 |---|---|---|---|
 | Dominio | Cantidades 1–500, 1–10 líneas, SKU repetido, fechas, matriz de transiciones | PHPUnit o Pest (unitarias) | AC-02-02, 02-04, 02-06, 02-07, 03-07 |
 | API y base real | Reserva total, rechazo sin efectos parciales, cancelación, despacho, idempotencia y conflicto | Pruebas HTTP de Laravel (`$this->postJson`) con `DatabaseMigrations` contra el contenedor | AC-03-01 a 03-15 |
-| Concurrencia | Dos reservas simultáneas que compiten por stock | Dos procesos reales (Laravel `Process::pool` o peticiones paralelas a `php artisan serve`) con barrera; ≥ 20 repeticiones; sin envolver en transacción de prueba | AC-03-03, 03-08 |
+| Concurrencia | Dos reservas simultáneas que compiten por stock | Dos procesos PHP independientes contra PostgreSQL real, con barrera; ≥ 20 repeticiones; sin envolver en transacción de prueba. Opciones válidas: (a) Laravel `Process::pool` lanzando dos comandos de consola que llaman al servicio de reserva; (b) dos peticiones HTTP paralelas a php-fpm en Docker; (c) `php artisan serve` solo con `PHP_CLI_SERVER_WORKERS` ≥ 2, que PHP no admite en Windows (sirve en Linux, Docker o el runner de CI). La opción (a) funciona también en los PC del equipo con Windows. **No usar `php artisan serve` con su configuración por defecto**: atiende una petición a la vez y la prueba pasaría sin ejercitar el bloqueo (R-E01) | AC-03-03, 03-08 |
 | Seguridad | 401, 403 por rol, 404 entre organizaciones, aislamiento en listados, auditoría e IA, logs sin secretos | Pruebas HTTP con las ocho cuentas del seed | AC-01-01 a 01-12, 04-11, 05-11 |
 | IA | Respuesta válida, JSON inválido, campo extra, ID ajeno, timeout, fallo, inyección | `FixtureProvider` con los siete fixtures; proveedor espía | AC-05-01 a 05-14 |
 | E2E | Solicitante crea y envía; coordinador reserva; bodega despacha; coordinador entrega; cancelación libera stock | Playwright (o Laravel Dusk) sobre el candidato de entrega | Recorrido de SPEC-02 a SPEC-04 |
