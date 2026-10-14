@@ -13,7 +13,7 @@ Monolito modular MVC con aislamiento multitenant estricto por organization_id y 
 - **Servicio de Asistencia IA:** Integración desacoplada documentada en ADR-004.
 
 ## 3. Base de Datos, Migraciones y Seeding
-- **Migraciones:** Creación de tablas estructuradas para users, organizations, kits, equests, equest_items y udit_logs.
+- **Migraciones:** Creación de tablas estructuradas para users, organizations, kits, requests, request_items y audit_logs.
 - **Seeders:** Datos sembrados para usuarios base de ORG-A y ORG-B con roles predeterminados (Solicitante, Coordinador, Bodega, Auditor).
 
 ## 4. Estrategia de Pruebas, CI y Calidad
