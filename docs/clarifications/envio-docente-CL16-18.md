@@ -29,4 +29,6 @@ Registraremos su respuesta como decisión del cliente, con fecha y canal, y actu
 
 La captura recibida el 2026-10-14 respalda envío y respuesta; esta fecha es recepción de evidencia, no fecha inferida del chat WhatsApp. El texto inicial y estado previo de este archivo se conservan como historial de preparación.
 
+Actualización posterior: el coordinador confirma que envío y respuesta ocurrieron el **2026-10-14**. La respuesta muestra 12:22 p. m.; zona del dispositivo no confirmada, UTC pendiente. La fecha se acredita por confirmación del coordinador, no por un rótulo visible en la imagen.
+
 Enviar requiere destinatario y canal accesible (o envío por el coordinador). No marcar «enviado» por preparar el texto ni «resuelto» por respuesta de IA.

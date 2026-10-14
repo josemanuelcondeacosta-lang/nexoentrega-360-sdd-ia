@@ -28,4 +28,6 @@ El resto de permisos y aislamiento del examen se conserva. SPEC-01/04 0.3.1-draf
 
 La imagen se adjuntó en la conversación con Codex. No se encontró ruta local disponible para copiarla al repositorio: **este archivo registra la inspección, no es el archivo de imagen original**. Conde José debe conservar la captura original y, para el PDF/evidencias compartidas, aportar una copia pertinente con datos personales no necesarios ocultos. No se registra enlace público de WhatsApp ni mensaje enviado por Codex.
 
-Pendientes: fecha calendario y zona horaria originales, identificación completa de la docente si corresponde y archivo de captura para el paquete final. La fecha 2026-10-14 corresponde a recepción en esta conversación, no prueba la fecha del intercambio WhatsApp.
+Actualización del coordinador: Conde José confirma que el intercambio ocurrió **hoy, 2026-10-14**. La fecha se registra por su confirmación, aunque no aparece en la captura. Hora visible de envío: 12:17 p. m.; respuesta: 12:22 p. m. Zona horaria del dispositivo no confirmada; no convertir a UTC todavía.
+
+Pendientes: zona horaria del dispositivo, identificación completa de la docente si corresponde y archivo de captura para el paquete final. Se distingue la fecha confirmada por el coordinador de los datos visibles en la imagen.
