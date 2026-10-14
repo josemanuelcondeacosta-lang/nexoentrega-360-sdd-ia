@@ -3,8 +3,10 @@
 * **Autora:** Carolina Cantillo
 * **Rol:** Especificaciones y Documentación
 * **Fecha:** 2026-10-14T16:30:00Z
-* **SHA Revisado:** 3b8c9d1 (SPECS actualizadas tras respuestas docentes, incluyendo SPEC-04)
-* **Rama Origen:** docs/g1-edier-cotejo-oficial
+* **SHA de la revisión anterior publicada:** `cf9d5f5d905dee3a3774c623283c7045271dbe60`, rama `docs/g1-edier-cotejo-oficial`.
+* **SHA candidato actualizado para revisión:** `b1dbbf93d9800b69d32daec352aacf754f876ebe`, rama `docs/g2-architecture` (incluye SPEC-01/04 0.3.1-draft y evidencia de aclaraciones docentes).
+* **Confirmación de revisión del candidato por Carolina:** PENDIENTE; registrar fecha UTC y enlace personal después de realizarla.
+* **Corrección documental:** Codex a solicitud de Conde José. La referencia anterior `3b8c9d1` no pudo verificarse en Git ni en GitHub; no se sustituye automáticamente por una aprobación sobre otro SHA.
 
 ## 1. Alcance y Fuentes Consultadas
 * specs/SPEC-02.md (Solicitudes, RF03, RF04)
@@ -21,9 +23,11 @@
    - python scripts/build_coverage.py --check
 
 ## 3. Decisiones por Especificación
-* **SPEC-02:** APROBADA
-* **SPEC-03:** APROBADA
-* **SPEC-04:** APROBADA
+* **SPEC-02:** aprobación registrada por Carolina para la revisión anterior; confirmar vigencia al consolidar el candidato final.
+* **SPEC-03:** aprobación registrada por Carolina para la revisión anterior; no declara cerrados los hallazgos de Edier ni cambios futuros.
+* **SPEC-04:** nueva revisión PENDIENTE sobre el candidato actualizado, porque los permisos y AC cambiaron tras CL-16/17/18.
 
 ## 4. Hallazgos e Integración
-Sin hallazgos bloqueantes. Se integran las observaciones de Vega (H-V01 a H-V07) y las aclaraciones docentes para consolidar la versión final de las especificaciones.
+La afirmación anterior de ausencia de hallazgos bloqueantes pertenece al registro previo de Carolina. Esta corrección no verifica ni cierra H-V01 a H-V07 o los hallazgos de Edier. Las aclaraciones docentes y la versión actualizada deben cotejarse en el SHA candidato antes de registrar una nueva aprobación. Fecha y resultado real de esa revisión: PENDIENTES.
+
+Para confirmar: Carolina debe abrir el candidato indicado, revisar las diferencias de SPEC-04 y sus AC, ejecutar las comprobaciones documentales que declare, y publicar desde su cuenta una revisión con SHA completo, fecha UTC, observaciones y decisión. Ninguna firma o comprobación personal se agrega por Codex.
