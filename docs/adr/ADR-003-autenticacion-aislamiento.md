@@ -10,7 +10,7 @@
   - **H-V06:** Protección estricta contra ataques CSRF mediante verificación de tokens y cookies SameSite/SameOrigin.
 
 ## Contexto y Problema
-NexoEntrega 360 requiere aislar completamente los recursos entre ORG-A y ORG-B bajo cuatro roles (Solicitante, Coordinador, Bodega, Auditor). Se deben precisar los parámetros de sesión, logout, hashing y protección contra vulnerabilidades de enumeración y CSRF.
+NexoEntrega 360 requiere aislar completamente los recursos entre ORG-A y ORG-B bajo cuatro roles (Solicitante, Coordinador, Bodega, Auditor). Se deben precisar los parámetros de sesión, logout, algoritmo de hashing definitivo y protección contra vulnerabilidades CSRF.
 
 ## Opciones Evaluadas
 1. **Laravel Sessions (Cookie HTTP-Only, SameSite=Lax/Strict) + Scope Tenant en Eloquent.**
@@ -18,13 +18,13 @@ NexoEntrega 360 requiere aislar completamente los recursos entre ORG-A y ORG-B b
 3. **Multi-tenancy con esquemas de BD separados.**
 
 ## Decisión Seleccionada
-Adoptamos la **Opción 1: Sesiones basadas en cookies HTTP-Only con Middleware de Organización**, con las siguientes precisiones técnicas:
+Adoptamos la **Opción 1: Sesiones basadas en cookies HTTP-Only con Middleware de Organización**, con las siguientes precisiones técnicas definitivas:
 
 ### Especificación Técnica
-- **Sesión y Cookie:** Duración de sesión configurable (config/session.php: lifetime = 120 minutos), expire_on_close = true, http_only = true, secure = true, same_site = lax.
+- **Algoritmo de Hashing Definitivo:** **Bcrypt** con factor de costo 12 para todas las contraseñas almacenadas.
+- **Sesión y Cookie:** Duración de sesión configurable (config/session.php: lifetime = 120 minutos), expire_on_close = true, http_only = true, same_site = lax. El flag secure = true estará habilitado por entorno en producción HTTPS, manteniendo secure = false únicamente cuando la demo local corra sobre HTTP estándar.
 - **Logout:** Invalidación explícita de sesión (Auth::logout(), session()->invalidate(), session()->regenerateToken()).
-- **Hashing de Contraseñas:** Algoritmo **Bcrypt** (costo 12) o **Argon2id** nativo de Laravel.
-- **Protección CSRF (H-V06):** Verificación activa de token CSRF mediante ValidateCsrfToken en todas las peticiones de mutación (POST, PUT, DELETE).
+- **Protección CSRF (H-V06):** Verificación activa de token CSRF mediante ValidateCsrfToken en todas las peticiones de mutación HTTP (**POST, PUT, PATCH, DELETE**).
 - **Manejo de Errores 403 vs 404 (H-V05):** Si un recurso existe pero pertenece a otra organización, el servidor retornará HTTP 404 Not Found en lugar de 403 Forbidden para evitar la enumeración maliciosa de identificadores.
 
 ## Consecuencias y Validación
