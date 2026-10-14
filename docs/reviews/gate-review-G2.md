@@ -1,5 +1,7 @@
 # Revisión G2 — paquete parcial de arquitectura
 
+Actualización de coordinación: Carolina aprobó plan/tareas del SHA c70e431; posterior ajuste de rangos AC requiere revisión. Paquete de cuatro ADR/diagramas/contrato aún requiere decisiones independientes de Edier/Vega. Ver `coordinacion-cierre-G1-G2.md`. No usar las tablas históricas posteriores como decisión del corte actual.
+
 Estado: **PROPUESTO, SIN APROBACIÓN**. Rama `docs/g2-architecture`, basada en `origin/docs/g2-vega-ia` (`a13aa17`); no se fusionan PR G1 pendientes. G1 todavía pendiente por SPEC. Diseño documental permitido; implementación no iniciada.
 
 | Artefacto | Estado / revisor propuesto |

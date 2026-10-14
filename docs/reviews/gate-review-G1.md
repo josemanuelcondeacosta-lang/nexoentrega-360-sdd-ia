@@ -1,5 +1,7 @@
 # Gate review G1 — plantilla sin aprobación
 
+Estado actualizado por alcance: Carolina aprueba SPEC-04 0.3.2 en c70e431 (enlace en su aporte); SPEC-01/03/05 0.4-draft y confirmación coherente de SPEC-02 pendientes. Correcciones H-V/H-E preparadas en `coordinacion-cierre-G1-G2.md`; G1 global no aprobado.
+
 - Fecha y hora UTC: PENDIENTE
 - Artefactos, versiones y SHA: PENDIENTE
 - Autor(es): PENDIENTE

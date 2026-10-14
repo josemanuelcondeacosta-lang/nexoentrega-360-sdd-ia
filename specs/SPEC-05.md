@@ -1,6 +1,6 @@
 # SPEC-05: Asistente IA
 
-- **Versión:** 0.3-draft — **no aprobada para implementar**.
+- **Versión:** 0.4-draft — **no aprobada para implementar**.
 - **Fuente vinculante:** `docs/examen-oficial/originales/Examen_Estudiantes_SDD_IA.pdf` §1 (p. 2), §4 RF10–RF12 (p. 5), §5 RNF01/RNF06 (p. 6), §10 IA dentro del producto (p. 11), §11 familia IA (p. 12); anexos `ai-output.schema.json`, `ai-provider-fixtures.json`, `untrusted-observation.txt` y `fixture-scenarios.json`.
 - **Estado y aprobación:** versión 0.3 elaborada con asistencia de IA a solicitud de Castro Edier (registro `docs/evidence/ai-log/AI-001-cotejo-oficial-g1.md`). Revisor humano distinto del autor: **PENDIENTE**. Fecha UTC y commit revisado: **PENDIENTE**.
 
@@ -10,7 +10,7 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-05.json` se gener
 ```json
 {
   "id": "SPEC-05",
-  "version": "0.3-draft",
+  "version": "0.4-draft",
   "name": "Asistente IA",
   "status": "Borrador cotejado con el enunciado oficial; pendiente de revisión humana independiente",
   "story": {
@@ -21,25 +21,9 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-05.json` se gener
   },
   "requirements": ["RF02", "RF09", "RF10", "RF11", "RF12", "RNF01", "RNF06"],
   "description": "Resumen asistido por IA de hasta 20 solicitudes ENVIADA elegidas por el coordinador, con proyección de campos autorizados, adaptador de proveedor intercambiable, validación estructural y de pertenencia, degradación determinista y aprobación humana auditada. Enunciado §4 y §10.",
-  "actors": [
-    "Coordinador: solicita y aprueba resúmenes de su organización",
-    "Proveedor de IA: externo y no confiable; real, local, reproducción declarada o fixture",
-    "Sistema: adaptador, validador y generador del resumen alternativo",
-    "Auditor, Bodega y Solicitante: sin acceso al asistente"
-  ],
-  "scope": [
-    "Selección por identificador de 1 a 20 solicitudes ENVIADA de la organización",
-    "Proyección de los seis campos autorizados por RF10",
-    "Adaptador intercambiable con plazo de 5 s",
-    "Validación contra ai-output.schema.json y de pertenencia de identificadores",
-    "Resumen determinista alternativo ante salida inválida, timeout o fallo",
-    "Borrador identificado como asistencia de IA y aprobación auditada"
-  ],
-  "exclusions": [
-    "Ejecutar acciones sugeridas por el modelo o cambiar prioridad, reserva o despacho desde el asistente",
-    "Exigir al modelo explicar su razonamiento interno o usar su confianza declarada como evidencia",
-    "Uso de más modelos o proveedores de pago (opcional, sin puntos extra)"
-  ],
+  "actors": ["Coordinador: solicita y aprueba resúmenes de su organización", "Proveedor de IA: externo y no confiable; real, local, reproducción declarada o fixture", "Sistema: adaptador, validador y generador del resumen alternativo", "Auditor, Bodega y Solicitante: sin acceso al asistente"],
+  "scope": ["Selección por identificador de 1 a 20 solicitudes ENVIADA de la organización", "Proyección de los seis campos autorizados por RF10", "Adaptador intercambiable con plazo de 5 s", "Validación contra ai-output.schema.json y de pertenencia de identificadores", "Resumen determinista alternativo ante salida inválida, timeout o fallo", "Borrador identificado como asistencia de IA y aprobación auditada"],
+  "exclusions": ["Ejecutar acciones sugeridas por el modelo o cambiar prioridad, reserva o despacho desde el asistente", "Exigir al modelo explicar su razonamiento interno o usar su confianza declarada como evidencia", "Uso de más modelos o proveedores de pago (opcional, sin puntos extra)"],
   "inputs": [
     {
       "field": "requestIds",
@@ -62,63 +46,42 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-05.json` se gener
       "validation": ["Borrador de la organización del coordinador; si no, 404"]
     }
   ],
-  "process": [
-    "Autenticar; solo el Coordinador puede solicitar o aprobar; Auditor, Bodega y Solicitante reciben 403",
-    "Validar la selección y resolver cada identificador en la organización y en estado ENVIADA",
-    "Proyectar solo los seis campos autorizados y marcar las observaciones como dato no confiable",
-    "Invocar el adaptador con un plazo de 5 s; el modelo no recibe herramientas, credenciales ni acceso a la base",
-    "Validar la respuesta contra el esquema y comprobar en código que cada requestId pertenece al conjunto enviado y no se repite",
-    "Si es válida, guardar el borrador con su origen (proveedor y modelo, reproducción declarada o fixture) y la etiqueta de asistencia de IA",
-    "Si la salida es inválida, vence el plazo o falla el proveedor, devolver un mensaje controlado y un resumen determinista alternativo con origen fallback; el resto del sistema sigue funcionando",
-    "Mostrar summary y reason como texto escapado; nunca ejecutar marcado ni instrucciones",
-    "Aprobar: registrar aprobación y evento de auditoría en una transacción sin cambiar prioridad, inventario ni estado"
-  ],
+  "process": ["Autenticar; solo el Coordinador puede solicitar o aprobar; Auditor, Bodega y Solicitante reciben 403", "Validar la selección y resolver cada identificador en la organización y en estado ENVIADA", "Proyectar solo los seis campos autorizados y marcar las observaciones como dato no confiable", "Invocar el adaptador con un plazo de 5 s; el modelo no recibe herramientas, credenciales ni acceso a la base", "Validar la respuesta contra el esquema y comprobar en código que cada requestId pertenece al conjunto enviado y no se repite", "Si es válida, guardar el borrador con su origen (proveedor y modelo, reproducción declarada o fixture) y la etiqueta de asistencia de IA", "Si la salida es inválida, vence el plazo o falla el proveedor, devolver un mensaje controlado y un resumen determinista alternativo con origen fallback; el resto del sistema sigue funcionando", "Mostrar summary y reason como texto escapado; nunca ejecutar marcado ni instrucciones", "Aprobar: registrar aprobación y evento de auditoría en una transacción sin cambiar prioridad, inventario ni estado"],
   "outputs": [
-    {"condition": "Salida válida", "result": "200 con borrador identificado como asistencia de IA, summary, recommendations y origen"},
-    {"condition": "Salida inválida, timeout de 5 s o fallo del proveedor", "result": "200 con mensaje controlado, resumen determinista, recommendations vacío (CL-08) y origen fallback"},
-    {"condition": "Selección vacía, mayor de 20 o con repetidos", "result": "422 sin llamar al proveedor"},
-    {"condition": "Identificador de otra organización o inexistente", "result": "404 sin llamar al proveedor"},
-    {"condition": "Solicitud seleccionada fuera de ENVIADA", "result": "409 sin llamar al proveedor (supuesto CL-19)"},
-    {"condition": "Rol distinto de Coordinador", "result": "403"},
-    {"condition": "Aprobación válida", "result": "200 con aprobador y fecha UTC; un evento de auditoría"}
+    {
+      "condition": "Salida válida",
+      "result": "200 con borrador identificado como asistencia de IA, summary, recommendations y origen"
+    },
+    {
+      "condition": "Salida inválida, timeout de 5 s o fallo del proveedor",
+      "result": "200 con mensaje controlado, resumen determinista, recommendations vacío (CL-08) y origen fallback"
+    },
+    {
+      "condition": "Selección vacía, mayor de 20 o con repetidos",
+      "result": "422 sin llamar al proveedor"
+    },
+    {
+      "condition": "Identificador de otra organización o inexistente",
+      "result": "404 sin llamar al proveedor"
+    },
+    {
+      "condition": "Solicitud seleccionada fuera de ENVIADA",
+      "result": "409 sin llamar al proveedor (supuesto CL-19)"
+    },
+    {
+      "condition": "Rol distinto de Coordinador",
+      "result": "403"
+    },
+    {
+      "condition": "Aprobación válida",
+      "result": "200 con aprobador y fecha UTC; un evento de auditoría"
+    }
   ],
-  "businessRules": [
-    "RF10: el coordinador solicita un resumen de hasta 20 solicitudes ENVIADA de su organización seleccionadas por identificador; el adaptador recibe solo requestId, zona, prioridad, fecha requerida, estado y observaciones",
-    "RF11: summary hasta 600 caracteres; hasta cinco recomendaciones con requestId válido del conjunto recibido, reason hasta 240 caracteres y de una a tres evidenceFields permitidas; sin IDs duplicados o ajenos ni propiedades adicionales; el texto es contenido no confiable y nunca se ejecuta",
-    "RF12: el resumen es un borrador identificable como asistencia de IA; solo el coordinador lo aprueba y deja constancia; aprobar no reserva, despacha ni cambia prioridad; salida inválida, timeout de 5 s o fallo del proveedor devuelven mensaje controlado y resumen determinista alternativo",
-    "La prioridad proviene de la solicitud, no del modelo; la validación de pertenencia, estado y formato se hace en código, un prompt restrictivo no basta",
-    "Interfaz de proveedor intercambiable; CI usa los fixtures deterministas del anexo sin servicios de pago",
-    "Debe demostrarse una salida de un LLM real por API, modelo local o reproducción declarada con entrada, salida y origen, pasando por el mismo adaptador y validador; no se hardcodean recomendaciones ni se afirma una invocación en vivo que no ocurrió",
-    "La aprobación se audita con los campos de RF09"
-  ],
-  "edgeCases": [
-    "Selección de 0, 1, 20 y 21 identificadores",
-    "Identificador repetido, B-001 de ORG-B y una solicitud RESERVADA",
-    "JSON roto (fixture AI-JSON-BAD)",
-    "summary vacío, de 600 y de 601 caracteres",
-    "0, 5 y 6 recomendaciones",
-    "reason de 240 y 241 caracteres",
-    "evidenceFields vacío, con 1, 3 y 4 claves, repetidas o con clave no permitida",
-    "requestId duplicado o fuera del conjunto (fixture AI-FOREIGN-ID)",
-    "Propiedad adicional execute (fixture AI-EXTRA)",
-    "Marcado script en summary e instrucciones incrustadas en observaciones (fixture AI-INJECTION y untrusted-observation.txt)",
-    "Respuesta a los 5001 ms (fixture AI-TIMEOUT), error del proveedor (AI-ERROR) y proveedor no configurado"
-  ],
-  "assumptions": [
-    "El resumen alternativo es determinista para la misma selección y estado de datos y no incluye recomendaciones (CL-08, decisión del equipo)",
-    "Se persisten borradores válidos y metadatos sanitizados de intentos fallidos, sin prompts con secretos (CL-05, decisión del equipo)",
-    "Solicitud seleccionada fuera de ENVIADA produce 409 (CL-19, decisión del equipo)"
-  ],
-  "openQuestions": [
-    "CL-05: persistencia y retención de intentos de IA (equipo)",
-    "CL-08: contenido exacto del resumen alternativo (equipo)"
-  ],
-  "dependencies": [
-    "SPEC-01: rol Coordinador y organización",
-    "SPEC-02: solicitudes en ENVIADA",
-    "SPEC-04: estructura del evento de auditoría",
-    "Copia de trabajo de ai-output.schema.json en contracts/ (G2) y fixtures del anexo"
-  ],
+  "businessRules": ["RF10: el coordinador solicita un resumen de hasta 20 solicitudes ENVIADA de su organización seleccionadas por identificador; el adaptador recibe solo requestId, zona, prioridad, fecha requerida, estado y observaciones", "RF11: summary hasta 600 caracteres; hasta cinco recomendaciones con requestId válido del conjunto recibido, reason hasta 240 caracteres y de una a tres evidenceFields permitidas; sin IDs duplicados o ajenos ni propiedades adicionales; el texto es contenido no confiable y nunca se ejecuta", "RF12: el resumen es un borrador identificable como asistencia de IA; solo el coordinador lo aprueba y deja constancia; aprobar no reserva, despacha ni cambia prioridad; salida inválida, timeout de 5 s o fallo del proveedor devuelven mensaje controlado y resumen determinista alternativo", "La prioridad proviene de la solicitud, no del modelo; la validación de pertenencia, estado y formato se hace en código, un prompt restrictivo no basta", "Interfaz de proveedor intercambiable; CI usa los fixtures deterministas del anexo sin servicios de pago", "Debe demostrarse una salida de un LLM real por API, modelo local o reproducción declarada con entrada, salida y origen, pasando por el mismo adaptador y validador; no se hardcodean recomendaciones ni se afirma una invocación en vivo que no ocurrió", "La aprobación se audita con los campos de RF09", "Decisiones propuestas G2: selección se valida formato 422 → pertenencia 404 → estado 409 antes de proveedor; fallback aprobable sin cambiar negocio; segunda aprobación 409. Timeout proveedor 5s, tolerancia de observación fallback ≤250ms. Nueva revisión humana requerida."],
+  "edgeCases": ["Selección de 0, 1, 20 y 21 identificadores", "Identificador repetido, B-001 de ORG-B y una solicitud RESERVADA", "JSON roto (fixture AI-JSON-BAD)", "summary vacío, de 600 y de 601 caracteres", "0, 5 y 6 recomendaciones", "reason de 240 y 241 caracteres", "evidenceFields vacío, con 1, 3 y 4 claves, repetidas o con clave no permitida", "requestId duplicado o fuera del conjunto (fixture AI-FOREIGN-ID)", "Propiedad adicional execute (fixture AI-EXTRA)", "Marcado script en summary e instrucciones incrustadas en observaciones (fixture AI-INJECTION y untrusted-observation.txt)", "Respuesta a los 5001 ms (fixture AI-TIMEOUT), error del proveedor (AI-ERROR) y proveedor no configurado"],
+  "assumptions": ["El resumen alternativo es determinista para la misma selección y estado de datos y no incluye recomendaciones (CL-08, decisión del equipo)", "Se persisten borradores válidos y metadatos sanitizados de intentos fallidos, sin prompts con secretos (CL-05, decisión del equipo)", "Solicitud seleccionada fuera de ENVIADA produce 409 (CL-19, decisión del equipo)"],
+  "openQuestions": ["CL-05: persistencia y retención de intentos de IA (equipo)", "CL-08: contenido exacto del resumen alternativo (equipo)"],
+  "dependencies": ["SPEC-01: rol Coordinador y organización", "SPEC-02: solicitudes en ENVIADA", "SPEC-04: estructura del evento de auditoría", "Copia de trabajo de ai-output.schema.json en contracts/ (G2) y fixtures del anexo"],
   "acceptanceCriteria": [
     {
       "id": "AC-05-01",
@@ -142,7 +105,7 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-05.json` se gener
       "kind": "fallo",
       "given": "los fixtures AI-TIMEOUT con 5001 ms y AI-ERROR",
       "when": "el coordinador solicita un resumen",
-      "then": "a los 5 s, con la tolerancia instrumental declarada, se devuelven mensaje controlado y resumen determinista; listar, reservar y despachar siguen funcionando durante y después"
+      "then": "el adaptador corta la espera del proveedor a los 5 segundos; test instrumental permite hasta 250 ms adicionales de procesamiento del fallback (no ampliar timeout del proveedor); mensaje controlado y fallback determinista; listar/reservar/despachar siguen funcionando"
     },
     {
       "id": "AC-05-04",
@@ -182,7 +145,7 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-05.json` se gener
       "kind": "fallo",
       "given": "una solicitud de ORG-A cuyas observaciones contienen el texto de untrusted-observation.txt y el fixture AI-INJECTION",
       "when": "el coordinador solicita el resumen",
-      "then": "la instrucción incrustada no se obedece, el identificador ajeno se rechaza y se usa el resumen alternativo; el marcado se muestra escapado; inventario, estados, prioridades y permisos no cambian"
+      "then": "la instrucción incrustada no se obedece; el ID ajeno invalida la salida completa y se usa fallback; el texto malicioso rechazado no llega a pantalla; stock, estados, prioridades y permisos no cambian. Escape de salida válida se verifica por separado en AC-05-17"
     },
     {
       "id": "AC-05-09",
@@ -231,6 +194,30 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-05.json` se gener
       "given": "el pipeline de CI del repositorio",
       "when": "ejecuta las pruebas del asistente",
       "then": "usa solo los siete fixtures deterministas de ai-provider-fixtures.json, sin credenciales ni servicios de pago, y cada resultado coincide con el campo expected del fixture"
+    },
+    {
+      "id": "AC-05-15",
+      "requirements": ["RF12", "RF09"],
+      "kind": "positivo",
+      "given": "borrador de ORG-A generado como fallback y coordinador autenticado con CSRF válido",
+      "when": "aprueba el borrador alternativo",
+      "then": "200; conserva origen fallback y registra aprobación+evento en la misma transacción, sin cambios de solicitudes, prioridad o inventario"
+    },
+    {
+      "id": "AC-05-16",
+      "requirements": ["RF12", "RF09"],
+      "kind": "negativo",
+      "given": "borrador ya APROBADO en ORG-A y su evento de aprobación existente",
+      "when": "el coordinador repite aprobación con CSRF válido",
+      "then": "409; no cambia aprobación previa ni añade un segundo evento; solicitudes e inventario inalterados"
+    },
+    {
+      "id": "AC-05-17",
+      "requirements": ["RF11", "RF12", "RNF01"],
+      "kind": "positivo",
+      "given": "salida IA válida con IDs propios y texto <script>window.__unsafe=true</script> en summary, dentro de límites",
+      "when": "se valida y se muestra el borrador",
+      "then": "la salida válida se acepta, texto escapado visible, no se ejecuta script y window.__unsafe no se establece; sin cambios de inventario, estado o prioridad"
     }
   ]
 }
@@ -254,3 +241,5 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-05.json` se gener
 - 0.1: borrador inicial (commit `1aeacbf`).
 - 0.2-draft: ampliación a 13 AC sin fuente oficial.
 - 0.3-draft: cotejo con el enunciado y anexos; selección por identificador, campos oficiales, esquema oficial, fixtures referenciados, campos RF09 en la aprobación y AC-05-14 (CI sin servicios de pago).
+
+Actualización 0.4-draft por Codex a solicitud del coordinador: hallazgos H-V/H-E atendidos documentalmente; los AC nuevos no son pruebas ejecutadas. Revisión humana sobre nuevo SHA PENDIENTE.

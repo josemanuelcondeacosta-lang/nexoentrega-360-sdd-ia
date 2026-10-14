@@ -33,3 +33,7 @@ La afirmación anterior de ausencia de hallazgos bloqueantes pertenece al regist
 Para confirmar: Carolina debe abrir el candidato indicado, revisar las diferencias de SPEC-04 y sus AC, ejecutar las comprobaciones documentales que declare, y publicar desde su cuenta una revisión con SHA completo, fecha UTC, observaciones y decisión. Ninguna firma o comprobación personal se agrega por Codex.
 
 Actualización del candidato: el PR #10 incluye ahora SPEC-04 **0.3.2-draft** (R-V02), contrato CSRF y plan/tareas corregidos. El SHA `b1dbbf9` anterior conserva validez como referencia histórica, pero no aprueba estos cambios posteriores. Revisar el SHA del commit de correcciones del PR #10, facilitado por el coordinador, usando `docs/reviews/carolina-revision-sencilla.md`. Aprobación de esta versión: **PENDIENTE**.
+
+## Revisión personal recibida de Carolina
+
+[Comentario publicado por karollCantillo](https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/10#issuecomment-6176370904). SHA leído: `c70e431a1099b47bdd1a0dc79802c7af54cf6109`; fecha UTC declarada por ella: `2026-10-14T19:15:00Z`. Decisión: **SPEC-04 0.3.2-draft aprobada; plan/tareas aprobados sobre ese SHA**. Alcance: cotejo AC-04-11, CSRF IA, tablas y responsabilidades. Mantiene H-V/H-E abiertos; no certifica aplicación. Este apartado actualiza el estado pendiente anterior únicamente para ese alcance y versión. Cambios posteriores requieren revisión propia; SPEC-01/03/05 0.4-draft no quedan aprobadas por ese comentario.

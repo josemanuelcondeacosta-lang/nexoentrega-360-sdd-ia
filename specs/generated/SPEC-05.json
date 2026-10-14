@@ -1,6 +1,6 @@
 {
   "id": "SPEC-05",
-  "version": "0.3-draft",
+  "version": "0.4-draft",
   "name": "Asistente IA",
   "status": "Borrador cotejado con el enunciado oficial; pendiente de revisión humana independiente",
   "story": {
@@ -122,7 +122,8 @@
     "La prioridad proviene de la solicitud, no del modelo; la validación de pertenencia, estado y formato se hace en código, un prompt restrictivo no basta",
     "Interfaz de proveedor intercambiable; CI usa los fixtures deterministas del anexo sin servicios de pago",
     "Debe demostrarse una salida de un LLM real por API, modelo local o reproducción declarada con entrada, salida y origen, pasando por el mismo adaptador y validador; no se hardcodean recomendaciones ni se afirma una invocación en vivo que no ocurrió",
-    "La aprobación se audita con los campos de RF09"
+    "La aprobación se audita con los campos de RF09",
+    "Decisiones propuestas G2: selección se valida formato 422 → pertenencia 404 → estado 409 antes de proveedor; fallback aprobable sin cambiar negocio; segunda aprobación 409. Timeout proveedor 5s, tolerancia de observación fallback ≤250ms. Nueva revisión humana requerida."
   ],
   "edgeCases": [
     "Selección de 0, 1, 20 y 21 identificadores",
@@ -184,7 +185,7 @@
       "kind": "fallo",
       "given": "los fixtures AI-TIMEOUT con 5001 ms y AI-ERROR",
       "when": "el coordinador solicita un resumen",
-      "then": "a los 5 s, con la tolerancia instrumental declarada, se devuelven mensaje controlado y resumen determinista; listar, reservar y despachar siguen funcionando durante y después"
+      "then": "el adaptador corta la espera del proveedor a los 5 segundos; test instrumental permite hasta 250 ms adicionales de procesamiento del fallback (no ampliar timeout del proveedor); mensaje controlado y fallback determinista; listar/reservar/despachar siguen funcionando"
     },
     {
       "id": "AC-05-04",
@@ -237,7 +238,7 @@
       "kind": "fallo",
       "given": "una solicitud de ORG-A cuyas observaciones contienen el texto de untrusted-observation.txt y el fixture AI-INJECTION",
       "when": "el coordinador solicita el resumen",
-      "then": "la instrucción incrustada no se obedece, el identificador ajeno se rechaza y se usa el resumen alternativo; el marcado se muestra escapado; inventario, estados, prioridades y permisos no cambian"
+      "then": "la instrucción incrustada no se obedece; el ID ajeno invalida la salida completa y se usa fallback; el texto malicioso rechazado no llega a pantalla; stock, estados, prioridades y permisos no cambian. Escape de salida válida se verifica por separado en AC-05-17"
     },
     {
       "id": "AC-05-09",
@@ -301,6 +302,40 @@
       "given": "el pipeline de CI del repositorio",
       "when": "ejecuta las pruebas del asistente",
       "then": "usa solo los siete fixtures deterministas de ai-provider-fixtures.json, sin credenciales ni servicios de pago, y cada resultado coincide con el campo expected del fixture"
+    },
+    {
+      "id": "AC-05-15",
+      "requirements": [
+        "RF12",
+        "RF09"
+      ],
+      "kind": "positivo",
+      "given": "borrador de ORG-A generado como fallback y coordinador autenticado con CSRF válido",
+      "when": "aprueba el borrador alternativo",
+      "then": "200; conserva origen fallback y registra aprobación+evento en la misma transacción, sin cambios de solicitudes, prioridad o inventario"
+    },
+    {
+      "id": "AC-05-16",
+      "requirements": [
+        "RF12",
+        "RF09"
+      ],
+      "kind": "negativo",
+      "given": "borrador ya APROBADO en ORG-A y su evento de aprobación existente",
+      "when": "el coordinador repite aprobación con CSRF válido",
+      "then": "409; no cambia aprobación previa ni añade un segundo evento; solicitudes e inventario inalterados"
+    },
+    {
+      "id": "AC-05-17",
+      "requirements": [
+        "RF11",
+        "RF12",
+        "RNF01"
+      ],
+      "kind": "positivo",
+      "given": "salida IA válida con IDs propios y texto <script>window.__unsafe=true</script> en summary, dentro de límites",
+      "when": "se valida y se muestra el borrador",
+      "then": "la salida válida se acepta, texto escapado visible, no se ejecuta script y window.__unsafe no se establece; sin cambios de inventario, estado o prioridad"
     }
   ]
 }

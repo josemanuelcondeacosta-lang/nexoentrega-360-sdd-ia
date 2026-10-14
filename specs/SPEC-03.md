@@ -1,6 +1,6 @@
 # SPEC-03: Inventario y transiciones
 
-- **Versión:** 0.3-draft — **no aprobada para implementar**.
+- **Versión:** 0.4-draft — **no aprobada para implementar**.
 - **Fuente vinculante:** `docs/examen-oficial/originales/Examen_Estudiantes_SDD_IA.pdf` §2 (p. 3), §3 RF04–RF07 y condiciones de consistencia (p. 4), §4 RF09 (p. 5), §5 RNF02/RNF05 (p. 6), §11 (p. 12); anexos `acceptance-oracles.md` y `fixture-scenarios.json`.
 - **Estado y aprobación:** versión 0.3 elaborada con asistencia de IA a solicitud de Castro Edier (registro `docs/evidence/ai-log/AI-001-cotejo-oficial-g1.md`). Revisor humano distinto del autor: **PENDIENTE**. Fecha UTC y commit revisado: **PENDIENTE**.
 
@@ -10,7 +10,7 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-03.json` se gener
 ```json
 {
   "id": "SPEC-03",
-  "version": "0.3-draft",
+  "version": "0.4-draft",
   "name": "Inventario y transiciones",
   "status": "Borrador cotejado con el enunciado oficial; pendiente de revisión humana independiente",
   "story": {
@@ -21,23 +21,9 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-03.json` se gener
   },
   "requirements": ["RF02", "RF04", "RF05", "RF06", "RF07", "RF09", "RNF02", "RNF05"],
   "description": "Transiciones ENVIADA a RESERVADA a DESPACHADA a ENTREGADA y cancelación desde ENVIADA o RESERVADA, con inventario por organización y SKU, reserva atómica de todas las líneas, idempotencia con Idempotency-Key y auditoría confirmada en la misma transacción. Enunciado §3.",
-  "actors": [
-    "Coordinador: reserva ENVIADA y registra ENTREGADA sobre DESPACHADA",
-    "Bodega: despacha RESERVADA",
-    "Solicitante dueño: cancela sus solicitudes en ENVIADA o RESERVADA",
-    "Auditor: sin permiso de transición"
-  ],
-  "scope": [
-    "Reserva total o nula con Idempotency-Key y control de concurrencia",
-    "Despacho, entrega y cancelación con sus efectos exactos sobre el inventario",
-    "Rechazo 409 de toda transición no indicada, sin efectos",
-    "Evento de auditoría y resultado idempotente confirmados junto con estado e inventario"
-  ],
-  "exclusions": [
-    "Ajustes manuales de existencia física: no hay API de ajuste; el stock inicial proviene del seed (CL-06)",
-    "Devoluciones, rutas y GPS (fuera del alcance, enunciado §1)",
-    "Idempotencia de operaciones distintas de la reserva (no exigida; CL-11)"
-  ],
+  "actors": ["Coordinador: reserva ENVIADA y registra ENTREGADA sobre DESPACHADA", "Bodega: despacha RESERVADA", "Solicitante dueño: cancela sus solicitudes en ENVIADA o RESERVADA", "Auditor: sin permiso de transición"],
+  "scope": ["Reserva total o nula con Idempotency-Key y control de concurrencia", "Despacho, entrega y cancelación con sus efectos exactos sobre el inventario", "Rechazo 409 de toda transición no indicada, sin efectos", "Evento de auditoría y resultado idempotente confirmados junto con estado e inventario"],
+  "exclusions": ["Ajustes manuales de existencia física: no hay API de ajuste; el stock inicial proviene del seed (CL-06)", "Devoluciones, rutas y GPS (fuera del alcance, enunciado §1)", "Idempotencia de operaciones distintas de la reserva (no exigida; CL-11)"],
   "inputs": [
     {
       "field": "requestId",
@@ -65,64 +51,42 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-03.json` se gener
       "validation": ["reserved nunca supera onHand", "Pertenece a una sola organización"]
     }
   ],
-  "process": [
-    "Autenticar; resolver la solicitud dentro de la organización (404 si no existe en ella); autorizar el rol para la operación (403 si no)",
-    "RESERVAR: tras autorizar, buscar la clave en el ámbito clave, usuario, organización y operación; si existe con la misma huella devolver el código y cuerpo almacenados sin nuevos efectos; si la huella difiere responder 409",
-    "Abrir transacción; bloquear la solicitud y las filas de inventario de sus SKU en orden estable por SKU",
-    "Verificar el estado de origen; si la transición no está indicada en RF04 responder 409 sin cambios",
-    "RESERVAR desde ENVIADA: comprobar disponible mayor o igual que la cantidad en todas las líneas; si alguna falla responder 409 y revertir todo; si todas cumplen, aumentar reserved de cada línea y pasar a RESERVADA",
-    "DESPACHAR desde RESERVADA: disminuir onHand y reserved en las cantidades de la solicitud y pasar a DESPACHADA",
-    "ENTREGAR desde DESPACHADA: pasar a ENTREGADA sin tocar el inventario",
-    "CANCELAR desde ENVIADA o RESERVADA por el solicitante dueño: si estaba RESERVADA disminuir reserved exactamente en sus cantidades sin tocar onHand; pasar a CANCELADA",
-    "Registrar el evento de auditoría y, en la reserva, el resultado idempotente dentro de la misma transacción; confirmar; cualquier fallo antes del commit revierte todo",
-    "Responder con el estado y las cantidades confirmados"
-  ],
+  "process": ["Autenticar; resolver la solicitud dentro de la organización (404 si no existe en ella); autorizar el rol para la operación (403 si no)", "RESERVAR: tras autorizar, buscar la clave en el ámbito clave, usuario, organización y operación; si existe con la misma huella devolver el código y cuerpo almacenados sin nuevos efectos; si la huella difiere responder 409", "Abrir transacción; bloquear la solicitud y las filas de inventario de sus SKU en orden estable por SKU", "Verificar el estado de origen; si la transición no está indicada en RF04 responder 409 sin cambios", "RESERVAR desde ENVIADA: comprobar disponible mayor o igual que la cantidad en todas las líneas; si alguna falla responder 409 y revertir todo; si todas cumplen, aumentar reserved de cada línea y pasar a RESERVADA", "DESPACHAR desde RESERVADA: disminuir onHand y reserved en las cantidades de la solicitud y pasar a DESPACHADA", "ENTREGAR desde DESPACHADA: pasar a ENTREGADA sin tocar el inventario", "CANCELAR desde ENVIADA o RESERVADA por el solicitante dueño: si estaba RESERVADA disminuir reserved exactamente en sus cantidades sin tocar onHand; pasar a CANCELADA", "Registrar el evento de auditoría y, en la reserva, el resultado idempotente dentro de la misma transacción; confirmar; cualquier fallo antes del commit revierte todo", "Responder con el estado y las cantidades confirmados"],
   "outputs": [
-    {"condition": "Transición válida", "result": "200 con estado y cantidades confirmados; un evento de auditoría"},
-    {"condition": "Repetición con la misma clave y el mismo contenido dentro de la retención", "result": "El mismo código y cuerpo originales, sin nueva reserva ni nuevo evento"},
-    {"condition": "Misma clave con contenido distinto", "result": "409 sin efectos"},
-    {"condition": "Alguna línea sin disponibilidad suficiente", "result": "409; ninguna línea ni el estado cambian"},
-    {"condition": "Transición no indicada, incluida una segunda reserva con otra clave", "result": "409 conservando datos e inventario"},
-    {"condition": "Rol no autorizado para la operación sobre recurso de su organización", "result": "403 sin efectos y sin almacenar la clave"},
-    {"condition": "Solicitud de otra organización o inexistente", "result": "404 sin efectos"}
+    {
+      "condition": "Transición válida",
+      "result": "200 con estado y cantidades confirmados; un evento de auditoría"
+    },
+    {
+      "condition": "Repetición con la misma clave y el mismo contenido dentro de la retención",
+      "result": "El mismo código y cuerpo originales, sin nueva reserva ni nuevo evento"
+    },
+    {
+      "condition": "Misma clave con contenido distinto",
+      "result": "409 sin efectos"
+    },
+    {
+      "condition": "Alguna línea sin disponibilidad suficiente",
+      "result": "409; ninguna línea ni el estado cambian"
+    },
+    {
+      "condition": "Transición no indicada, incluida una segunda reserva con otra clave",
+      "result": "409 conservando datos e inventario"
+    },
+    {
+      "condition": "Rol no autorizado para la operación sobre recurso de su organización",
+      "result": "403 sin efectos y sin almacenar la clave"
+    },
+    {
+      "condition": "Solicitud de otra organización o inexistente",
+      "result": "404 sin efectos"
+    }
   ],
-  "businessRules": [
-    "RF04: flujo base BORRADOR, ENVIADA, RESERVADA, DESPACHADA, ENTREGADA; ENVIADA y RESERVADA pueden pasar a CANCELADA por el solicitante dueño; toda transición no indicada se rechaza con 409 y conserva datos e inventario",
-    "RF05: la reserva cubre todas las líneas o ninguna; solo desde ENVIADA; disponible igual a existencia física menos reservada; las tres cantidades no negativas",
-    "RF06: cancelar una RESERVADA libera exactamente su reserva sin cambiar la existencia física; despachar disminuye física y reservada en las cantidades de la solicitud; ENTREGADA no altera inventario; cancelar una ENVIADA no altera inventario",
-    "RF07: cada petición de reserva incluye Idempotency-Key; misma clave, usuario, organización, operación y contenido repiten el resultado sin duplicar efectos; misma clave con contenido diferente devuelve 409; el resultado se conserva al menos 24 horas",
-    "La clave se procesa después de autenticar y autorizar y no permite recuperar la respuesta de otro usuario",
-    "Dos peticiones simultáneas que compiten por existencias insuficientes no pueden producir dos reservas exitosas; un error antes del commit no deja reserva parcial",
-    "Estado, inventario, evento de auditoría y resultado idempotente se confirman juntos",
-    "Cada operación afecta solo el inventario de su organización"
-  ],
-  "edgeCases": [
-    "Disponible exactamente igual a la cantidad pedida",
-    "Una línea suficiente y otra insuficiente en la misma solicitud",
-    "A-001 y A-002 reservadas a la vez, 7 unidades cada una de KIT-ALIMENTO con existencia física 10",
-    "Doble despacho de la misma solicitud",
-    "Entregar una RESERVADA; cancelar BORRADOR, DESPACHADA o ENTREGADA; cualquier salida de CANCELADA o ENTREGADA",
-    "Repetición de clave a las 23 h 59 min y a las 24 h",
-    "Misma clave textual usada por otro usuario u otra organización",
-    "Reserva sin Idempotency-Key",
-    "Fallo inducido antes del commit",
-    "Rol incorrecto para cada operación"
-  ],
-  "assumptions": [
-    "Retención de la clave exactamente 24 horas desde su creación; en ese instante deja de repetir (CL-11, decisión del equipo)",
-    "Se almacenan las respuestas completadas de la reserva, incluido el 409 de negocio; no se almacenan 401, 403, 422 ni 500, que pueden reintentarse con la misma clave (CL-04; debe fijarse en el contrato G2)",
-    "Clave ausente produce 422 (decisión del equipo)",
-    "No existe API de ajuste de stock (CL-06)"
-  ],
-  "openQuestions": [
-    "CL-04 y CL-11: confirmar en el contrato OpenAPI la política de errores almacenados, reintentos y expiración"
-  ],
-  "dependencies": [
-    "SPEC-01: identidad y matriz de permisos",
-    "SPEC-02: solicitudes en ENVIADA",
-    "SPEC-04: estructura del evento de auditoría",
-    "Base relacional con transacciones y bloqueo de filas (ADR de transacciones e idempotencia, G2)"
-  ],
+  "businessRules": ["RF04: flujo base BORRADOR, ENVIADA, RESERVADA, DESPACHADA, ENTREGADA; ENVIADA y RESERVADA pueden pasar a CANCELADA por el solicitante dueño; toda transición no indicada se rechaza con 409 y conserva datos e inventario", "RF05: la reserva cubre todas las líneas o ninguna; solo desde ENVIADA; disponible igual a existencia física menos reservada; las tres cantidades no negativas", "RF06: cancelar una RESERVADA libera exactamente su reserva sin cambiar la existencia física; despachar disminuye física y reservada en las cantidades de la solicitud; ENTREGADA no altera inventario; cancelar una ENVIADA no altera inventario", "RF07: cada petición de reserva incluye Idempotency-Key; misma clave, usuario, organización, operación y contenido repiten el resultado sin duplicar efectos; misma clave con contenido diferente devuelve 409; el resultado se conserva al menos 24 horas", "La clave se procesa después de autenticar y autorizar y no permite recuperar la respuesta de otro usuario", "Dos peticiones simultáneas que compiten por existencias insuficientes no pueden producir dos reservas exitosas; un error antes del commit no deja reserva parcial", "Estado, inventario, evento de auditoría y resultado idempotente se confirman juntos", "Cada operación afecta solo el inventario de su organización"],
+  "edgeCases": ["Disponible exactamente igual a la cantidad pedida", "Una línea suficiente y otra insuficiente en la misma solicitud", "A-001 y A-002 reservadas a la vez, 7 unidades cada una de KIT-ALIMENTO con existencia física 10", "Doble despacho de la misma solicitud", "Entregar una RESERVADA; cancelar BORRADOR, DESPACHADA o ENTREGADA; cualquier salida de CANCELADA o ENTREGADA", "Repetición de clave a las 23 h 59 min y a las 24 h", "Misma clave textual usada por otro usuario u otra organización", "Reserva sin Idempotency-Key", "Fallo inducido antes del commit", "Rol incorrecto para cada operación"],
+  "assumptions": ["Retención de la clave exactamente 24 horas desde su creación; en ese instante deja de repetir (CL-11, decisión del equipo)", "Se almacenan las respuestas completadas de la reserva, incluido el 409 de negocio; no se almacenan 401, 403, 422 ni 500, que pueden reintentarse con la misma clave (CL-04; debe fijarse en el contrato G2)", "Clave ausente produce 422 (decisión del equipo)", "No existe API de ajuste de stock (CL-06)"],
+  "openQuestions": ["CL-04 y CL-11: confirmar en el contrato OpenAPI la política de errores almacenados, reintentos y expiración"],
+  "dependencies": ["SPEC-01: identidad y matriz de permisos", "SPEC-02: solicitudes en ENVIADA", "SPEC-04: estructura del evento de auditoría", "Base relacional con transacciones y bloqueo de filas (ADR de transacciones e idempotencia, G2)"],
   "acceptanceCriteria": [
     {
       "id": "AC-03-01",
@@ -194,7 +158,7 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-03.json` se gener
       "kind": "fallo",
       "given": "A-001 ENVIADA y un fallo inducido al escribir el evento de auditoría antes del commit",
       "when": "el coordinador reserva A-001",
-      "then": "la petición falla de forma controlada; A-001 sigue ENVIADA, reservado sigue en 0, no hay resultado idempotente almacenado ni evento; nunca existe una reserva sin su evento"
+      "then": "recibe 500 con correlationId sanitizado; la transacción revierte estado, stock y auditoría; no se conserva resultado idempotente, permitiendo reintento con la misma clave"
     },
     {
       "id": "AC-03-10",
@@ -251,6 +215,14 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-03.json` se gener
       "given": "las pantallas con las acciones reservar, despachar, entregar y cancelar a 390 y 1366 px de ancho",
       "when": "cada rol ejecuta su acción solo con teclado, provocando también un rechazo 409",
       "then": "no hay desbordamiento horizontal; los controles tienen nombre visible; el rechazo se muestra asociado a la acción; la verificación manual se registra sin afirmar conformidad WCAG total"
+    },
+    {
+      "id": "AC-03-17",
+      "requirements": ["RF04", "RF06", "RNF02", "RF09"],
+      "kind": "fallo",
+      "given": "A-001 RESERVADA, físico 10/reservado 7/disponible 3, dos procesos PostgreSQL reales y barrera",
+      "when": "Bodega despacha y Solicitante dueño cancela simultáneamente la misma solicitud",
+      "then": "una petición recibe 200 y la otra 409; si gana despacho queda DESPACHADA con 3/0/3, si gana cancelación queda CANCELADA con 10/0/10; exactamente un evento exitoso nuevo, sin efectos parciales"
     }
   ]
 }
@@ -273,3 +245,5 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-03.json` se gener
 - 0.1: borrador inicial (commit `1aeacbf`).
 - 0.2-draft: ampliación a 13 AC sin fuente oficial.
 - 0.3-draft: cotejo con el enunciado; actores oficiales por transición, oráculos del anexo, AC-03-14 (segunda reserva con otra clave), AC-03-15 (permisos e idempotencia tras autorizar) y AC-03-16 (RNF05).
+
+Actualización 0.4-draft por Codex a solicitud del coordinador: hallazgos H-V/H-E atendidos documentalmente; los AC nuevos no son pruebas ejecutadas. Revisión humana sobre nuevo SHA PENDIENTE.
