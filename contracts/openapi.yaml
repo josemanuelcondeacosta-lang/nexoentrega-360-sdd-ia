@@ -770,6 +770,31 @@ paths:
       - Coordinador
       - Bodega
       - Auditor
+  /api/catalog:
+    get:
+      operationId: catalogoSkuActivo
+      summary: Consultar SKU activos para el formulario
+      tags:
+      - Base
+      description: Solo SKU activos de la organización autenticada; no revela cantidades
+        de inventario. Proyección para RF03.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: Consultar SKU activos para el formulario
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          $ref: '#/components/responses/Base401'
+      x-roles: *id001
   /api/dashboard:
     get:
       operationId: consultarTablero

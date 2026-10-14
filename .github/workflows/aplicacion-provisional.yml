@@ -1,0 +1,60 @@
+name: Aplicación provisional
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17.6-bookworm
+        env:
+          POSTGRES_USER: nexo
+          POSTGRES_PASSWORD: nexo_demo_only
+          POSTGRES_DB: nexo_test
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U nexo -d nexo_test" --health-interval 5s --health-timeout 3s --health-retries 15
+    env:
+      APP_ENV: testing
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: nexo_test
+      DB_USERNAME: nexo
+      DB_PASSWORD: nexo_demo_only
+      SESSION_DRIVER: array
+      CACHE_STORE: array
+      QUEUE_CONNECTION: sync
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: pdo_pgsql, mbstring
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.2'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: composer install --no-interaction --prefer-dist
+        working-directory: apps/nexo
+      - run: cp .env.example .env && php artisan key:generate
+        working-directory: apps/nexo
+      - run: php vendor/bin/pint --test
+        working-directory: apps/nexo
+      - run: php artisan test --log-junit ../../docs/evidence/runtime/phpunit-ci.xml
+        working-directory: apps/nexo
+      - run: composer audit
+        working-directory: apps/nexo
+      - run: php artisan view:cache && php artisan route:list --path=api
+        working-directory: apps/nexo
+      - run: npm ci && npm run check:frontend && npm audit
+      - run: python scripts/export_specs.py --check && python scripts/build_coverage.py --check && python -m unittest discover -s scripts -p 'test_*.py'
+      - run: python scripts/check_secrets.py
+      - run: pip install -r contracts/requirements-docs.lock && python scripts/build_openapi.py --check && python scripts/validate_openapi.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidencia-provisional
+          path: docs/evidence/runtime/

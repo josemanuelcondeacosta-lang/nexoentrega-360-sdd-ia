@@ -8,3 +8,11 @@ dist/
 __pycache__/
 .pytest_cache/
 .venv-docs/
+vendor/
+*.sqlite
+*.sqlite-*
+playwright-report/
+test-results/
+apps/nexo/storage/logs/*.log
+apps/nexo/storage/framework/sessions/*
+apps/nexo/bootstrap/cache/*.php

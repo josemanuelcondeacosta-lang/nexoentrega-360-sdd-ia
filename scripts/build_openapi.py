@@ -141,6 +141,8 @@ def build():
     add('/api/inventory','get','listarInventario','Consultar inventario',ref('PaginaInventario'),errors=('401','403','422'),
         roles=['Coordinador','Bodega','Auditor'],parameters=pagination,
         description='Solo lectura de organización autenticada. físico/reservado/disponible no negativos. Coordinador incluido por CL-16 según respuesta docente reportada por coordinador.')
+    add('/api/catalog','get','catalogoSkuActivo','Consultar SKU activos para el formulario',{'type':'array','items':{'type':'string'}},errors=('401',),roles=all_roles,
+        description='Solo SKU activos de la organización autenticada; no revela cantidades de inventario. Proyección para RF03.')
     add('/api/dashboard','get','consultarTablero','Consultar cantidades por estado',ref('Tablero'),errors=('401','403','422'),
         roles=all_roles,parameters=filters,
         description='Alcance propio para Solicitante por CL-18 reportada; organización para otros. Sin inventario ni datos ajenos.')
