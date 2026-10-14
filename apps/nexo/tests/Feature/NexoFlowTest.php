@@ -113,6 +113,18 @@ class NexoFlowTest extends TestCase
         $this->assertSame(1, DB::table('audit_events')->where('action', 'APPROVE_AI')->count());
     }
 
+    public function test_requester_audit_lists_only_owned_requests_with_uuid_ids(): void
+    {
+        $owned = $this->draft();
+        $this->send($owned);
+        $other = User::factory()->create(['organization_id' => 'ORG-A', 'role' => 'Solicitante']);
+        $foreign = $this->actingAs($other)->postJson('/api/requests', ['zona' => 'NORTE', 'prioridad' => 'NORMAL', 'fechaRequerida' => now()->addDay()->toIso8601String(), 'lineas' => [['sku' => 'KIT-AGUA', 'cantidad' => 1]]])->assertCreated()->json('id');
+        $this->postJson("/api/requests/$foreign/send", [])->assertOk();
+        $this->actingAs($this->user('Solicitante'))->getJson('/api/audit')->assertOk()->assertJsonPath('total', 1)->assertJsonPath('items.0.resourceId', $owned);
+        $this->getJson("/api/requests/$foreign/audit")->assertForbidden();
+        $this->actingAs($this->user('Solicitante', 'B'))->getJson('/api/audit')->assertOk()->assertJsonPath('total', 0);
+    }
+
     public function test_invalid_quantities_rejected_before_writes(): void
     {
         $this->actingAs($this->user('Solicitante'))->postJson('/api/requests', ['zona' => 'NORTE', 'prioridad' => 'NORMAL', 'fechaRequerida' => now()->addDay()->toIso8601String(), 'lineas' => [['sku' => 'KIT-ALIMENTO', 'cantidad' => 0]]])->assertUnprocessable();

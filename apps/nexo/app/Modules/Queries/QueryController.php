@@ -96,7 +96,7 @@ class QueryController
             $q->where('resource_id', $requestId);
         }
         if ($u->role === 'Solicitante') {
-            $q->whereIn('resource_id', DB::table('requests')->where('solicitante_id', $u->id)->where('organization_id', $u->organization_id)->select('id'));
+            $q->whereIn('resource_id', DB::table('requests')->where('solicitante_id', $u->id)->where('organization_id', $u->organization_id)->selectRaw('id::text'));
         }
 
         return $this->page($r, $q->orderByDesc('occurred_at')->orderBy('id'), fn ($e) => ['id' => $e->id, 'actorId' => (string) $e->actor_id, 'organizationId' => $e->organization_id,
