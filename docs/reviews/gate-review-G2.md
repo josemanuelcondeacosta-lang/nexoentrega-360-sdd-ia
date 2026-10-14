@@ -26,3 +26,7 @@ Estado: **PROPUESTO, SIN APROBACIÓN**. Rama `docs/g2-architecture`, basada en `
 - [ ] Registrar autor, revisor independiente, fecha UTC, SHA completo, observaciones, decisiones y enlaces reales.
 
 Autor del paquete: Codex bajo solicitud de Conde José. Revisor humano: PENDIENTE. UTC/SHA revisado: PENDIENTE. Observaciones/decisión: PENDIENTE. No atribuir estos cambios a una contribución personal realizada por el coordinador.
+
+## Actualización de ubicación: consolidación documental
+
+Los estados de la tabla anterior describen el paquete parcial original. Esta rama reúne ahora ADR-002 de Edier, ADR-003 y plan/tareas de Carolina, datos/estados/secuencia reserva y estrategia actualizada de Vega. Se conservan fuentes y autorías sin presumir aprobación de sus versiones nuevas. Detalle y revisiones humanas encontradas: `docs/reviews/revision-completa.md`. R-V01/02 siguen abiertos; R-V03 tiene copia de estrategia corregida. No cerrar G2 globalmente.
