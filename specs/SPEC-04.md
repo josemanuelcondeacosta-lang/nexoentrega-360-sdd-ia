@@ -1,6 +1,6 @@
 # SPEC-04: Consultas y auditoría
 
-- **Versión:** 0.3.1-draft — **no aprobada para implementar**.
+- **Versión:** 0.3.2-draft — **no aprobada para implementar**.
 - **Fuente vinculante:** `docs/examen-oficial/originales/Examen_Estudiantes_SDD_IA.pdf` §1 objetivos observables (p. 2), §2 (p. 3), §4 RF08–RF09 (p. 5), §5 RNF03–RNF06 (p. 6), §11 operación (p. 12), §12 ejecución reproducible (p. 13).
 - **Estado y aprobación:** versión 0.3 elaborada con asistencia de IA a solicitud de Castro Edier (registro `docs/evidence/ai-log/AI-001-cotejo-oficial-g1.md`). Revisor humano distinto del autor: **PENDIENTE**. Fecha UTC y commit revisado: **PENDIENTE**.
 
@@ -10,7 +10,7 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-04.json` se gener
 ```json
 {
   "id": "SPEC-04",
-  "version": "0.3.1-draft",
+  "version": "0.3.2-draft",
   "name": "Consultas y auditoría",
   "status": "Borrador cotejado con el enunciado oficial; pendiente de revisión humana independiente",
   "story": {
@@ -213,7 +213,7 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-04.json` se gener
       "kind": "permiso",
       "given": "eventos de auditoría de ORG-A y de ORG-B",
       "when": "auditor y coordinador de ORG-A consultan historial; solicitante consulta historial propio y ajeno; bodega consulta historial; todos intentan acceder al historial de una solicitud de ORG-B",
-      "then": "auditor y coordinador ven solo eventos de ORG-A; solicitante solo eventos de sus solicitudes y obtiene 404 para las ajenas; bodega recibe 403 para recurso de ORG-A; identificadores de ORG-B reciben 404 sin datos (CL-17 reportada)"
+      "then": "auditor y coordinador ven solo eventos de ORG-A; solicitante solo eventos de sus solicitudes y obtiene 403 para una solicitud de otro dueño de ORG-A; bodega recibe 403 para recurso de ORG-A; identificadores inexistentes o de ORG-B reciben 404 sin datos (CL-17 y semántica oficial del apartado 2)"
     },
     {
       "id": "AC-04-12",
@@ -262,3 +262,5 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-04.json` se gener
 - 0.3.1-draft: cotejo con el enunciado; corrección de RNF04, campos RF09, AC-04-11 a AC-04-14 (auditoría aislada, arranque, health y readiness, RNF05).
 
 Cambio 0.3.1-draft: CL-16/17/18 confirmadas según reporte del coordinador; sin aprobación humana de esta nueva versión. Otros hallazgos G1 siguen pendientes.
+
+Cambio 0.3.2-draft: R-V02 corregido en AC-04-11; 403 para otro dueño dentro de la organización y 404 para inexistente/interorganización. Nueva revisión humana pendiente.

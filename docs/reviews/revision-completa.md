@@ -77,3 +77,11 @@ OpenAPI 3.1.1 válido: 19 rutas, 21 operaciones; IA preservada;
 Escaneo UTF-8/caracteres de control: 67 Markdown/YAML, sin errores. Integridad oficial: 29 entradas de manifiesto verificadas (4 coinciden con bytes locales; 25 con blobs Git). Windows transforma LF a CRLF al extraer archivos de texto, por eso su hash local difiere; blobs originales coinciden. No se alteraron originales para forzar hashes.
 
 No se ejecutaron aplicación, base, API, carga, E2E o CI remoto. Mermaid se conserva como fuente, sin render automatizado. La validación de contratos no cierra R-V01/02.
+
+## Actualización técnica posterior — pendientes atendidos por Codex
+
+Las filas anteriores son hallazgos del corte original `4b75798`, no estado final de esta rama. Se incorpora fragmento IA v0.2.0 de Vega (`833e9b9`), se regenera OpenAPI, y se corrige R-V02 en SPEC-04 0.3.2-draft/AC-04-11 y contrato: 403 misma organización/acción prohibida; 404 inexistente/interorganización. CSRF y política de errores tienen verificación documental de regresión. R-V01/R-V02: **corregidos documentalmente, revisión independiente pendiente**, no implementación probada.
+
+RC-03/04/05: plan y tareas alineados con nombres de datos.md, dependencias de migración/seed/auditoría, cobertura IA, módulos/tests futuros, responsabilidades del equipo y condición de término. RC-01 continúa pendiente de revisión personal de Carolina. RC-02/H-V/H-E restantes no se cierran automáticamente. R-V03/R-E01 conservan copia corregida de estrategia. RC-08 permanece: sin merge a main ni aprobación global.
+
+Evidencia nueva: `docs/evidence/correcciones-RV01-RV02-plan.md`; guía accesible para revisión humana: `carolina-revision-sencilla.md`.

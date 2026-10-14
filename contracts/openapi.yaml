@@ -5,7 +5,7 @@ info:
   description: 'Diseño G2 propuesto, no API implementada. SPEC 0.3-draft; G1/G2 pendientes.
     Laravel + PostgreSQL. Sesión/CSRF pendientes ADR-003. CL-16/17/18: respuesta afirmativa
     reportada por coordinador; evidencia original pendiente. Rutas y componentes IA
-    copiados sin cambios desde openapi-ia.yaml.'
+    copiados sin cambios desde openapi-ia.yaml v0.2.0 (CSRF corregido por Vega).'
 servers:
 - url: http://localhost:8000
   description: Ejecución local
@@ -32,6 +32,7 @@ paths:
       - Asistente IA
       parameters:
       - $ref: '#/components/parameters/CorrelationId'
+      - $ref: '#/components/parameters/CsrfToken'
       requestBody:
         required: true
         content:
@@ -106,6 +107,8 @@ paths:
           $ref: '#/components/responses/Conflicto'
         '422':
           $ref: '#/components/responses/Invalido'
+        '419':
+          $ref: '#/components/responses/CsrfInvalido'
   /api/ai/summaries/{summaryId}/approve:
     post:
       operationId: aprobarResumenIA
@@ -129,6 +132,7 @@ paths:
         schema:
           type: string
       - $ref: '#/components/parameters/CorrelationId'
+      - $ref: '#/components/parameters/CsrfToken'
       responses:
         '200':
           description: Borrador aprobado
@@ -147,6 +151,8 @@ paths:
           $ref: '#/components/responses/NoEncontrado'
         '409':
           $ref: '#/components/responses/Conflicto'
+        '419':
+          $ref: '#/components/responses/CsrfInvalido'
   /api/auth/csrf:
     get:
       operationId: bootstrapCsrf
@@ -462,8 +468,7 @@ paths:
       - Base
       description: BORRADOR → ENVIADA; validar fechaRequerida >= instante de envío.
         No cambia stock. Cuerpo requerido {} sin propiedades extra. Rechazo sin cambios
-        de negocio ni evento exitoso. Audit atómico. Misma reserva con otra clave
-        devuelve 409.
+        de negocio ni evento exitoso. Audit atómico.
       parameters:
       - $ref: '#/components/parameters/CorrelationId'
       - *id002
@@ -575,8 +580,7 @@ paths:
       - Base
       description: RESERVADA → DESPACHADA; disminuyen físico y reservado por las cantidades
         de solicitud. Cuerpo requerido {} sin propiedades extra. Rechazo sin cambios
-        de negocio ni evento exitoso. Audit atómico. Misma reserva con otra clave
-        devuelve 409.
+        de negocio ni evento exitoso. Audit atómico.
       parameters:
       - $ref: '#/components/parameters/CorrelationId'
       - *id002
@@ -631,7 +635,7 @@ paths:
       - Base
       description: DESPACHADA → ENTREGADA; sin cambio de inventario. Cuerpo requerido
         {} sin propiedades extra. Rechazo sin cambios de negocio ni evento exitoso.
-        Audit atómico. Misma reserva con otra clave devuelve 409.
+        Audit atómico.
       parameters:
       - $ref: '#/components/parameters/CorrelationId'
       - *id002
@@ -686,8 +690,7 @@ paths:
       - Base
       description: Dueño únicamente. ENVIADA o RESERVADA → CANCELADA. Liberar reserva
         solo desde RESERVADA; físico inalterado. Cuerpo requerido {} sin propiedades
-        extra. Rechazo sin cambios de negocio ni evento exitoso. Audit atómico. Misma
-        reserva con otra clave devuelve 409.
+        extra. Rechazo sin cambios de negocio ni evento exitoso. Audit atómico.
       parameters:
       - $ref: '#/components/parameters/CorrelationId'
       - *id002
@@ -804,9 +807,10 @@ paths:
       tags:
       - Base
       description: 'Auditor y Coordinador: organización; Solicitante: solo eventos
-        de sus solicitudes (CL-17 según reporte del coordinador). Bodega sin acceso.
-        Por solicitud validar pertenencia y dueño; recursos fuera del alcance retornan
-        404. Orden UTC+id. Sin rutas de edición o borrado.'
+        de sus solicitudes (CL-17). Bodega sin acceso. Sin identidad: 401; recurso
+        inexistente o de otra organización: 404; recurso de la misma organización
+        pero lectura prohibida por rol o dueño: 403. Listados filtran el alcance antes
+        de paginar y contar. Orden UTC+id. Sin rutas de edición o borrado.'
       parameters:
       - $ref: '#/components/parameters/CorrelationId'
       - *id003
@@ -833,6 +837,10 @@ paths:
       - Auditor
       - Coordinador
       - Solicitante
+      x-error-policy:
+        unauthenticated: 401
+        missingOrOtherOrganization: 404
+        sameOrganizationForbiddenRoleOrOwner: 403
   /api/requests/{requestId}/audit:
     get:
       operationId: historialSolicitud
@@ -840,9 +848,10 @@ paths:
       tags:
       - Base
       description: 'Auditor y Coordinador: organización; Solicitante: solo eventos
-        de sus solicitudes (CL-17 según reporte del coordinador). Bodega sin acceso.
-        Por solicitud validar pertenencia y dueño; recursos fuera del alcance retornan
-        404. Orden UTC+id. Sin rutas de edición o borrado.'
+        de sus solicitudes (CL-17). Bodega sin acceso. Sin identidad: 401; recurso
+        inexistente o de otra organización: 404; recurso de la misma organización
+        pero lectura prohibida por rol o dueño: 403. Listados filtran el alcance antes
+        de paginar y contar. Orden UTC+id. Sin rutas de edición o borrado.'
       parameters:
       - $ref: '#/components/parameters/CorrelationId'
       - *id003
@@ -870,6 +879,10 @@ paths:
       - Auditor
       - Coordinador
       - Solicitante
+      x-error-policy:
+        unauthenticated: 401
+        missingOrOtherOrganization: 404
+        sameOrganizationForbiddenRoleOrOwner: 403
   /health:
     get:
       operationId: health
@@ -929,6 +942,13 @@ components:
       description: Provisional hasta ADR-003 (sesión de servidor revocable propuesta
         en CL-14).
   parameters:
+    CsrfToken:
+      name: X-XSRF-TOKEN
+      in: header
+      required: true
+      description: Propuesta CSRF para sesión cookie; obtener cookie XSRF-TOKEN desde
+        bootstrap y enviar token correspondiente. Pendiente ADR-003.
+      schema: *id008
     CorrelationId:
       name: X-Correlation-Id
       in: header
@@ -954,13 +974,6 @@ components:
         type: string
         minLength: 1
         maxLength: 128
-    CsrfToken:
-      name: X-XSRF-TOKEN
-      in: header
-      required: true
-      description: Propuesta CSRF para sesión cookie; obtener cookie XSRF-TOKEN desde
-        bootstrap y enviar token correspondiente. Pendiente ADR-003.
-      schema: *id008
   headers:
     CorrelationId:
       description: correlationId de la petición, igual al registrado en logs y auditoría.
@@ -1386,6 +1399,15 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    CsrfInvalido:
+      description: Token CSRF ausente o inválido; sesión cookie propuesta.
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     Invalido:
       description: Selección vacía, con más de 20 IDs, con IDs repetidos o con propiedades
         extra
@@ -1450,4 +1472,4 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
 x-status: pending-human-review
-x-source-ia: contracts/openapi-ia.yaml; rama docs/g2-vega-ia; a13aa17
+x-source-ia: contracts/openapi-ia.yaml v0.2.0; rama docs/g2-vega-ia; 833e9b9

@@ -1,14 +1,15 @@
 openapi: 3.1.1
 info:
   title: NexoEntrega 360 — Asistente de IA (fragmento)
-  version: 0.1.0
+  version: 0.2.0
   description: |
     Fragmento del contrato con las rutas del asistente de IA (SPEC-05, ADR-004).
     Se integra en contracts/openapi.yaml cuando exista el contrato base (ADR-001).
     El esquema de salida del modelo es la copia de trabajo del anexo oficial
     contracts/ai-output.schema.json; este contrato describe lo que la API devuelve
     al navegador después de validar esa salida.
-    Autenticación provisional hasta ADR-003.
+    Autenticación provisional hasta ADR-003. Las dos escrituras exigen X-XSRF-TOKEN, igual que las
+    demás escrituras del contrato base (corrección R-V01, v0.2.0).
 servers:
   - url: http://localhost:8000
     description: Ejecución local
@@ -27,6 +28,7 @@ paths:
       tags: [Asistente IA]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/CsrfToken'
       requestBody:
         required: true
         content:
@@ -87,6 +89,8 @@ paths:
           $ref: '#/components/responses/Conflicto'
         '422':
           $ref: '#/components/responses/Invalido'
+        '419':
+          $ref: '#/components/responses/CsrfInvalido'
   /api/ai/summaries/{summaryId}/approve:
     post:
       operationId: aprobarResumenIA
@@ -103,6 +107,7 @@ paths:
           schema:
             type: string
         - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/CsrfToken'
       responses:
         '200':
           description: Borrador aprobado
@@ -121,6 +126,8 @@ paths:
           $ref: '#/components/responses/NoEncontrado'
         '409':
           $ref: '#/components/responses/Conflicto'
+        '419':
+          $ref: '#/components/responses/CsrfInvalido'
 components:
   securitySchemes:
     sesion:
@@ -129,6 +136,14 @@ components:
       name: nexo_session
       description: Provisional hasta ADR-003 (sesión de servidor revocable propuesta en CL-14).
   parameters:
+    CsrfToken:
+      name: X-XSRF-TOKEN
+      in: header
+      required: true
+      description: Propuesta CSRF para sesión cookie; obtener cookie XSRF-TOKEN desde bootstrap y enviar token correspondiente. Pendiente ADR-003.
+      schema:
+        type: string
+        minLength: 1
     CorrelationId:
       name: X-Correlation-Id
       in: header
@@ -260,6 +275,15 @@ components:
             $ref: '#/components/schemas/Error'
     Conflicto:
       description: Solicitud seleccionada fuera de ENVIADA, o borrador ya aprobado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    CsrfInvalido:
+      description: Token CSRF ausente o inválido; sesión cookie propuesta.
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
       content:
         application/json:
           schema:

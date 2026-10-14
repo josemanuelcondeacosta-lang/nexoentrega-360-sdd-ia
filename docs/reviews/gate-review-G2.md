@@ -29,4 +29,6 @@ Autor del paquete: Codex bajo solicitud de Conde José. Revisor humano: PENDIENT
 
 ## Actualización de ubicación: consolidación documental
 
+Actualización técnica posterior: fragmento IA v0.2.0 de Vega integrado; CSRF uniforme y 403/404 del historial corregidos; plan/tareas alineados con datos y dependencias. Ver evidencia de correcciones y revisión completa. Estado: corregido documentalmente, **revisión humana y pruebas de producto pendientes**. La frase «R-V01/02 siguen abiertos» del corte original ya no describe ausencia de corrección, sino pendiente de validación humana/implementación real.
+
 Los estados de la tabla anterior describen el paquete parcial original. Esta rama reúne ahora ADR-002 de Edier, ADR-003 y plan/tareas de Carolina, datos/estados/secuencia reserva y estrategia actualizada de Vega. Se conservan fuentes y autorías sin presumir aprobación de sus versiones nuevas. Detalle y revisiones humanas encontradas: `docs/reviews/revision-completa.md`. R-V01/02 siguen abiertos; R-V03 tiene copia de estrategia corregida. No cerrar G2 globalmente.

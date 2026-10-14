@@ -1,6 +1,6 @@
 {
   "id": "SPEC-04",
-  "version": "0.3.1-draft",
+  "version": "0.3.2-draft",
   "name": "Consultas y auditoría",
   "status": "Borrador cotejado con el enunciado oficial; pendiente de revisión humana independiente",
   "story": {
@@ -273,7 +273,7 @@
       "kind": "permiso",
       "given": "eventos de auditoría de ORG-A y de ORG-B",
       "when": "auditor y coordinador de ORG-A consultan historial; solicitante consulta historial propio y ajeno; bodega consulta historial; todos intentan acceder al historial de una solicitud de ORG-B",
-      "then": "auditor y coordinador ven solo eventos de ORG-A; solicitante solo eventos de sus solicitudes y obtiene 404 para las ajenas; bodega recibe 403 para recurso de ORG-A; identificadores de ORG-B reciben 404 sin datos (CL-17 reportada)"
+      "then": "auditor y coordinador ven solo eventos de ORG-A; solicitante solo eventos de sus solicitudes y obtiene 403 para una solicitud de otro dueño de ORG-A; bodega recibe 403 para recurso de ORG-A; identificadores inexistentes o de ORG-B reciben 404 sin datos (CL-17 y semántica oficial del apartado 2)"
     },
     {
       "id": "AC-04-12",

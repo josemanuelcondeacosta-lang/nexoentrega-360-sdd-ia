@@ -31,3 +31,5 @@
 La afirmación anterior de ausencia de hallazgos bloqueantes pertenece al registro previo de Carolina. Esta corrección no verifica ni cierra H-V01 a H-V07 o los hallazgos de Edier. Las aclaraciones docentes y la versión actualizada deben cotejarse en el SHA candidato antes de registrar una nueva aprobación. Fecha y resultado real de esa revisión: PENDIENTES.
 
 Para confirmar: Carolina debe abrir el candidato indicado, revisar las diferencias de SPEC-04 y sus AC, ejecutar las comprobaciones documentales que declare, y publicar desde su cuenta una revisión con SHA completo, fecha UTC, observaciones y decisión. Ninguna firma o comprobación personal se agrega por Codex.
+
+Actualización del candidato: el PR #10 incluye ahora SPEC-04 **0.3.2-draft** (R-V02), contrato CSRF y plan/tareas corregidos. El SHA `b1dbbf9` anterior conserva validez como referencia histórica, pero no aprueba estos cambios posteriores. Revisar el SHA del commit de correcciones del PR #10, facilitado por el coordinador, usando `docs/reviews/carolina-revision-sencilla.md`. Aprobación de esta versión: **PENDIENTE**.

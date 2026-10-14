@@ -12,3 +12,5 @@ Estado: **candidato para revisión, G1/G2 sin cierre global**. Ubicaciones y pro
 - [Revisión G1](reviews/gate-review-G1.md) y [revisión G2](reviews/gate-review-G2.md).
 
 `reviews/archive/` conserva documentos históricos, no aprobaciones vigentes. Esta organización no fusiona PR ni acredita por sí sola contribuciones/revisiones humanas. Para ver decisiones actuales y pendientes, consultar primero revision-completa.md.
+
+Correcciones posteriores: [evidencia CSRF/403/404 y plan](evidence/correcciones-RV01-RV02-plan.md), [guía sencilla para Carolina](reviews/carolina-revision-sencilla.md). Los cambios requieren revisión personal; no reemplazarla por este índice.
