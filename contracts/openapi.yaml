@@ -2,9 +2,10 @@ openapi: 3.1.1
 info:
   title: NexoEntrega 360 — contrato integrado
   version: 0.1.0-draft
-  description: Diseño G2 propuesto, no API implementada. SPEC 0.3-draft; G1/G2 pendientes.
-    Laravel + PostgreSQL. Sesión/CSRF pendientes ADR-003. CL-16/17/18 no resueltas.
-    Rutas y componentes IA copiados sin cambios desde openapi-ia.yaml.
+  description: 'Diseño G2 propuesto, no API implementada. SPEC 0.3-draft; G1/G2 pendientes.
+    Laravel + PostgreSQL. Sesión/CSRF pendientes ADR-003. CL-16/17/18: respuesta afirmativa
+    reportada por coordinador; evidencia original pendiente. Rutas y componentes IA
+    copiados sin cambios desde openapi-ia.yaml.'
 servers:
 - url: http://localhost:8000
   description: Ejecución local
@@ -739,8 +740,9 @@ paths:
       summary: Consultar inventario
       tags:
       - Base
-      description: 'Solo organización autenticada. físico/reservado/disponible no
-        negativos. Coordinador pendiente CL-16: no habilitado como permiso confirmado.'
+      description: Solo lectura de organización autenticada. físico/reservado/disponible
+        no negativos. Coordinador incluido por CL-16 según respuesta docente reportada
+        por coordinador.
       parameters:
       - $ref: '#/components/parameters/CorrelationId'
       - *id003
@@ -762,6 +764,7 @@ paths:
         '422':
           $ref: '#/components/responses/Base422'
       x-roles:
+      - Coordinador
       - Bodega
       - Auditor
   /api/dashboard:
@@ -770,8 +773,8 @@ paths:
       summary: Consultar cantidades por estado
       tags:
       - Base
-      description: Alcance propio para Solicitante (provisional CL-18); organización
-        para otros. Sin inventario ni datos ajenos. Decisión docente pendiente.
+      description: Alcance propio para Solicitante por CL-18 reportada; organización
+        para otros. Sin inventario ni datos ajenos.
       parameters:
       - $ref: '#/components/parameters/CorrelationId'
       - *id005
@@ -800,9 +803,10 @@ paths:
       summary: Consultar auditoría inmutable
       tags:
       - Base
-      description: Acceso literal Auditor; otros roles pendientes CL-17. Organización
-        filtrada; por solicitud validar pertenencia. Orden UTC+id. Sin rutas de edición
-        o borrado.
+      description: 'Auditor y Coordinador: organización; Solicitante: solo eventos
+        de sus solicitudes (CL-17 según reporte del coordinador). Bodega sin acceso.
+        Por solicitud validar pertenencia y dueño; recursos fuera del alcance retornan
+        404. Orden UTC+id. Sin rutas de edición o borrado.'
       parameters:
       - $ref: '#/components/parameters/CorrelationId'
       - *id003
@@ -827,15 +831,18 @@ paths:
           $ref: '#/components/responses/Base422'
       x-roles:
       - Auditor
+      - Coordinador
+      - Solicitante
   /api/requests/{requestId}/audit:
     get:
       operationId: historialSolicitud
       summary: Consultar auditoría inmutable
       tags:
       - Base
-      description: Acceso literal Auditor; otros roles pendientes CL-17. Organización
-        filtrada; por solicitud validar pertenencia. Orden UTC+id. Sin rutas de edición
-        o borrado.
+      description: 'Auditor y Coordinador: organización; Solicitante: solo eventos
+        de sus solicitudes (CL-17 según reporte del coordinador). Bodega sin acceso.
+        Por solicitud validar pertenencia y dueño; recursos fuera del alcance retornan
+        404. Orden UTC+id. Sin rutas de edición o borrado.'
       parameters:
       - $ref: '#/components/parameters/CorrelationId'
       - *id003
@@ -861,6 +868,8 @@ paths:
           $ref: '#/components/responses/Base422'
       x-roles:
       - Auditor
+      - Coordinador
+      - Solicitante
   /health:
     get:
       operationId: health

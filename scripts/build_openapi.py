@@ -29,7 +29,7 @@ def build():
     doc = copy.deepcopy(ia)
     doc['info'] = {'title': 'NexoEntrega 360 — contrato integrado', 'version': '0.1.0-draft',
         'description': 'Diseño G2 propuesto, no API implementada. SPEC 0.3-draft; G1/G2 pendientes. '
-        'Laravel + PostgreSQL. Sesión/CSRF pendientes ADR-003. CL-16/17/18 no resueltas. '
+        'Laravel + PostgreSQL. Sesión/CSRF pendientes ADR-003. CL-16/17/18: respuesta afirmativa reportada por coordinador; evidencia original pendiente. '
         'Rutas y componentes IA copiados sin cambios desde openapi-ia.yaml.'}
     doc['x-status'] = 'pending-human-review'
     doc['x-source-ia'] = 'contracts/openapi-ia.yaml; rama docs/g2-vega-ia; a13aa17'
@@ -136,15 +136,15 @@ def build():
             errors=('401','403','404','409','422','500'),roles=[role],parameters=params,
             description=desc+' Cuerpo requerido {} sin propiedades extra. Rechazo sin cambios de negocio ni evento exitoso. Audit atómico. Misma reserva con otra clave devuelve 409.')
     add('/api/inventory','get','listarInventario','Consultar inventario',ref('PaginaInventario'),errors=('401','403','422'),
-        roles=['Bodega','Auditor'],parameters=pagination,
-        description='Solo organización autenticada. físico/reservado/disponible no negativos. Coordinador pendiente CL-16: no habilitado como permiso confirmado.')
+        roles=['Coordinador','Bodega','Auditor'],parameters=pagination,
+        description='Solo lectura de organización autenticada. físico/reservado/disponible no negativos. Coordinador incluido por CL-16 según respuesta docente reportada por coordinador.')
     add('/api/dashboard','get','consultarTablero','Consultar cantidades por estado',ref('Tablero'),errors=('401','403','422'),
         roles=all_roles,parameters=filters,
-        description='Alcance propio para Solicitante (provisional CL-18); organización para otros. Sin inventario ni datos ajenos. Decisión docente pendiente.')
+        description='Alcance propio para Solicitante por CL-18 reportada; organización para otros. Sin inventario ni datos ajenos.')
     for path in ['/api/audit','/api/requests/{requestId}/audit']:
         add(path,'get','listarAuditoria' if path=='/api/audit' else 'historialSolicitud','Consultar auditoría inmutable',
-            ref('PaginaAuditoria'),roles=['Auditor'],parameters=pagination + ([] if path=='/api/audit' else id_param),
-            description='Acceso literal Auditor; otros roles pendientes CL-17. Organización filtrada; por solicitud validar pertenencia. Orden UTC+id. Sin rutas de edición o borrado.')
+            ref('PaginaAuditoria'),roles=['Auditor','Coordinador','Solicitante'],parameters=pagination + ([] if path=='/api/audit' else id_param),
+            description='Auditor y Coordinador: organización; Solicitante: solo eventos de sus solicitudes (CL-17 según reporte del coordinador). Bodega sin acceso. Por solicitud validar pertenencia y dueño; recursos fuera del alcance retornan 404. Orden UTC+id. Sin rutas de edición o borrado.')
     add('/health','get','health','Liveness del proceso',ref('Health'),errors=(),public=True,
         description='200 si proceso responde; no depende de DB o LLM. Sin detalles internos.')
     add('/ready','get','readiness','Readiness de persistencia',ref('Readiness'),errors=(),public=True,

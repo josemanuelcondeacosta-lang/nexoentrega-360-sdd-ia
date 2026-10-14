@@ -2,6 +2,8 @@
 
 Estado: **NO ENVIADO POR CODEX**. Destinatario/canal no proporcionados y sin respuesta registrada. Este archivo preserva las preguntas publicadas en el clarification-log v0.3; no añade decisiones del cliente.
 
+Actualización 2026-10-14: el coordinador comunica respuesta afirmativa de la profesora a las tres propuestas. El estado anterior describe la preparación del mensaje; actualmente existe una **respuesta reportada por el coordinador**, sin fecha/canal original ni evidencia adjunta. Codex no realizó envío. Registro vigente: `clarification-log.md`, sección «Respuesta comunicada por el coordinador». No volver a enviar automáticamente.
+
 Asunto sugerido: NexoEntrega 360 — aclaración de permisos RF08/RF09 (CL-16 a CL-18)
 
 Profesor/a:

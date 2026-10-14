@@ -1,6 +1,6 @@
 # SPEC-04: Consultas y auditoría
 
-- **Versión:** 0.3-draft — **no aprobada para implementar**.
+- **Versión:** 0.3.1-draft — **no aprobada para implementar**.
 - **Fuente vinculante:** `docs/examen-oficial/originales/Examen_Estudiantes_SDD_IA.pdf` §1 objetivos observables (p. 2), §2 (p. 3), §4 RF08–RF09 (p. 5), §5 RNF03–RNF06 (p. 6), §11 operación (p. 12), §12 ejecución reproducible (p. 13).
 - **Estado y aprobación:** versión 0.3 elaborada con asistencia de IA a solicitud de Castro Edier (registro `docs/evidence/ai-log/AI-001-cotejo-oficial-g1.md`). Revisor humano distinto del autor: **PENDIENTE**. Fecha UTC y commit revisado: **PENDIENTE**.
 
@@ -10,7 +10,7 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-04.json` se gener
 ```json
 {
   "id": "SPEC-04",
-  "version": "0.3-draft",
+  "version": "0.3.1-draft",
   "name": "Consultas y auditoría",
   "status": "Borrador cotejado con el enunciado oficial; pendiente de revisión humana independiente",
   "story": {
@@ -23,7 +23,7 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-04.json` se gener
   "description": "Listados paginados con filtros, tablero de cantidades por estado e inventario, historial de auditoría inmutable vía API y condiciones operativas de consulta: rendimiento, arranque reproducible, logs con correlationId y health y readiness. Enunciado §4 y §5.",
   "actors": [
     "Solicitante: solo sus solicitudes",
-    "Coordinador y Bodega: solicitudes de su organización; Bodega también inventario",
+    "Coordinador: solicitudes, inventario e historial de su organización (CL-16/17 reportadas); Bodega: solicitudes e inventario sin auditoría",
     "Auditor: solicitudes, inventario y auditoría de su organización",
     "Operador o evaluador: arranque, health y readiness"
   ],
@@ -116,9 +116,9 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-04.json` se gener
     "RNF03, RNF04 y health y readiness se ubican en esta SPEC porque cubren consultas y operación; ninguna otra SPEC trata la operación"
   ],
   "openQuestions": [
-    "CL-16: ¿el Coordinador consulta inventario? (docente)",
-    "CL-17: ¿qué roles, además del Auditor, consultan el historial de auditoría? (docente)",
-    "CL-18: ¿el Solicitante ve el tablero limitado a sus solicitudes? (docente)",
+    "CL-16: respuesta afirmativa docente reportada por el coordinador; evidencia original pendiente",
+    "CL-17: Coordinador consulta historial de su organización y Solicitante de sus solicitudes según respuesta reportada; evidencia original pendiente",
+    "CL-18: tablero propio sin inventario para Solicitante según respuesta reportada; evidencia original pendiente",
     "CL-15: retención de auditoría y de logs técnicos (equipo)"
   ],
   "dependencies": [
@@ -204,16 +204,16 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-04.json` se gener
       "requirements": ["RF08", "RF02"],
       "kind": "permiso",
       "given": "inventario sembrado de ORG-A y ORG-B",
-      "when": "la bodega y el auditor de ORG-A consultan inventario o tablero, y el solicitante de ORG-A intenta consultar el inventario",
-      "then": "bodega y auditor ven físico, reservado y disponible consistentes, con disponible igual a físico menos reservado, solo de ORG-A; el solicitante recibe 403; el acceso del coordinador queda según CL-16"
+      "when": "bodega, auditor y coordinador de ORG-A consultan inventario, y el solicitante de ORG-A intenta consultarlo y consulta su tablero",
+      "then": "bodega, auditor y coordinador ven físico, reservado y disponible consistentes solo de ORG-A; disponible igual a físico menos reservado; el solicitante recibe 403 en inventario y su tablero muestra solo conteos de solicitudes propias, sin inventario ni conteos ajenos (CL-16/18 reportadas)"
     },
     {
       "id": "AC-04-11",
       "requirements": ["RF09", "RF02"],
       "kind": "permiso",
       "given": "eventos de auditoría de ORG-A y de ORG-B",
-      "when": "el auditor de ORG-A consulta el historial y luego pide un evento o el historial de una solicitud de ORG-B",
-      "then": "solo ve eventos de ORG-A; lo de ORG-B recibe 404 sin datos"
+      "when": "auditor y coordinador de ORG-A consultan historial; solicitante consulta historial propio y ajeno; bodega consulta historial; todos intentan acceder al historial de una solicitud de ORG-B",
+      "then": "auditor y coordinador ven solo eventos de ORG-A; solicitante solo eventos de sus solicitudes y obtiene 404 para las ajenas; bodega recibe 403 para recurso de ORG-A; identificadores de ORG-B reciben 404 sin datos (CL-17 reportada)"
     },
     {
       "id": "AC-04-12",
@@ -248,7 +248,7 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-04.json` se gener
 
 - RNF04 corresponde a arranque reproducible y no a rendimiento: AC-04-09 cubre solo RNF03 y AC-04-12 cubre RNF04 (diferencia D-06).
 - Campos del evento según RF09, incluido «recurso» (diferencia D-11). Aislamiento de auditoría explícito en AC-04-11 (diferencia D-12).
-- Pendientes de docente: CL-16, CL-17 y CL-18.
+- CL-16/17/18: respuesta afirmativa reportada por Conde José; evidencia original pendiente. Permisos y AC-04-10/11 modificados requieren nueva revisión sobre nuevo SHA.
 
 ## Riesgos y plan de prueba
 
@@ -259,4 +259,6 @@ El bloque siguiente es la fuente única. `specs/generated/SPEC-04.json` se gener
 
 - 0.1: borrador inicial (commit `1aeacbf`).
 - 0.2-draft: ampliación a 10 AC sin fuente oficial.
-- 0.3-draft: cotejo con el enunciado; corrección de RNF04, campos RF09, AC-04-11 a AC-04-14 (auditoría aislada, arranque, health y readiness, RNF05).
+- 0.3.1-draft: cotejo con el enunciado; corrección de RNF04, campos RF09, AC-04-11 a AC-04-14 (auditoría aislada, arranque, health y readiness, RNF05).
+
+Cambio 0.3.1-draft: CL-16/17/18 confirmadas según reporte del coordinador; sin aprobación humana de esta nueva versión. Otros hallazgos G1 siguen pendientes.

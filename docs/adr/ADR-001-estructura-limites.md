@@ -45,7 +45,7 @@ Una única transacción PostgreSQL confirma estado, inventario, auditoría y res
 
 Navegador y observaciones no confiables; API resuelve identidad y filtra organización antes de exponer datos. PostgreSQL no es accesible al navegador. Credencial del proveedor solo en backend, sin nombres/secretos/datos ajenos en payload. Respuesta IA se valida y se presenta escapada. Sesión revocable/cookie y controles CSRF son provisionales hasta ADR-003; contrato IA conserva su esquema original.
 
-Fuera de alcance: usuarios masivos, recuperación de contraseña, GPS/rutas, devoluciones, ajustes de stock por API y decisiones automáticas de IA. CL-16/17/18 siguen preguntas del cliente: no ampliar permisos por esta propuesta. Inventario literal para Bodega/Auditor; historial literal para Auditor; tablero del Solicitante provisional y con alcance propio, pendiente CL-18.
+Fuera de alcance: usuarios masivos, recuperación de contraseña, GPS/rutas, devoluciones, ajustes de stock por API y decisiones automáticas de IA. El coordinador reporta respuesta afirmativa de la profesora a CL-16/17/18: Coordinador también lee inventario e historial de su organización; Solicitante lee historial y tablero de sus propias solicitudes sin inventario. Bodega no recibe acceso a auditoría. Fecha/canal y evidencia original pendientes; la decisión se registra como reportada y las SPEC afectadas requieren nueva revisión.
 
 ## Consecuencias y riesgos
 

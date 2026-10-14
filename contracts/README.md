@@ -18,7 +18,7 @@ Las versiones son herramientas documentales, no dependencias del producto Larave
 
 - ADR-002: política final de errores idempotentes (propuesta 200/409 almacenados; no 401/403/404/422/500), TTL/conservación y transacción real.
 - ADR-003: sesión, cookie, CSRF, expiración y hash. Base propone bootstrap `/api/auth/csrf` y header X-XSRF-TOKEN en escrituras; fragmento IA original no lo declara. Unificar protección en TODAS las escrituras al revisar ADR-003, sin inferir que IA esté exenta. 419 es propuesta Laravel; no decisión del docente.
-- CL-16: inventario Coordinador; acceso literal Bodega/Auditor hasta decisión. CL-17: historial de otros roles; acceso literal Auditor. CL-18: tablero propio del Solicitante provisional y sin inventario.
+- CL-16/17/18: el coordinador reporta respuesta afirmativa de la profesora. Inventario: Coordinador/Bodega/Auditor, solo su organización. Auditoría: Auditor/Coordinador de su organización; Solicitante solo sus solicitudes; Bodega sin acceso. Tablero Solicitante propio, sin inventario. Fecha/canal y mensaje original pendientes; renovar revisión del contrato/SPEC modificados.
 - Validar fecha al enviar, SKU activo y distinto, pertenencia, unicidad de IDs IA y relaciones físico/reservado no se resuelve solo con JSON Schema: controles semánticos de servidor pendientes.
 - Auditoría solo lectura por API; errores sanitizados y correlationId. Liveness y readiness públicas sin secretos; readiness no depende de IA.
 
