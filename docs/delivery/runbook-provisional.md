@@ -28,12 +28,13 @@ Crear base de pruebas independiente `nexo_test` en PostgreSQL del contenedor ant
 docker compose exec database psql -U nexo -d postgres -c "CREATE DATABASE nexo_test"
 docker compose exec -e APP_ENV=testing -e DB_DATABASE=nexo_test app php artisan test
 npm ci
+npx playwright install chromium
 npm run test:e2e
 ```
 
 Crear la base solo si no existe. Los tests HTTP de Laravel usan una base real para comprobar efectos; su middleware CSRF se omite por modo testing del framework y se comprueba externamente con navegador. Los E2E operan sobre la demo y añaden solicitudes ficticias; cada ejecución consume algunas existencias. Usar entorno de evaluación limpio dedicado, no datos compartidos, al repetir todos los escenarios.
 
-Instalar Edge para la configuración local de Playwright. Capturas/trazas/reporte se generan en test-results y playwright-report (ignorados en Git); seleccionar evidencia sanitizada para docs/evidence/runtime. La verificación por teclado automatizada no equivale a conformidad WCAG ni sustituye revisión manual.
+Playwright utiliza su Chromium aislado; para probar Edge adicionalmente, definir E2E_CHANNEL=msedge antes de ejecutar. Capturas/trazas/reporte se generan en test-results y playwright-report (ignorados en Git); seleccionar evidencia sanitizada para docs/evidence/runtime. La verificación por teclado automatizada no equivale a conformidad WCAG ni sustituye revisión manual.
 
 ## Operación, rollback y brechas
 

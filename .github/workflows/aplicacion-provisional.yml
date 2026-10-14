@@ -50,6 +50,15 @@ jobs:
       - run: php artisan view:cache && php artisan route:list --path=api
         working-directory: apps/nexo
       - run: npm ci && npm run check:frontend && npm audit
+      - run: npx playwright install --with-deps chromium
+      - name: Servidor de evaluación con CSRF activo
+        working-directory: apps/nexo
+        run: |
+          php artisan migrate --force
+          php artisan db:seed --force
+          APP_ENV=local SESSION_DRIVER=file SESSION_COOKIE=nexo_session PHP_CLI_SERVER_WORKERS=4 php artisan serve --host=127.0.0.1 --port=8000 --no-reload > /tmp/nexo-server.log 2>&1 &
+          curl --retry 20 --retry-connrefused --retry-delay 2 --fail http://127.0.0.1:8000/ready
+      - run: node tests/integration/concurrency.mjs && npm run test:e2e
       - run: python scripts/export_specs.py --check && python scripts/build_coverage.py --check && python -m unittest discover -s scripts -p 'test_*.py'
       - run: python scripts/check_secrets.py
       - run: pip install -r contracts/requirements-docs.lock && python scripts/build_openapi.py --check && python scripts/validate_openapi.py
