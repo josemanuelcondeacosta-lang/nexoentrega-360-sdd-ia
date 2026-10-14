@@ -1,0 +1,53 @@
+{
+    "runs":  [
+                 {
+                     "id":  38638973219,
+                     "name":  "Aplicación provisional",
+                     "status":  "completed",
+                     "conclusion":  "success",
+                     "head_sha":  "02ef410ed11d26fa651e405f1563879e987aea97",
+                     "html_url":  "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38638973219"
+                 },
+                 {
+                     "id":  38638968344,
+                     "name":  "Aplicación provisional",
+                     "status":  "completed",
+                     "conclusion":  "success",
+                     "head_sha":  "02ef410ed11d26fa651e405f1563879e987aea97",
+                     "html_url":  "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38638968344"
+                 },
+                 {
+                     "id":  38631943826,
+                     "name":  "Aplicación provisional",
+                     "status":  "completed",
+                     "conclusion":  "success",
+                     "head_sha":  "66a080f0bee963a31e4643858634d9c6c225e8a3",
+                     "html_url":  "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38631943826"
+                 },
+                 {
+                     "id":  38631936394,
+                     "name":  "Aplicación provisional",
+                     "status":  "completed",
+                     "conclusion":  "success",
+                     "head_sha":  "66a080f0bee963a31e4643858634d9c6c225e8a3",
+                     "html_url":  "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38631936394"
+                 },
+                 {
+                     "id":  38631851121,
+                     "name":  "Aplicación provisional",
+                     "status":  "completed",
+                     "conclusion":  "success",
+                     "head_sha":  "179e71c19e9171577982be97da0faa895dceff38",
+                     "html_url":  "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38631851121"
+                 },
+                 {
+                     "id":  38631844981,
+                     "name":  "Aplicación provisional",
+                     "status":  "completed",
+                     "conclusion":  "success",
+                     "head_sha":  "179e71c19e9171577982be97da0faa895dceff38",
+                     "html_url":  "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38631844981"
+                 }
+             ],
+    "checkedAtUtc":  "2026-10-14T21:20:48.2804889Z"
+}

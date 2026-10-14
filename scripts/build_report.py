@@ -82,6 +82,8 @@ def markdown(path, min_level=2):
 
 
 def content(sha):
+    github = json.loads((ROOT / 'docs/evidence/github/snapshot.json').read_text(encoding='utf-8'))
+    current_ci = json.loads((ROOT / 'docs/evidence/github/current-ci.json').read_text(encoding='utf-8'))
     add('cover', sha)
     add('toc')
     heading('1. Entrega identificada y estado del proyecto')
@@ -98,6 +100,12 @@ def content(sha):
     paragraph('La aplicación provisional incluye sesiones, ocho cuentas ficticias, formulario de solicitudes, transiciones por rol, reserva transaccional, idempotencia, inventario, listados, tablero e historial. El asistente integrado utiliza únicamente fallback determinista, visible como tal; no se ha demostrado una salida de un LLM real en esta aplicación.')
     paragraph('Pendientes de cierre: revisión humana de las versiones correspondientes, proveedor IA y validación estricta completa, carga exigida, pruebas de todos los criterios, restauración y aceptación manual. Adelantar implementación por instrucción del coordinador no subsana la revisión previa requerida por el examen.')
     source('docs/examen-oficial/anexos/09_pdf-delivery-template.md', sha)
+    heading('1.2 Aportes comprobados directamente en GitHub', 2)
+    paragraph('Consulta de evidencia: ' + github['fetchedAtUtc'] + '. Se revisaron PR, comentarios, revisiones y ejecuciones; se conserva una instantánea local verificable. Un PR abierto no significa aporte fusionado ni aprobación del paquete. Los nombres de cuenta identifican publicaciones, no prueban autoría manual de contenido asistido por IA.')
+    table(['PR / cuenta', 'Artefacto o aporte', 'SHA / estado'], [[f"#{pr['number']} · {pr['author']}", pr['title'], pr['sha'] + (' · borrador' if pr['draft'] else ' · abierto') + (' · fusionado' if pr['merged_at'] else ' · sin fusionar')] for pr in sorted(github['pullRequests'], key=lambda p: p['number'])])
+    paragraph('El PR #11 de Vega incorpora el workflow de verificación documental y AI-008. Se incluye su registro con procedencia exacta, sin fusionar la rama ni presentar CI documental como prueba de aplicación. El PR #12 contiene la aplicación y la edición de este informe.')
+    for pr in sorted(github['pullRequests'], key=lambda p: p['number']):
+        add('link', (f"PR #{pr['number']} · {pr['sha'][:12]}", pr['url']))
 
     heading('2. Cinco historias de usuario y especificaciones')
     paragraph('Las siguientes especificaciones proceden de los JSON generados a partir de las fuentes Markdown. Se conserva el contenido funcional y el estado declarado. Los 73 criterios son objetivos de aceptación; no deben interpretarse como 73 pruebas superadas.')
@@ -147,7 +155,11 @@ def content(sha):
         ['datos.md', 'Entidades y relaciones'], ['estados.md', 'Estados y transiciones permitidas'],
         ['secuencia-reserva-concurrente.md', 'Competencia por existencias y resultado esperado'],
         ['secuencia-ia-con-fallo.md', 'Validación, fallo del proveedor y fallback']])
-    paragraph('Los seis diagramas editables Mermaid están versionados en docs/architecture/. Esta edición describe su contenido y enlaza sus fuentes; la incorporación de figuras renderizadas de los seis diagramas permanece pendiente para la revisión final.')
+    paragraph('Los seis diagramas editables Mermaid están versionados en docs/architecture/. Las figuras siguientes se renderizan directamente desde esas fuentes, sin cambiar nodos, relaciones ni decisiones. Representan el diseño documentado; no certifican implementación ni aprobación de sus elementos propuestos.')
+    for file, caption in [('contexto', 'Contexto y fronteras del sistema'), ('componentes', 'Componentes y dependencias'), ('datos', 'Entidades y relaciones del modelo propuesto'), ('estados', 'Estados y transiciones de solicitudes'), ('secuencia-reserva-concurrente', 'Secuencia de reserva concurrente'), ('secuencia-ia-con-fallo', 'Secuencia de IA con fallo y fallback')]:
+        if not (ROOT / 'docs/architecture/figures' / (file + '.png')).exists():
+            raise SystemExit('Falta renderizar diagrama: ' + file)
+        add('diagram', (ROOT / 'docs/architecture/figures' / (file + '.png'), caption))
     for p in sorted((ROOT / 'docs/architecture').glob('*.md')):
         source(p.relative_to(ROOT).as_posix(), sha)
     table(['Entidad', 'Datos principales', 'Control'], [
@@ -178,10 +190,14 @@ def content(sha):
         source(p.relative_to(ROOT).as_posix(), sha)
 
     heading('4. Uso crítico de IA y verificación')
-    paragraph('La bitácora diferencia el uso de IA para preparar el proyecto del asistente integrado en la aplicación. Se incluyen siete registros existentes; la autoría y las verificaciones se reproducen como están documentadas, sin crear decisiones humanas nuevas. El asistente actual solo produce fallback: falta demostrar el proveedor real y su validación estricta.')
+    paragraph('La bitácora diferencia el uso de IA para preparar el proyecto del asistente integrado en la aplicación. Se incluyen ocho registros existentes, siete de la consolidación y AI-008 del PR #11; la autoría y las verificaciones se reproducen como están documentadas, sin crear decisiones humanas nuevas. El asistente actual solo produce fallback: falta demostrar el proveedor real y su validación estricta.')
     for p in sorted((ROOT / 'docs/evidence/ai-log').glob('AI-*.md')):
         heading(p.stem, 2)
         markdown(p.relative_to(ROOT).as_posix(), 3)
+    heading('AI-008 · CI documental publicado por Vega', 2)
+    paragraph('Fuente adicional recuperada del PR #11, SHA 435651b48e37729133e4db15f9ec8540123c7162. El contenido siguiente se reproduce como registro publicado por su cuenta; no se convierte en revisión humana nueva de este informe.')
+    markdown('docs/evidence/github/sources/AI-008-ci-documental.md', 3)
+    add('link', ('Fuente original de AI-008 en GitHub', REPO + '/blob/435651b48e37729133e4db15f9ec8540123c7162/docs/evidence/ai-log/AI-008-ci-documental.md'))
 
     heading('5. Validación, trazabilidad y resultados')
     add('callout', 'Ocho pruebas PHP correctas no significan 73 criterios aceptados. Los resultados se vinculan a sus versiones; no se trasladan automáticamente a una versión posterior.')
@@ -194,9 +210,20 @@ def content(sha):
         ['Documentos y contrato', 'Fuentes coherentes y OpenAPI válido', '14 pruebas documentales; 20 rutas / 22 operaciones'],
         ['LLM real / carga / restauración', 'Evidencia de operación y objetivos del examen', 'Pendiente; no se declara superado']])
     paragraph('Entorno observado: Windows, Docker con Linux, PHP 8.5.0, Laravel fijado en composer.lock, PostgreSQL 17.6, Node 22.22.2 y Playwright 1.56.1. La suite relacional utiliza nexo_test, separada de nexo de demostración. CI se ejecutó en Ubuntu. Los intentos interrumpidos con Edge no se contabilizan como suite correcta; la ejecución completa anterior utilizó Chromium aislado.')
-    heading('5.1 Defecto observado y corrección', 2)
+    heading('5.1 CI comprobada en GitHub para la corrección actual', 2)
+    paragraph('Consulta: ' + current_ci['checkedAtUtc'] + '. La versión 02ef410 incluye la corrección dd806db y la primera edición Word/PDF. La evidencia remota siguiente amplía los resultados anteriores; no acredita el LLM real, carga ni aceptación de todos los AC.')
+    latest = [run for run in current_ci['runs'] if run['head_sha'] == '02ef410ed11d26fa651e405f1563879e987aea97']
+    table(['Ejecución', 'SHA', 'Estado observado'], [[str(run['id']), run['head_sha'], run['status'] + ' / ' + str(run['conclusion'])] for run in latest])
+    for run in latest:
+        add('link', ('Ver ejecución CI ' + str(run['id']), run['html_url']))
+    checks = json.loads((ROOT / 'docs/evidence/github/pr-11-checks.json').read_text(encoding='utf-8'))
+    paragraph('Comprobación adicional del PR #11 en 435651b: GitHub registra los dos checks siguientes; su alcance es documental y secretos, separado del pipeline de aplicación.')
+    table(['Check de Vega', 'Estado', 'Finalizado UTC'], [[check['name'], str(check['conclusion']), str(check['completed_at'])] for check in checks])
+    for check in checks:
+        add('link', ('Evidencia GitHub: ' + check['name'], check['html_url']))
+    heading('5.2 Defecto observado y corrección', 2)
     markdown('docs/evidence/runtime/correccion-auditoria.md', 3)
-    heading('5.2 Trazabilidad SPEC frente a código', 2)
+    heading('5.3 Trazabilidad SPEC frente a código', 2)
     modules = ['Identity / middleware', 'Requests / interfaz', 'Inventory / transacciones', 'Queries / interfaz', 'AI / fallback']
     table(['SPEC', 'Código relacionado', 'Límite de la evidencia'], [[s['id'] + f" ({len(s['acceptanceCriteria'])} AC)", modules[i], 'Escenarios parciales ejecutados; aceptación completa pendiente'] for i, s in enumerate(specs)])
     paragraph('La matriz completa de 73 AC se conserva en docs/evidence/runtime/spec-vs-code.csv, con estado NOT_VERIFIED_IN_FULL. Cada AC completo está descrito en el apartado 2. La matriz documental enlaza pruebas planificadas; solo los reportes ejecutados acreditan resultados observados.')
@@ -209,11 +236,27 @@ def content(sha):
     heading('6. Riesgos y controles')
     paragraph('La siguiente lectura conserva los riesgos registrados y distingue controles observados de pendientes. Las personas propuestas no se consideran autoras de trabajo no realizado; el riesgo residual requiere evaluación humana.')
     rows = []
+    risk_evidence = {
+        'R-01': 'Reserva concurrente f33183a: 200/409 y un evento. Residual por evaluar: faltan más intercalados y carga.',
+        'R-02': 'Suite relacional con aislamiento; regresión dd806db verifica historial propio y ajeno. Residual por evaluar: matriz completa pendiente.',
+        'R-03': 'Replay y conflicto de clave comprobados en PostgreSQL. Residual por evaluar: TTL y escenarios concurrentes adicionales pendientes.',
+        'R-04': 'Proveedor y validador completo no implementados; riesgo alto hasta probar salida externa e inyección.',
+        'R-05': 'Fallback y aprobación sin stock comprobados. Residual por evaluar: falta fallo real del proveedor y timeout.',
+        'R-06': 'CI en GitHub correcto para 02ef410; Docker y lockfiles existentes. Residual por evaluar: aceptación de clon limpio y recuperación pendientes.',
+        'R-07': 'Originales oficiales recibidos y cotejo documental existente. Residual: vigilar cambios de versión; no afirmar revisión humana completa.',
+        'R-08': 'Implementación adelantada por autorización del coordinador. Residual alto: no sustituye el gate previo exigido.',
+        'R-09': 'Snapshot GitHub y reportes separan publicaciones y pruebas de tareas propuestas. Residual: validación humana de la contribución personal pendiente.',
+        'R-10': 'Cuatro E2E a 390/1366 pasaron en f33183a y la CI de 02ef410 es correcta. Residual: accesibilidad manual y carga/p95 pendientes.',
+        'R-11': 'Transacciones y rechazo parcial comprobados. Residual por evaluar: falta fallo inducido exhaustivo de auditoría antes de commit.',
+        'R-12': 'Confirmación afirmativa reportada con captura de CL-16/17/18. No se mantiene la consulta como no enviada; conservar evidencia original y alcance concreto.'
+    }
     for line in (ROOT / 'docs/risks/risk-register.md').read_text(encoding='utf-8').splitlines():
         if line.startswith('| R-'):
             c = [v.strip() for v in line.strip('|').split('|')]
-            rows.append([c[0] + ' · ' + c[1], c[3] + ' / ' + c[2], c[4]])
-    table(['Riesgo', 'Prob. / impacto', 'Control documentado'], rows)
+            heading(c[0] + ' · ' + c[1], 3)
+            paragraph('Probabilidad: ' + c[3] + '. Impacto: ' + c[2] + '. Responsable en el registro: ' + c[5] + '.')
+            paragraph('Control documentado: ' + c[4] + '. Evidencia en la fuente histórica: ' + c[6] + '. Residual registrado: ' + c[7] + '.')
+            paragraph('Estado actual del control: ' + risk_evidence[c[0]])
     paragraph('Actualización de lectura: hay evidencia parcial de reserva, aislamiento, idempotencia y ejecución; el material oficial ya está recibido y CL-16/17/18 cuentan con respuesta reportada. El registro fuente contiene textos históricos pendientes de armonización. Se mantiene alto el riesgo de proceso por cierre humano pendiente; IA, carga y recuperación siguen sin aceptación completa.')
     source('docs/risks/risk-register.md', sha)
 
@@ -229,6 +272,24 @@ def content(sha):
 
     heading('9. Participación y evidencias del equipo')
     markdown('docs/delivery/participacion-verificada.md', 2)
+    paragraph('Aporte adicional comprobado: josevegalago2006-cpu publicó el PR #11 (workflow de CI documental y registro AI-008), aún abierto en borrador. Esta publicación se distingue del pipeline de aplicación del PR #12.')
+    heading('9.1 Revisiones y decisiones publicadas, con su alcance', 2)
+    paragraph('Las revisiones formales recuperadas tienen estado COMMENTED; no se contabilizan como APPROVED de GitHub. Se transcribe el texto publicado para conservar sus decisiones y observaciones concretas. La revisión asistida del PR #7 no acredita una revisión personal de Conde José. Las aprobaciones textuales de versiones previas no se transfieren al SHA actual.')
+    for pr in sorted(github['pullRequests'], key=lambda p: p['number']):
+        for review in pr['reviews']:
+            heading(f"PR #{pr['number']} · {review['author']} · {review['state']}", 3)
+            paragraph('SHA revisado: ' + str(review['sha']) + '. Fecha GitHub: ' + str(review['date']) + '.')
+            for line in str(review['body']).splitlines():
+                if line.strip(): paragraph(line)
+            add('link', ('Revisión original en GitHub', review['url']))
+        if pr['number'] == 10:
+            for comment in pr['comments']:
+                if comment['author'] == 'karollCantillo':
+                    heading('Decisión textual de Carolina en PR #10', 3)
+                    paragraph('Publicada: ' + str(comment['date']) + '. Alcance declarado: SPEC-04 y plan/tareas en c70e431; no cierre global del candidato actual.')
+                    for line in comment['body'].splitlines():
+                        if line.strip(): paragraph(line)
+                    add('link', ('Comentario original de Carolina', comment['url']))
     paragraph('Los enlaces a PR se consultan en el repositorio: #2/#8 (Edier), #3/#4 (Vega), #7/#10 (Carolina y consolidación), #12 (frontend/integración provisional). Las revisiones válidas requieren autor real, SHA y decisión. Las tareas propuestas no acreditan su realización.')
     source('docs/team/plan-colaboracion.md', sha)
     heading('Fuentes y control de edición', 2)
@@ -280,6 +341,7 @@ def word(sha):
         t = OxmlElement('w:t'); t.text = label; r.append(t); h.append(r); p._p.append(h)
     for kind, value in blocks:
         if kind == 'cover':
+            d.add_paragraph('INGENIERÍA DE SOFTWARE · EXAMEN DE EQUIPO', 'Subtitle')
             d.add_paragraph('EXAMEN · SPEC DRIVEN DEVELOPMENT CON IA', 'Subtitle')
             p = d.add_paragraph(); p.paragraph_format.space_before = Pt(45)
             r = p.add_run('NexoEntrega\n360'); r.bold = True; r.font.size = Pt(44); r.font.color.rgb = RGBColor.from_string(GREEN)
@@ -328,11 +390,22 @@ def word(sha):
             for key, label in [('given', 'Dado'), ('when', 'Cuando'), ('then', 'Entonces')]:
                 p = d.add_paragraph(); p.add_run(label + ': ').bold = True; p.add_run(value[key])
         elif kind == 'link': link(*value)
-        elif kind == 'image':
+        elif kind in ['image', 'diagram']:
             p, caption = value
             if p.exists():
-                d.add_picture(str(p), width=Inches(2.55 if 'mobile' in p.name else 6.3))
+                if kind == 'diagram':
+                    from PIL import Image as PILImage
+                    if not d.paragraphs[-1]._p.xpath('.//w:br[@w:type="page"]'):
+                        d.add_page_break()
+                    d.add_heading(caption, 3)
+                    with PILImage.open(p) as image:
+                        width, height = image.size
+                    scale = min(6.3 / width, 7.6 / height)
+                    d.add_picture(str(p), width=Inches(width * scale), height=Inches(height * scale))
+                else:
+                    d.add_picture(str(p), width=Inches(2.55 if 'mobile' in p.name else 6.3))
                 d.add_paragraph(caption, 'Caption')
+                if kind == 'diagram': d.add_page_break()
         elif kind == 'bullet': d.add_paragraph(clean(value), 'List Bullet')
         elif kind == 'code':
             p = d.add_paragraph(clean(value)); p.paragraph_format.space_after = Pt(2)
@@ -377,6 +450,7 @@ def pdf(sha):
     parts = []
     for kind, value in blocks:
         if kind == 'cover':
+            parts.append(p('INGENIERÍA DE SOFTWARE · EXAMEN DE EQUIPO'))
             parts += [Spacer(1, 35), p('EXAMEN · SDD CON IA'), Spacer(1, 35), Paragraph('NexoEntrega<br/>360', ParagraphStyle('Cover', fontName='NexoBold', fontSize=49, leading=56, textColor=colors.HexColor('#' + GREEN))), Spacer(1, 20), p('Informe técnico y evidencias', 'Subsection'), p('Especificaciones · Arquitectura · Validación · Equipo'), Spacer(1, 26), p('EDICIÓN PROVISIONAL PARA REVISIÓN', 'Callout'), p('14 de octubre de 2026'), Spacer(1, 18)]
             for name, code in [('Cantillo Carolina', '20231153656'), ('Castro Edier', '202311254074'), ('Conde José', '202321256268'), ('Vega José', '202321256198')]:
                 parts.append(p(name + '  ·  ' + code))
@@ -405,11 +479,15 @@ def pdf(sha):
             label, url = value
             parts.append(Paragraph('<link href="' + escape(url, quote=True) + '" color="#2E6650">Fuente: ' + escape(label) + '</link>', st['Cell']))
             parts.append(Spacer(1, 7))
-        elif kind == 'image':
+        elif kind in ['image', 'diagram']:
             file, caption = value
             if file.exists():
-                img = Image(str(file)); ratio = min(490 / img.imageWidth, 450 / img.imageHeight); img.drawWidth *= ratio; img.drawHeight *= ratio
+                if kind == 'diagram':
+                    if not parts or not isinstance(parts[-1], PageBreak): parts.append(PageBreak())
+                    parts.append(p(caption, 'Minor'))
+                img = Image(str(file)); ratio = min(490 / img.imageWidth, (635 if kind == 'diagram' else 450) / img.imageHeight); img.drawWidth *= ratio; img.drawHeight *= ratio
                 parts += [Spacer(1, 12), img, p(caption, 'Cell'), Spacer(1, 12)]
+                if kind == 'diagram': parts.append(PageBreak())
         else:
             parts.append(p(('• ' if kind == 'bullet' else '') + str(value), {'callout': 'Callout', 'code': 'CodeBlock'}.get(kind, 'Text')))
     def decorate(canvas, doc):

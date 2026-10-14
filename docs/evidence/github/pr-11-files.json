@@ -1,0 +1,18 @@
+[
+    {
+        "filename":  ".github/workflows/verificacion-documental.yml",
+        "status":  "added",
+        "sha":  "7af1b8e057e156b2b42ac0c6aca4a44bf8f4eaec",
+        "additions":  74,
+        "deletions":  0,
+        "blob_url":  "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/blob/435651b48e37729133e4db15f9ec8540123c7162/.github%2Fworkflows%2Fverificacion-documental.yml"
+    },
+    {
+        "filename":  "docs/evidence/ai-log/AI-008-ci-documental.md",
+        "status":  "added",
+        "sha":  "9197ea9f0eeef27d332b66d35b667e02347a5de2",
+        "additions":  47,
+        "deletions":  0,
+        "blob_url":  "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/blob/435651b48e37729133e4db15f9ec8540123c7162/docs%2Fevidence%2Fai-log%2FAI-008-ci-documental.md"
+    }
+]
