@@ -1,0 +1,74 @@
+# CI documental de NexoEntrega 360 (TSK-09, diferencia D-20).
+# Comprueba SPEC, matriz, contrato OpenAPI, integridad de los documentos oficiales
+# y secretos. Todavía no hay aplicación: las pruebas de producto se añadirán
+# cuando exista el proyecto Laravel (ver docs/testing/estrategia-pruebas.md).
+name: Verificación documental
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  documentos:
+    name: SPEC, matriz, contrato e integridad
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Obtener el código
+        uses: actions/checkout@v4
+
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Primero se comprueba, nunca se regenera antes (anexo 18_inicio_starter.md).
+      - name: SPEC y JSON derivados coinciden con la fuente única
+        run: python scripts/export_specs.py --check
+
+      - name: Matriz de cobertura y traza al día
+        run: python scripts/build_coverage.py --check
+
+      - name: Pruebas del verificador documental
+        run: python -m unittest discover -s scripts -p "test_*.py" -v
+
+      - name: Integridad del enunciado y los anexos oficiales
+        working-directory: docs/examen-oficial
+        run: sha256sum -c SHA256SUMS.txt
+
+      - name: Instalar herramientas del contrato (versiones fijadas)
+        if: hashFiles('contracts/requirements-docs.lock') != ''
+        run: python -m pip install --disable-pip-version-check -r contracts/requirements-docs.lock
+
+      - name: Contrato integrado coherente con base y fragmento IA
+        if: hashFiles('scripts/build_openapi.py') != ''
+        run: python scripts/build_openapi.py --check
+
+      - name: Validar OpenAPI 3.1.1, ejemplos y contrato IA
+        if: hashFiles('scripts/validate_openapi.py') != ''
+        run: python scripts/validate_openapi.py
+
+  secretos:
+    name: Detección de secretos
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Obtener el historial completo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Alcance: todo el historial de Git del repositorio con las reglas por defecto de gitleaks.
+      - name: Buscar claves y contraseñas con gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: 'false'
