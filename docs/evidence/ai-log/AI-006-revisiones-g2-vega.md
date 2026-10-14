@@ -29,7 +29,7 @@ Guiar la revisión de Vega al PR #8 de Edier y corregir en la estrategia de prue
 | Cambio | Decisión de Vega (aceptada / corregida / descartada) | Motivo | Fecha UTC |
 |---|---|---|---|
 | Revisión del PR #8 | Aceptada | Comprobó los cuatro puntos en los archivos del PR y el parámetro `Idempotency-Key` del OpenAPI; coinciden | 2026-10-14 |
-| Corrección R-E01 en la estrategia de pruebas | PENDIENTE | | |
+| Corrección R-E01 en la estrategia de pruebas | Aprobada | |
 
 ## Verificación
 
