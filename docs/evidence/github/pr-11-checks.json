@@ -1,0 +1,16 @@
+[
+    {
+        "name":  "Detección de secretos",
+        "status":  "completed",
+        "conclusion":  "success",
+        "completed_at":  "2026-10-14T18:50:29Z",
+        "html_url":  "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38618470106/job/116039699731"
+    },
+    {
+        "name":  "SPEC, matriz, contrato e integridad",
+        "status":  "completed",
+        "conclusion":  "success",
+        "completed_at":  "2026-10-14T18:50:28Z",
+        "html_url":  "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38618470106/job/116039699369"
+    }
+]

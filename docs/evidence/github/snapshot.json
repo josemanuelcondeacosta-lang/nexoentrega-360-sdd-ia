@@ -1,0 +1,339 @@
+{
+  "fetchedAtUtc": "2026-10-14T21:17:48.2537906Z",
+  "runs": [
+    {
+      "id": 38638973219,
+      "name": "Aplicación provisional",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "02ef410ed11d26fa651e405f1563879e987aea97",
+      "html_url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38638973219"
+    },
+    {
+      "id": 38638968344,
+      "name": "Aplicación provisional",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "02ef410ed11d26fa651e405f1563879e987aea97",
+      "html_url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38638968344"
+    },
+    {
+      "id": 38631943826,
+      "name": "Aplicación provisional",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "66a080f0bee963a31e4643858634d9c6c225e8a3",
+      "html_url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38631943826"
+    },
+    {
+      "id": 38631936394,
+      "name": "Aplicación provisional",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "66a080f0bee963a31e4643858634d9c6c225e8a3",
+      "html_url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38631936394"
+    },
+    {
+      "id": 38631851121,
+      "name": "Aplicación provisional",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "179e71c19e9171577982be97da0faa895dceff38",
+      "html_url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38631851121"
+    },
+    {
+      "id": 38631844981,
+      "name": "Aplicación provisional",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "179e71c19e9171577982be97da0faa895dceff38",
+      "html_url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38631844981"
+    },
+    {
+      "id": 38631043185,
+      "name": "Aplicación provisional",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f33183aa72c261bb513cf8aada1113605b461262",
+      "html_url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38631043185"
+    },
+    {
+      "id": 38631036099,
+      "name": "Aplicación provisional",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f33183aa72c261bb513cf8aada1113605b461262",
+      "html_url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38631036099"
+    },
+    {
+      "id": 38630562333,
+      "name": "Aplicación provisional",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "022cc845c92bbc783bf487ca7480b0f09c3aecc1",
+      "html_url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38630562333"
+    },
+    {
+      "id": 38630555614,
+      "name": "Aplicación provisional",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "022cc845c92bbc783bf487ca7480b0f09c3aecc1",
+      "html_url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38630555614"
+    },
+    {
+      "id": 38630045632,
+      "name": "Aplicación provisional",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "138e954c574329be8b59c7c7adc9769a1d1624e5",
+      "html_url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38630045632"
+    },
+    {
+      "id": 38629990744,
+      "name": "Aplicación provisional",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "138e954c574329be8b59c7c7adc9769a1d1624e5",
+      "html_url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38629990744"
+    }
+  ],
+  "pullRequests": [
+    {
+      "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/12",
+      "draft": true,
+      "merged_at": null,
+      "sha": "02ef410ed11d26fa651e405f1563879e987aea97",
+      "reviews": [],
+      "number": 12,
+      "author": "josemanuelcondeacosta-lang",
+      "state": "open",
+      "branch": "feat/provisional-frontend-integration",
+      "comments": [],
+      "title": "Frontend e integración provisional con PostgreSQL"
+    },
+    {
+      "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/11",
+      "draft": true,
+      "merged_at": null,
+      "sha": "435651b48e37729133e4db15f9ec8540123c7162",
+      "reviews": [],
+      "number": 11,
+      "author": "josevegalago2006-cpu",
+      "state": "open",
+      "branch": "ci/vega-verificacion-documental",
+      "comments": [],
+      "title": "CI: verificación documental de SPEC, contrato, integridad y secretos (TSK-09)"
+    },
+    {
+      "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/10",
+      "draft": true,
+      "merged_at": null,
+      "sha": "088621981b2e1f1eae951790cf02b57b9707be47",
+      "reviews": [],
+      "number": 10,
+      "author": "josemanuelcondeacosta-lang",
+      "state": "open",
+      "branch": "docs/consolidated-review",
+      "comments": [
+        {
+          "date": "2026-10-14T19:17:43Z",
+          "body": "Este comentario reemplaza mi comentario anterior, que quedó con campos sin llenar.\r\n\r\nRevisora: Carolina Cantillo / karollCantillo\r\nSHA completo que leí: c70e431a1099b47bdd1a0dc79802c7af54cf6109\r\nFecha UTC real de mi revisión: 2026-10-14T19:15:00Z\r\n\r\nArchivos y criterios comprobados:\r\n- specs/SPEC-04.md, AC-04-11 (corrección R-V02), comparado con el enunciado §2 (pág. 3).\r\n- contracts/openapi-ia.yaml: CSRF en crearResumenIA y aprobarResumenIA.\r\n- docs/plan.md, sección 3: nombres de tablas comparados con docs/architecture/datos.md.\r\n- docs/tasks.md: responsables y dependencias.\r\n\r\nQué comprobé personalmente:\r\n- AC-04-11: el solicitante recibe 403 para una solicitud de otro dueño de su organización y 404 para una solicitud inexistente o de ORG-B. Coincide con el enunciado §2.\r\n- Las dos escrituras de IA declaran X-XSRF-TOKEN obligatorio y respuesta 419.\r\n- Las nueve tablas de plan.md coinciden con datos.md.\r\n- tasks.md: TSK-01, TSK-02 y TSK-08 pasan de mí a Edier. Quedo a cargo de tests de aceptación, apoyo en tests de autenticación y verificación de oráculos. Estoy de acuerdo.\r\n\r\nEvidencia consultada: diff del commit c70e431 (git show) y datos.md de la rama docs/consolidated-review.\r\n\r\nHallazgos o pendientes: ninguno bloqueante. R-V02 lo levantó Vega; esta revisión verifica su corrección en c70e431.\r\n\r\nDecisión SPEC-04 0.3.2-draft: aprobada\r\nDecisión plan/tareas: aprobado\r\n\r\nAlcance: esta revisión no certifica la aplicación ni cierra otros hallazgos G1/G2. H-V01, H-V04, H-V05, H-V07 y H-E02 siguen abiertos para la SPEC 0.4.",
+          "author": "karollCantillo",
+          "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/10#issuecomment-6176370904"
+        },
+        {
+          "date": "2026-10-14T19:24:17Z",
+          "body": "Coordinación asistida por Codex a solicitud de Conde José. SHA candidato: 088621981b2e1f1eae951790cf02b57b9707be47. Carolina ya publicó revisión real SPEC-04/plan/tareas sobre c70e431; se conserva ese alcance, sin extenderlo a cambios nuevos.\n\n@josevegalago2006-cpu: revisar SPEC-01/05 0.4 (H-V01 a H-V07), CSRF, contrato y ADR-003.\n@eblanquiceth13-cmyk: revisar SPEC-03 0.4 (H-E01/H-E02), ADR-001/002, datos y contrato.\n@karollCantillo: confirmar alcance SPEC-02/03 y rangos de AC en tareas; SPEC-04 0.3.2 ya aprobada por ella sobre c70e431.\n\nPublicar decisión PERSONAL con SHA, UTC, archivos/AC, comprobaciones y hallazgos. Ver docs/reviews/coordinacion-cierre-G1-G2.md. 14 tests documentales OK, 73 AC y contrato válido; ninguna prueba de aplicación. G1/G2 global pendientes. Análisis PR #7 identificado como asistido por Codex; no suplanta revisión personal de José. No merge automático.",
+          "author": "josemanuelcondeacosta-lang",
+          "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/10#issuecomment-6176493003"
+        }
+      ],
+      "title": "docs: consolidación y revisión completa de artefactos G1/G2"
+    },
+    {
+      "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/9",
+      "draft": true,
+      "merged_at": null,
+      "sha": "27f644cce7df5b14eeb33727914b74c9cb79cd82",
+      "reviews": [],
+      "number": 9,
+      "author": "josemanuelcondeacosta-lang",
+      "state": "open",
+      "branch": "docs/correct-carolina-review-sha",
+      "comments": [],
+      "title": "docs(review): corregir referencia SHA de revisión G1"
+    },
+    {
+      "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/8",
+      "draft": true,
+      "merged_at": null,
+      "sha": "68eab81bc6bb382daa42d117b09203afc32fbfdc",
+      "reviews": [],
+      "number": 8,
+      "author": "eblanquiceth13-cmyk",
+      "state": "open",
+      "branch": "docs/g2-edier-transacciones",
+      "comments": [],
+      "title": "G2: ADR-002, datos, estados y secuencia de reserva concurrente (Edier)"
+    },
+    {
+      "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/7",
+      "draft": false,
+      "merged_at": null,
+      "sha": "7637056ffa5cf6c623e5bae424eead2a2d0fbeac",
+      "reviews": [
+        {
+          "author": "josemanuelcondeacosta-lang",
+          "sha": "7637056ffa5cf6c623e5bae424eead2a2d0fbeac",
+          "date": "2026-10-14T19:24:15Z",
+          "state": "COMMENTED",
+          "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/7#pullrequestreview-5523461407",
+          "body": "# Análisis asistido de PR #7 — pendiente de decisión personal del coordinador\n\nCodex a solicitud de Conde José; revisión documental automatizada/asistida, **no declaración de revisión humana hecha por José**.\n\nSHA de Carolina inspeccionado: `7637056ffa5cf6c623e5bae424eead2a2d0fbeac`. Fecha de análisis: 2026-10-14. PR: https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/7.\n\nComprobaciones: lectura de ADR-003, plan, tasks y registro Carolina; comparación con ADR-001/002, datos, contrato y distribución solicitada. UTF-8/caracteres de control comprobados en la consolidación; campos técnicos cookies/hash/logout/CSRF presentes. Los documentos son propuestas, no aplicación ejecutada.\n\nHallazgos originales:\n\n- Registro Carolina contenía `3b8c9d1` no verificable y aprobación extendida sin SHA real. Se preserva como histórico y se corrigió su trazabilidad en PR #9/#10. Carolina ahora publicó revisión real de SPEC-04/plan/tareas sobre `c70e431`, enlazada en registro.\n- Plan usaba kits/request_items/audit_logs en lugar de inventory_items/request_lines/audit_events de datos.md; corregido en consolidación.\n- Dependencias omitían migraciones/seed y auditoría antes de transiciones, y cobertura IA incompleta; corregido en tareas consolidadas.\n- No atribuir autoría personal conjunta a todos los integrantes por un encabezado; procedencia corregida.\n\nResultado del análisis: **solicitar actualización del PR #7 con las correcciones revisadas**, o consolidarlo mediante PR #10 tras revisiones necesarias. No fusionar ambos paquetes sin resolver duplicados. No se emite APPROVE en nombre de José.\n\nPara completar contribución humana de José: leer personalmente este análisis y los archivos fuente; publicar desde su cuenta qué verificó y decisión real, con UTC/SHA. La publicación asistida identifica autoría Codex y no acredita por sí sola la revisión personal exigida por §9.\n"
+        }
+      ],
+      "number": 7,
+      "author": "karollCantillo",
+      "state": "open",
+      "branch": "docs/g2-carolina",
+      "comments": [],
+      "title": "Docs/g2 carolina"
+    },
+    {
+      "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/6",
+      "draft": false,
+      "merged_at": null,
+      "sha": "0f98f68966ebcca0e620b7dfa83594bfc37dfbf1",
+      "reviews": [],
+      "number": 6,
+      "author": "karollCantillo",
+      "state": "open",
+      "branch": "docs/g1-carolina-review",
+      "comments": [],
+      "title": "docs(review): agregar revision independiente G1 de Carolina para SPEC…"
+    },
+    {
+      "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/5",
+      "draft": true,
+      "merged_at": null,
+      "sha": "b1dbbf93d9800b69d32daec352aacf754f876ebe",
+      "reviews": [
+        {
+          "author": "josevegalago2006-cpu",
+          "sha": "b1dbbf93d9800b69d32daec352aacf754f876ebe",
+          "date": "2026-10-14T18:19:56Z",
+          "state": "COMMENTED",
+          "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/5#pullrequestreview-5522605441",
+          "body": "Revisión de Vega (seguridad, permisos e IA) sobre el paquete G2 de José.\nSHA revisado: b1dbbf93d9800b69d32daec352aacf754f876ebe — 2026-10-14 UTC.\n\nHallazgos:\n- R-V01 (CSRF en IA): crearResumenIA y aprobarResumenIA no declaran CsrfToken, mientras todas las demás escrituras sí. El origen es mi openapi-ia.yaml, que no lo incluía; lo corrijo en mi rama y hay que regenerar openapi.yaml.\n- R-V02 (403 vs 404): el historial dice que un Solicitante que pide una solicitud fuera de su alcance recibe 404, incluso si es de otro solicitante de su misma organización. El enunciado (p. 3) exige 403 para acción prohibida sobre un recurso de su organización y 404 solo para recurso inexistente o de otra organización. SPEC-01 ya dice 403 en ese caso; el contrato debe alinearse.\n- R-V03 (copia desactualizada): docs/testing/estrategia-pruebas.md en esta rama no tiene la corrección R-E01 (commit 1a9fe52 de docs/g2-vega-ia). Hay que traer mi rama a la tuya.\n\nSPEC-01 0.3.1-draft: aprobada. El diff (b1dbbf9) solo ajusta los alcances de lectura según la respuesta de la profesora a CL-16/17/18 (Coordinador: inventario e historial de su organización; Solicitante: historial y tablero de sus propias solicitudes; Bodega sin auditoría). Las reglas base y el caso límite del 403 para solicitudes ajenas de la misma organización no cambian. Renuevo mi aprobación de SPEC-01 sobre este SHA.\n\nDecisión: requiere cambios en el contrato (R-V01, R-V02, R-V03).\nRevisión asistida por IA (Claude); las comprobaciones y la decisión son mías."
+        }
+      ],
+      "number": 5,
+      "author": "josemanuelcondeacosta-lang",
+      "state": "open",
+      "branch": "docs/g2-architecture",
+      "comments": [],
+      "title": "docs(g2): ADR-001, diagramas y OpenAPI integrado"
+    },
+    {
+      "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/4",
+      "draft": true,
+      "merged_at": null,
+      "sha": "833e9b99ef97d2be23b49a8a1778f54265c99a0a",
+      "reviews": [
+        {
+          "author": "eblanquiceth13-cmyk",
+          "sha": "a13aa176c81295e4b495a13d071a94997460f484",
+          "date": "2026-10-14T17:37:02Z",
+          "state": "COMMENTED",
+          "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/4#pullrequestreview-5522059835",
+          "body": "Revisión de Edier sobre el paquete G2 de Vega (ADR-004, secuencia de IA, contrato y estrategia de pruebas).\nSHA revisado: a13aa176c81295e4b495a13d071a94997460f484 — 2026-10-14 UTC.\n\nComprobé:\n- ADR-004 es compatible con mi ADR-002: la IA no se invoca dentro de una transacción de inventario y no escribe stock.\n- openapi-ia.yaml: maxItems 20 en requestIds (RF10).\n\nHallazgo (estrategia-pruebas.md, fila Concurrencia):\n- R-E01: «peticiones paralelas a php artisan serve» no prueba la concurrencia. El servidor de php artisan serve atiende una petición a la vez por defecto, así que las dos reservas se procesarían en serie y la prueba pasaría sin ejercitar el bloqueo (AC-03-03, AC-03-08).\n- Propuesta: usar varios workers (PHP_CLI_SERVER_WORKERS ≥ 2), php-fpm en Docker, o dos procesos separados que llamen directamente al servicio de reserva, siempre contra PostgreSQL real.\n\nDecisión: ADR-004, secuencia y contrato aprobados; estrategia de pruebas requiere ese cambio menor.\nRevisión asistida por IA (Claude); las comprobaciones y la decisión son mías."
+        }
+      ],
+      "number": 4,
+      "author": "josevegalago2006-cpu",
+      "state": "open",
+      "branch": "docs/g2-vega-ia",
+      "comments": [
+        {
+          "date": "2026-10-14T18:12:26Z",
+          "body": "Corregido R-E01 en el commit 1a9fe52: la fila de concurrencia de estrategia-pruebas.md exige dos procesos PHP independientes contra PostgreSQL y prohíbe php artisan serve con su configuración por defecto. Decisión registrada en AI-006.",
+          "author": "josevegalago2006-cpu",
+          "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/4#issuecomment-6175124130"
+        }
+      ],
+      "title": "G2: ADR-004 de IA, secuencia con fallo, contrato del asistente y estrategia de pruebas (Vega)"
+    },
+    {
+      "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/3",
+      "draft": true,
+      "merged_at": null,
+      "sha": "1b3bb379bec7047f9808ed3171aa745be1b14a4b",
+      "reviews": [
+        {
+          "author": "eblanquiceth13-cmyk",
+          "sha": "1b3bb379bec7047f9808ed3171aa745be1b14a4b",
+          "date": "2026-10-14T17:36:20Z",
+          "state": "COMMENTED",
+          "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/3#pullrequestreview-5522051619",
+          "body": "Revisión de Edier sobre la revisión G1 de Vega (vega-G1.md y AI-003).\nSHA revisado: 1b3bb379bec7047f9808ed3171aa745be1b14a4b — 2026-10-14 UTC.\n\nComprobé:\n- V-13: los códigos 422, 422, 422, 404 y 409 coinciden con AC-05-05 de SPEC-05.\n- V-22: el Auditor que intenta reservar recibe 403, coherente con la matriz del §2 y con mi diagrama de estados (solo el Coordinador reserva).\n- La decisión «aprobada con observaciones» deja abiertos H-V01 a H-V07 para la versión 0.4.\n\nDecisión: aprobado. Sin hallazgos nuevos.\nRevisión asistida por IA (Claude); las comprobaciones y la decisión son mías."
+        }
+      ],
+      "number": 3,
+      "author": "josevegalago2006-cpu",
+      "state": "open",
+      "branch": "docs/g1-vega-review",
+      "comments": [],
+      "title": "Revisión G1 de IA, seguridad y calidad (Vega)"
+    },
+    {
+      "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/2",
+      "draft": true,
+      "merged_at": null,
+      "sha": "cf9d5f5d905dee3a3774c623283c7045271dbe60",
+      "reviews": [
+        {
+          "author": "josevegalago2006-cpu",
+          "sha": "cf9d5f5d905dee3a3774c623283c7045271dbe60",
+          "date": "2026-10-14T15:49:32Z",
+          "state": "COMMENTED",
+          "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/2#pullrequestreview-5520701522",
+          "body": "Revisión de Vega (IA, seguridad y calidad) sobre SPEC-01 y SPEC-05.\nSHA revisado: cf9d5f5d905dee3a3774c623283c7045271dbe60 — 2026-10-14T15:03Z.\n\nComprobé:\n- Límites de RF11 (p. 5) y los 7 fixtures de ai-provider-fixtures.json contra SPEC-05.\n- Códigos 401/403/404 contra «Respuestas observables» (p. 3) en SPEC-01.\n- Checklist de CI contra §9 (p. 10).\n- Comandos en mi PC (Windows, Python 3.12.10): export_specs --check y build_coverage --check coherentes; 14 pruebas OK.\n\nDecisión: SPEC-01 y SPEC-05 aprobadas con observaciones. Hallazgos abiertos para la versión 0.4: H-V01 a H-V07 (el principal, H-V07: AC-05-08 mezcla fallback con marcado escapado).\nDetalle: docs/reviews/aportes/vega-G1.md (PR de la rama docs/g1-vega-review)."
+        }
+      ],
+      "number": 2,
+      "author": "eblanquiceth13-cmyk",
+      "state": "open",
+      "branch": "docs/g1-edier-cotejo-oficial",
+      "comments": [
+        {
+          "date": "2026-10-14T16:46:47Z",
+          "body": "Revisión de Carolina (especificaciones y documentación) sobre SPEC-02, SPEC-03 y SPEC-04.\r\nSHA revisado: cf9d5f5 — 2026-10-14T15:30Z.\r\n\r\nComprobé:\r\n\r\n* Flujos de BORRADOR→ENVIADA y reglas de cancelación de RF03 y RF04 contra SPEC-02.\r\n* Reglas de reserva atómica, stock e idempotencia (RF04–RF07) en SPEC-03 contra fixture-scenarios.json.\r\n* Separación por organización, auditoría y respuestas de error 401/403/404 (RF08, RF09, RNF03–RNF06) en SPEC-04.\r\n* Comandos en mi PC: export_specs --check y build_coverage --check coherentes; 14 pruebas OK.\r\n\r\nDecisión: SPEC-02, SPEC-03 y SPEC-04 en revisión. Hallazgos abiertos en integración con hallazgos de Vega (H-V01 a H-V07).\r\nDetalle: docs/reviews/aportes/carolina-G1.md (PR de la rama docs/g1-carolina-review).",
+          "author": "karollCantillo",
+          "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/2#issuecomment-6173494323"
+        }
+      ],
+      "title": "Cotejo oficial G1 y SPEC 0.3-draft"
+    },
+    {
+      "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/1",
+      "draft": true,
+      "merged_at": null,
+      "sha": "6fa084c4ae112d701835612f74a981eec8ff6736",
+      "reviews": [],
+      "number": 1,
+      "author": "josemanuelcondeacosta-lang",
+      "state": "open",
+      "branch": "docs/g1-specifications",
+      "comments": [
+        {
+          "date": "2026-10-14T05:55:21Z",
+          "body": "Revisión de Edier sobre SPEC-03 (inventario, transacciones e idempotencia). SHA revisado: 560c9cb, 2026-10-14 UTC. Cotejé RF04–RF07 contra la p. 4 del enunciado y los oráculos del anexo; las correcciones están en el PR #2. Escenarios previstos E-01 a E-17 en docs/reviews/aportes/edier-G1.md. Hallazgos abiertos: H-E01 (código HTTP del fallo antes del commit) y H-E02 (falta un AC para la carrera entre despacho y cancelación). Decisión: pendiente de revisión independiente.",
+          "author": "eblanquiceth13-cmyk",
+          "url": "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/1#issuecomment-6161925221"
+        }
+      ],
+      "title": "docs(g1): especificaciones, trazabilidad y revisión humana pendiente"
+    }
+  ],
+  "repository": "https://api.github.com/repos/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia"
+}

@@ -1,0 +1,9 @@
+.env
+vendor
+node_modules
+database/*.sqlite
+storage/logs/*
+storage/framework/sessions/*
+storage/framework/cache/data/*
+storage/framework/views/*
+bootstrap/cache/*.php

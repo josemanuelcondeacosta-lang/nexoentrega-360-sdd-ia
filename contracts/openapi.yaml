@@ -770,6 +770,31 @@ paths:
       - Coordinador
       - Bodega
       - Auditor
+  /api/catalog:
+    get:
+      operationId: catalogoSkuActivo
+      summary: Consultar SKU activos para el formulario
+      tags:
+      - Base
+      description: Solo SKU activos de la organización autenticada; no revela cantidades
+        de inventario. Proyección para RF03.
+      parameters:
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: Consultar SKU activos para el formulario
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          $ref: '#/components/responses/Base401'
+      x-roles: *id001
   /api/dashboard:
     get:
       operationId: consultarTablero
@@ -810,7 +835,9 @@ paths:
         de sus solicitudes (CL-17). Bodega sin acceso. Sin identidad: 401; recurso
         inexistente o de otra organización: 404; recurso de la misma organización
         pero lectura prohibida por rol o dueño: 403. Listados filtran el alcance antes
-        de paginar y contar. Orden UTC+id. Sin rutas de edición o borrado.'
+        de paginar y contar. Historial por solicitud: UTC ascendente, empates por
+        secuencia de transicion y luego id. Listado global: UTC descendente y luego
+        id. Sin rutas de edición o borrado.'
       parameters:
       - $ref: '#/components/parameters/CorrelationId'
       - *id003
@@ -851,7 +878,9 @@ paths:
         de sus solicitudes (CL-17). Bodega sin acceso. Sin identidad: 401; recurso
         inexistente o de otra organización: 404; recurso de la misma organización
         pero lectura prohibida por rol o dueño: 403. Listados filtran el alcance antes
-        de paginar y contar. Orden UTC+id. Sin rutas de edición o borrado.'
+        de paginar y contar. Historial por solicitud: UTC ascendente, empates por
+        secuencia de transicion y luego id. Listado global: UTC descendente y luego
+        id. Sin rutas de edición o borrado.'
       parameters:
       - $ref: '#/components/parameters/CorrelationId'
       - *id003

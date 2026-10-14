@@ -1,0 +1,19 @@
+{
+    "runs":  [
+                 {
+                     "id":  38631043185,
+                     "status":  "completed",
+                     "conclusion":  "success",
+                     "head_sha":  "f33183aa72c261bb513cf8aada1113605b461262",
+                     "html_url":  "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38631043185"
+                 },
+                 {
+                     "id":  38631036099,
+                     "status":  "completed",
+                     "conclusion":  "success",
+                     "head_sha":  "f33183aa72c261bb513cf8aada1113605b461262",
+                     "html_url":  "https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/actions/runs/38631036099"
+                 }
+             ],
+    "checkedAtUtc":  "2026-10-14T20:21:32.2728314Z"
+}

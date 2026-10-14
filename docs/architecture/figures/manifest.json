@@ -1,0 +1,41 @@
+{
+  "renderer": "Mermaid 12.2.0 + Playwright 1.56.1 / Chromium",
+  "figures": [
+    {
+      "source": "docs/architecture/componentes.md",
+      "sourceSha256": "e960767c68692ee78ff27d62de8ef779c934272ace46fae5f5fe8fef93792c13",
+      "figure": "componentes.png",
+      "figureSha256": "8c8c0605ef718ce65d5e8f59fca38775fbf2e9e3e33a5cd8616621778b8c3136"
+    },
+    {
+      "source": "docs/architecture/contexto.md",
+      "sourceSha256": "47a6822d23477b2cd40793ad5c42ccd5df173a1fd5880595facacf48262ca5dc",
+      "figure": "contexto.png",
+      "figureSha256": "c680cdc9c81e676277efbf349da94ce0582bb613d3d4593876d899489d100a3a"
+    },
+    {
+      "source": "docs/architecture/datos.md",
+      "sourceSha256": "2e0a05b7a4e6968f3b2d0b4137b87fe8e7f297c1606f8bab7885ec694bce0ad8",
+      "figure": "datos.png",
+      "figureSha256": "d3f1d9102f2ec4fa554303d57c5df60883fcc854e2077c36491481524fedb40a"
+    },
+    {
+      "source": "docs/architecture/estados.md",
+      "sourceSha256": "602975f897df59de9519b3b5ee49687342a1d6a519f4104a9837ac012ae29d98",
+      "figure": "estados.png",
+      "figureSha256": "3226074c4c5e77a535bd86b7cffc3e48d91dbc69da07de9c32103d6353260def"
+    },
+    {
+      "source": "docs/architecture/secuencia-ia-con-fallo.md",
+      "sourceSha256": "ca1e9779f9dcc3a4ae8f67abf3ae5d1055ccd089916d055d8510af6335dc3c0e",
+      "figure": "secuencia-ia-con-fallo.png",
+      "figureSha256": "bb11d5552137ded04af7bd02d36d74ad05b74afce2a55f9badf672abe504bbe9"
+    },
+    {
+      "source": "docs/architecture/secuencia-reserva-concurrente.md",
+      "sourceSha256": "11e0a75458581d39cc6d6715693cf6e36e1fa924393c5523dd123acb064adc46",
+      "figure": "secuencia-reserva-concurrente.png",
+      "figureSha256": "fdfc180704f9ca5f516cf1d6f048dd245d9c400ee4ec9e697b21efa58a882872"
+    }
+  ]
+}

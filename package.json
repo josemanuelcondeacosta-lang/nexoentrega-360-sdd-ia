@@ -1,0 +1,7 @@
+{
+  "name": "nexoentrega-verificacion",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {"test:e2e": "playwright test", "check:frontend": "node --check apps/nexo/public/app.js"},
+  "devDependencies": {"@playwright/test": "1.56.1"}
+}

@@ -4,6 +4,12 @@ Paquete documental reunido para revisión: [índice](docs/README.md) y [revisió
 
 Sistema académico para distribución comunitaria de kits en dos organizaciones de Barranquilla.
 
+## Aplicación provisional
+
+Implementación adelantada por solicitud del coordinador; G1/G2 continúan pendientes de cierre humano. Laravel + PostgreSQL, interfaz por rol y pruebas reales. IA limitada a fallback, sin proveedor LLM real.
+
+Ejecutar `docker compose up -d --build` y abrir http://127.0.0.1:8000. Consultar [cuentas y ejecución](docs/delivery/runbook-provisional.md) y [resultados observados](docs/evidence/runtime/verification.md). La referencia a 68 AC de la preparación inicial abajo es histórica: el paquete actual contiene 73 AC; no todos están verificados por aplicación.
+
 ## Equipo
 | Integrante | Código | Responsabilidad propuesta |
 |---|---|---|

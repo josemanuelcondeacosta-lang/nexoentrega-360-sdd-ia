@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="/app/phpunit.xml" tests="8" assertions="67" errors="0" failures="0" skipped="0" time="1.209039">
+    <testsuite name="Feature" tests="8" assertions="67" errors="0" failures="0" skipped="0" time="1.209039">
+      <testsuite name="Tests\Feature\NexoFlowTest" file="/app/tests/Feature/NexoFlowTest.php" tests="8" assertions="67" errors="0" failures="0" skipped="0" time="1.209039">
+        <testcase name="test_complete_flow_persists_stock_state_and_audit" file="/app/tests/Feature/NexoFlowTest.php" line="35" class="Tests\Feature\NexoFlowTest" classname="Tests.Feature.NexoFlowTest" assertions="12" time="0.798275"/>
+        <testcase name="test_partial_reservation_rejected_without_side_effects" file="/app/tests/Feature/NexoFlowTest.php" line="50" class="Tests\Feature\NexoFlowTest" classname="Tests.Feature.NexoFlowTest" assertions="6" time="0.048714"/>
+        <testcase name="test_idempotent_replay_and_conflicting_key" file="/app/tests/Feature/NexoFlowTest.php" line="61" class="Tests\Feature\NexoFlowTest" classname="Tests.Feature.NexoFlowTest" assertions="10" time="0.059507"/>
+        <testcase name="test_cancel_releases_exact_reservation_and_invalid_dispatch_is_atomic" file="/app/tests/Feature/NexoFlowTest.php" line="76" class="Tests\Feature\NexoFlowTest" classname="Tests.Feature.NexoFlowTest" assertions="7" time="0.051370"/>
+        <testcase name="test_roles_organization_and_historial_are_enforced_on_server" file="/app/tests/Feature/NexoFlowTest.php" line="87" class="Tests\Feature\NexoFlowTest" classname="Tests.Feature.NexoFlowTest" assertions="9" time="0.052577"/>
+        <testcase name="test_fallback_approval_has_no_privileged_effects" file="/app/tests/Feature/NexoFlowTest.php" line="102" class="Tests\Feature\NexoFlowTest" classname="Tests.Feature.NexoFlowTest" assertions="9" time="0.059756"/>
+        <testcase name="test_requester_audit_lists_only_owned_requests_with_uuid_ids" file="/app/tests/Feature/NexoFlowTest.php" line="116" class="Tests\Feature\NexoFlowTest" classname="Tests.Feature.NexoFlowTest" assertions="10" time="0.089016"/>
+        <testcase name="test_invalid_quantities_rejected_before_writes" file="/app/tests/Feature/NexoFlowTest.php" line="128" class="Tests\Feature\NexoFlowTest" classname="Tests.Feature.NexoFlowTest" assertions="4" time="0.049823"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>
