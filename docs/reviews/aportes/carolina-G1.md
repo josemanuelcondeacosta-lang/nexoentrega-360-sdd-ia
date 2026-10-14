@@ -21,9 +21,9 @@
    - `python scripts/build_coverage.py --check`
 
 ## 3. Decisiones por Especificación
-* **SPEC-02:** APROBADA
-* **SPEC-03:** APROBADA
-* **SPEC-04:** APROBADA
+* **SPEC-02:** En revisión
+* **SPEC-03:** En revisión
+* **SPEC-04:** En revisión
 
 ## 4. Hallazgos e Integración
 Sin hallazgos bloqueantes. Se integran las observaciones de Vega (`H-V01` a `H-V07`) para consolidar la versión `0.4` de las especificaciones.
