@@ -45,6 +45,10 @@ class NexoFlowTest extends TestCase
         $this->assertSame(4, DB::table('audit_events')->where('resource_id', $id)->count());
         $this->assertSame(1, DB::table('idempotency_records')->count());
         $this->actingAs($this->user('Auditor'))->getJson('/api/audit')->assertOk()->assertJsonPath('total', 4);
+        $this->getJson("/api/requests/$id/audit")->assertOk()->assertJsonPath('total', 4)
+            ->assertJsonPath('items.0.action', 'SEND')->assertJsonPath('items.1.action', 'RESERVE')
+            ->assertJsonPath('items.2.action', 'DISPATCH')->assertJsonPath('items.3.action', 'DELIVER');
+        $this->actingAs($this->user('Bodega'))->getJson("/api/requests/$id/audit")->assertForbidden();
     }
 
     public function test_partial_reservation_rejected_without_side_effects(): void

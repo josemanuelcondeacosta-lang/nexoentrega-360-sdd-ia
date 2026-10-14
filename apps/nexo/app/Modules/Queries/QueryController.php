@@ -99,7 +99,13 @@ class QueryController
             $q->whereIn('resource_id', DB::table('requests')->where('solicitante_id', $u->id)->where('organization_id', $u->organization_id)->selectRaw('id::text'));
         }
 
-        return $this->page($r, $q->orderByDesc('occurred_at')->orderBy('id'), fn ($e) => ['id' => $e->id, 'actorId' => (string) $e->actor_id, 'organizationId' => $e->organization_id,
+        if ($requestId) {
+            $q->orderBy('occurred_at')->orderByRaw("CASE action WHEN 'SEND' THEN 1 WHEN 'RESERVE' THEN 2 WHEN 'DISPATCH' THEN 3 WHEN 'DELIVER' THEN 4 WHEN 'CANCEL' THEN 5 ELSE 6 END");
+        } else {
+            $q->orderByDesc('occurred_at');
+        }
+
+        return $this->page($r, $q->orderBy('id'), fn ($e) => ['id' => $e->id, 'actorId' => (string) $e->actor_id, 'organizationId' => $e->organization_id,
             'resourceId' => $e->resource_id, 'action' => $e->action, 'occurredAt' => Carbon::parse($e->occurred_at)->utc()->toIso8601String(), 'correlationId' => $e->correlation_id]);
     }
 }

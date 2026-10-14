@@ -4,6 +4,8 @@ const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'
 let identity = null, catalog = [], requests = [], page = 1, total = 0;
 const reserveKeys = new Map();
 const stateNames = {BORRADOR:'Borrador',ENVIADA:'Enviada',RESERVADA:'Reservada',DESPACHADA:'Despachada',ENTREGADA:'Entregada',CANCELADA:'Cancelada'};
+const eventNames = {SEND:'Solicitud enviada',RESERVE:'Reserva confirmada',DISPATCH:'Despacho realizado',DELIVER:'Entrega registrada',CANCEL:'Solicitud cancelada',APPROVE_AI:'Resumen aprobado'};
+let historyGeneration=0;
 async function api(path, method='GET', body, extraHeaders={}) {
     const token = decodeURIComponent(document.cookie.split('; ').find(v => v.startsWith('XSRF-TOKEN='))?.slice(11) || '');
     const response = await fetch('/api'+path,{method,credentials:'same-origin',headers:{Accept:'application/json','Content-Type':'application/json','X-XSRF-TOKEN':token,...extraHeaders},body:body===undefined?undefined:JSON.stringify(body)});
@@ -30,6 +32,7 @@ async function loadRequests() {
     $('prev').disabled=page<=1;$('next').disabled=page*20>=total;
     $('requests-list').innerHTML=requests.length?requests.map(row=>{
         const buttons=[];
+        if(identity.role!=='Bodega')buttons.push(['history','Ver recorrido']);
         if(identity.role==='Solicitante' && row.estado==='BORRADOR'){buttons.push(['edit','Editar'],['send','Enviar']);}
         if(identity.role==='Solicitante' && ['ENVIADA','RESERVADA'].includes(row.estado))buttons.push(['cancel','Cancelar']);
         if(identity.role==='Coordinador' && row.estado==='ENVIADA')buttons.push(['reserve','Reservar']);
@@ -48,7 +51,7 @@ async function selectTab(tab) {
     }
     if(tab==='audit') {
         const data=await api('/audit?pageSize=100');
-        $('audit-list').innerHTML=data.items.length?data.items.map(event=>`<article class="audit-event"><span class="audit-dot"></span><div><h3>${escapeHtml(event.action)}</h3><p>${escapeHtml(event.resourceId)}</p><small>Actor ${escapeHtml(event.actorId)} · ${escapeHtml(new Date(event.occurredAt).toLocaleString('es-CO'))}</small><small class="correlation">${escapeHtml(event.correlationId)}</small></div></article>`).join(''):'<div class="empty"><h3>No hay eventos registrados</h3><p>Las transiciones confirmadas aparecerán aquí.</p></div>';
+        $('audit-list').innerHTML=data.items.length?data.items.map(event=>`<article class="audit-event"><span class="audit-dot"></span><div><h3>${escapeHtml(eventNames[event.action]||event.action)}</h3><p>${escapeHtml(requests.find(row=>row.id===event.resourceId)?.codigo||event.resourceId)}</p><small>Actor ${escapeHtml(event.actorId)} · ${escapeHtml(new Date(event.occurredAt).toLocaleString('es-CO'))}</small><small class="correlation">${escapeHtml(event.action)} · ${escapeHtml(event.correlationId)}</small>${event.action!=='APPROVE_AI'?`<button class="secondary" data-history="${escapeHtml(event.resourceId)}">Ver recorrido</button>`:''}</div></article>`).join(''):'<div class="empty"><h3>No hay eventos registrados</h3><p>Las transiciones confirmadas aparecerán aquí.</p></div>';
     }
     if(tab==='ai') {
         const data=await api('/requests?estado=ENVIADA&pageSize=100');
@@ -70,6 +73,7 @@ $('prev').addEventListener('click',()=>{page--;run(loadRequests());});$('next').
 $('requests-list').addEventListener('click',event=>{
     const button=event.target.closest('[data-action]');if(!button)return;
     if(button.dataset.action==='edit'){openForm(requests.find(row=>row.id===button.dataset.id));return;}
+    if(button.dataset.action==='history'){run(openHistory(button.dataset.id));return;}
     run((async()=>{button.disabled=true;const action=button.dataset.action,id=button.dataset.id;
         if(action==='reserve'&&!reserveKeys.has(id))reserveKeys.set(id,crypto.randomUUID());
         try{await api('/requests/'+id+'/'+action,'POST',{},action==='reserve'?{'Idempotency-Key':reserveKeys.get(id)}:{});reserveKeys.delete(id);notice('Operación confirmada. Estado e inventario actualizados.');await loadRequests();}
@@ -77,6 +81,27 @@ $('requests-list').addEventListener('click',event=>{
         finally{button.disabled=false;}
     })());
 });
+async function openHistory(id) {
+    const generation=++historyGeneration;
+    const dialog=$('history-dialog');
+    $('history-title').textContent='Recorrido de la solicitud';
+    $('history-summary').textContent='Cargando historial…';
+    $('history-events').replaceChildren();
+    if(!dialog.open)dialog.showModal();
+    $('close-history').focus();
+    try {
+        const [request,data]=await Promise.all([api('/requests/'+encodeURIComponent(id)),api('/requests/'+encodeURIComponent(id)+'/audit?pageSize=100')]);
+        if(!dialog.open||generation!==historyGeneration)return;
+        $('history-title').textContent='Recorrido de '+request.codigo;
+        $('history-summary').textContent='Estado actual: '+stateNames[request.estado]+'. Del primer paso al más reciente.';
+        $('history-events').innerHTML=data.items.length?data.items.map((event,index)=>`<li class="history-step"><span class="history-number">${index+1}</span><div><h3>${escapeHtml(eventNames[event.action]||event.action)}</h3><p>${escapeHtml(new Date(event.occurredAt).toLocaleString('es-CO'))}</p><small>Actor ${escapeHtml(event.actorId)}</small><details><summary>Referencia del evento</summary><small class="correlation">${escapeHtml(event.correlationId)}</small></details></div></li>`).join(''):'<li>El borrador aún no tiene transiciones registradas.</li>';
+    } catch(error) {
+        if(dialog.open&&generation===historyGeneration)$('history-summary').textContent=error.message+(error.status?' (HTTP '+error.status+')':'');
+    }
+}
+$('audit-list').addEventListener('click',event=>{const button=event.target.closest('[data-history]');if(button)run(openHistory(button.dataset.history));});
+$('close-history').addEventListener('click',()=>$('history-dialog').close());
+$('history-dialog').addEventListener('close',()=>{historyGeneration++;});
 function addLine(line={sku:catalog[0],cantidad:1}) {
     const index=crypto.randomUUID();const div=document.createElement('div');div.className='request-line';
     div.innerHTML=`<div><label for="sku-${index}">Tipo de kit</label><select id="sku-${index}" class="line-sku">${catalog.map(s=>`<option ${s===line.sku?'selected':''}>${escapeHtml(s)}</option>`).join('')}</select></div><div><label for="qty-${index}">Cantidad</label><input id="qty-${index}" class="line-qty" type="number" min="1" max="500" step="1" required value="${line.cantidad ?? 1}"></div><button class="quiet remove-line" type="button" aria-label="Eliminar línea">✕</button>`;

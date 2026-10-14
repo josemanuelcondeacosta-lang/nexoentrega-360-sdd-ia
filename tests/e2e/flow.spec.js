@@ -14,6 +14,16 @@ test('flujo por cuatro roles, inventario y auditoría',async({page})=>{
  await login(page,'bodega');request=page.locator('.request-card').filter({hasText:code});await request.getByRole('button',{name:'Despachar',exact:true}).click();await expect(request.locator('.badge')).toHaveText('Despachada');await logout(page);
  await login(page,'coordinador');request=page.locator('.request-card').filter({hasText:code});await request.getByRole('button',{name:'Registrar entrega'}).click();await expect(request.locator('.badge')).toHaveText('Entregada');await logout(page);
  await login(page,'auditor');await page.getByRole('button',{name:'Auditoría',exact:true}).click();await expect(page.locator('.audit-event').filter({hasText:'DELIVER'}).first()).toBeVisible();
+ await page.locator(`[data-history="${id}"]`).first().click();
+ await expect(page.locator('#history-title')).toHaveText('Recorrido de '+code);
+ await expect(page.locator('#history-events h3')).toHaveText(['Solicitud enviada','Reserva confirmada','Despacho realizado','Entrega registrada']);
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+ await page.getByRole('button',{name:'Cerrar recorrido'}).click();
+ await page.getByRole('button',{name:/^Solicitudes/}).click();
+ await page.locator(`[data-request="${id}"]`).getByRole('button',{name:'Ver recorrido'}).click();
+ await expect(page.locator('#history-title')).toHaveText('Recorrido de '+code);
+ await expect(page.locator('#history-events li')).toHaveCount(4);
+ await page.keyboard.press('Escape');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
  await page.screenshot({path:`test-results/flujo-${test.info().project.name}.png`,fullPage:true});
 });
