@@ -1,22 +1,26 @@
 # Material oficial del examen
 
-Carpeta preparada para recibir el enunciado y sus anexos. **No contiene todavía documentos oficiales.** El resumen del coordinador y la misión de trabajo están disponibles como contexto, pero no sustituyen la fuente oficial.
+Esta carpeta contiene el enunciado y los anexos **descargados de la plataforma oficial del examen** (sección «05 Plantillas y anexos»), sin modificaciones y con sus nombres originales. La plataforma indica que estos archivos se descargan «para incorporarlos al repositorio del equipo».
 
-Consultar [inventario](inventario.md) y [cotejo preparado](../reviews/cotejo-oficial-G1.md).
+| Carpeta / archivo | Contenido | Tipo |
+|---|---|---|
+| `originales/` | `Examen_Estudiantes_SDD_IA.pdf` y `Anexos_Estudiantes_SDD_IA.zip`, tal como se descargaron | **Oficial** (archivo emitido por el docente) |
+| `anexos/` | Los 27 archivos extraídos del ZIP, sin cambios de nombre ni contenido | **Oficial** (extracción byte a byte del ZIP) |
+| `SHA256SUMS.txt` | Hash SHA-256 de cada archivo de `originales/` y `anexos/` | Nota del equipo (verificación) |
+| `inventario.md` | Registro de recepción, procedencia, hash e integridad | Nota del equipo |
 
-## Recepción
+No hay transcripciones en esta carpeta: el PDF descargado contiene el enunciado íntegro (15 páginas) y la plataforma declara que «el PDF contiene el mismo enunciado». Cualquier transcripción, resumen o captura futura debe guardarse en `transcripciones/` e identificarse como tal.
 
-1. Facilitar el enunciado íntegro original (PDF/DOCX; si es una página del aula, exportación completa con identificación).
-2. Facilitar todos los anexos referenciados, conservando nombres y versiones. No se conoce aún su número ni sus nombres exactos.
-3. Facilitar correcciones y respuestas oficiales del docente, si existen; indicar expresamente cuando no existan documentos adicionales.
-4. Guardar los archivos aquí conservando los originales. No sobrescribir versiones: usar subcarpetas de versión si sus nombres coinciden.
-5. Registrar en inventario.md nombre, procedencia, versión/fecha, ruta, hash SHA-256 y estado de recepción. Un hash identifica el archivo; no demuestra su procedencia oficial.
-6. Revisar condiciones de distribución antes de subir originales a GitHub. Pueden compartirse con el equipo por el canal permitido y registrarse mediante referencia si no corresponde publicarlos.
+## Reglas de uso
 
-PowerShell, sustituyendo el nombre por el archivo recibido:
+1. No editar ni renombrar archivos de `originales/` o `anexos/`. Si el docente publica una versión nueva, guardarla en una subcarpeta con fecha (`v2026-10-XX/`) sin sobrescribir.
+2. Copiar a `contracts/`, `seeds/` o `docs/` solo **copias** de trabajo de los anexos; el original permanece aquí.
+3. Verificar integridad desde la raíz del repositorio:
 
-```powershell
-Get-FileHash -LiteralPath 'docs/examen-oficial/nombre-original.pdf' -Algorithm SHA256
+```sh
+cd docs/examen-oficial && sha256sum -c SHA256SUMS.txt
 ```
 
-No cambiar el estado a «recibido» hasta comprobar que el archivo existe, se abre y contiene todas sus páginas. La recepción no equivale a cotejo ni a aprobación humana de G1. Mantener las cinco SPEC pendientes hasta revisión válida.
+En PowerShell: `Get-FileHash -LiteralPath 'docs/examen-oficial/originales/Examen_Estudiantes_SDD_IA.pdf' -Algorithm SHA256`.
+
+Un hash identifica el archivo; la procedencia oficial la acredita la plataforma del examen. La recepción no equivale a cotejo ni a aprobación G1: ver [inventario](inventario.md) y [cotejo oficial](../reviews/cotejo-oficial-G1.md).

@@ -92,7 +92,7 @@ Crear primero su archivo de aporte con contenido real; `git add` solo incluye su
 | Persona | Tarea efectivamente realizada | Commit propio / PR | Prueba/comando y salida real | Revisión ajena y SHA | Estado |
 |---|---|---|---|---|---|
 | Carolina | Por registrar | Pendiente | Pendiente | Pendiente | Sin evidencia recibida |
-| Edier | Por registrar | Pendiente | Pendiente | Pendiente | Sin evidencia recibida |
+| Edier | Descarga e inventario de fuentes oficiales, cotejo RF/RNF y SPEC 0.3-draft (asistido por IA, AI-001); escenarios de inventario e idempotencia en `docs/reviews/aportes/edier-G1.md` (asistido por IA, AI-002) | PR #2, commit `560c9cb` y siguiente en la rama `docs/g1-edier-cotejo-oficial` | Comprobaciones documentales en `docs/evidence/g1-validation.md` (ejecución 2); ejecución propia en Windows pendiente | Pendiente: PR de Vega | Aporte entregado; revisión independiente pendiente |
 | Conde José | Por registrar por el coordinador | Pendiente | Pendiente | Pendiente | Sin contribución personal acreditada aquí |
 | Vega José | Por registrar | Pendiente | Pendiente | Pendiente | Sin evidencia recibida |
 

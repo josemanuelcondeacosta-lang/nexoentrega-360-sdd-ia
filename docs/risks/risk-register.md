@@ -8,11 +8,11 @@
 | R-04 | Respuesta IA con ID ajeno/inyección | Alta | Media | Schema estricto, whitelist IDs, texto no ejecutable | Por asignar | Pendiente | Por evaluar |
 | R-05 | Fallo de proveedor de IA | Media | Alta | Timeout 5 s, resumen alternativo determinista | Por asignar | Pendiente | Por evaluar |
 | R-06 | Entrega irreproducible | Alta | Media | Lockfiles, migraciones y clon limpio verificado | Por asignar | Pendiente | Por evaluar |
-
-| R-07 | Ausencia de enunciado y anexos | Alta | Alta | Solicitar fuente; marcar todo cierre de RF/RNF pendiente | Carolina (propuesto) | Fuente no recibida | Alto hasta cotejo |
+| R-07 | Ausencia de enunciado y anexos | Alta | Baja (fuente recibida 2026-10-14) | Originales en `docs/examen-oficial/` con SHA-256; cotejo en `cotejo-oficial-G1.md` | Carolina (propuesto) | Inventario y cotejo 0.3; revisión humana pendiente | Bajo; vigilar versiones nuevas del docente |
 | R-08 | Implementar antes de revisión humana | Alta | Media | Gate con SHA y autor/revisor distintos; no merge automático | Equipo (propuesto) | G1 no aprobado | Alto hasta revisión |
 | R-09 | Métricas o contribuciones ficticias | Alta | Media | Evidencia real, observado separado de esperado; no suplantar identidades | Equipo (propuesto) | Matriz preparada sin resultados | Por evaluar |
 | R-10 | Accesibilidad y rendimiento insuficientes | Media | Media | Teclado, 390/1366px y carga 20VU/60s con 2.000 solicitudes | José Vega (propuesto) | Pruebas no ejecutadas | Por evaluar |
 | R-11 | Auditoría y negocio divergen | Alta | Media | Misma transacción y fallo inducido antes del commit | Edier (propuesto) | AC-03-09 previsto | Por evaluar |
+| R-12 | Permisos no definidos por la matriz oficial (CL-16, CL-17, CL-18) sin respuesta del docente | Media | Media | Enviar preguntas; aplicar supuesto provisional registrado y aislar su impacto en AC-04-10 y E2E | Conde José (propuesto, envío) | Preguntas registradas, no enviadas | Medio hasta respuesta |
 
 Los responsables son propuestas de coordinación. Ningún control de aplicación se ha verificado aún ni se atribuye trabajo real a esas personas.

@@ -1,34 +1,37 @@
 # Fuentes y alcance de G1
 
-1. Enunciado oficial y anexos: **ARCHIVOS NO RECIBIDOS** por Codex. El coordinador informa que ya dispone de ellos; el resumen comunicado no sustituye su contenido íntegro. Máxima autoridad cuando se proporcionen. Inventario y cotejo preparado en `docs/reviews/cotejo-oficial-G1.md`.
-2. Misión del usuario «DESARROLLAR Y ENTREGAR NEXOENTREGA 360»: recibida el 2026-10-13. Describe el trabajo y límites; no prueba que sea copia del examen.
-3. Borrador inicial del repositorio: commit `1aeacbf681aa711c78c4a4488f5d7bb2acaf43cd`.
+1. **Enunciado oficial y anexos — RECIBIDOS** el 2026-10-14 y guardados sin cambios en `docs/examen-oficial/` (inventario con SHA-256 en [inventario.md](examen-oficial/inventario.md)). Máxima autoridad: «los valores explícitos de este enunciado prevalecen sobre supuestos o sugerencias del modelo» (§5).
+2. Misión del usuario «DESARROLLAR Y ENTREGAR NEXOENTREGA 360» (2026-10-13): contexto de organización; no sustituye al enunciado.
+3. Borrador inicial del repositorio: commit `1aeacbf681aa711c78c4a4488f5d7bb2acaf43cd`; ampliación 0.2-draft en la rama `docs/g1-specifications`.
 
-La versión 0.2-draft amplía el borrador sin convertir supuestos en acuerdos. Los números RF se mantienen siguiendo la misión; las etiquetas RNF son provisionales hasta cotejar sus textos exactos. Ningún requisito se marca cerrado por no existir su fuente oficial. Si el examen contradice una propuesta, actualizar SPEC, matriz y pruebas previstas antes de aprobar.
+La versión 0.3-draft de las SPEC aplica el cotejo de [cotejo-oficial-G1.md](reviews/cotejo-oficial-G1.md). Ningún requisito se declara cumplido: la cobertura es documental hasta que existan código, pruebas y revisión humana.
 
-| Propuesta transversal | Fuente/confirmación requerida |
-|---|---|
-| SOLICITANTE, COORDINADOR, BODEGA, AUDITOR y permisos detallados | Roles inferidos de borradores; CL-09 |
-| Fecha calendario, zona America/Bogota, observaciones ≤1000 | CL-02/03 |
-| Zonas por organización, prioridades ALTA/MEDIA/BAJA | CL-01/07/10 |
-| Ámbito, respuestas conservadas y frontera exacta TTL idempotente | CL-04/11 |
-| Whitelist de seis campos IA y nombres del contrato | CL-12 y anexos |
-| RNF04 como rendimiento; semántica de otros RNF | CL-13 |
+| Tema | Fuente oficial | Estado |
+|---|---|---|
+| Roles, permisos y respuestas 401/403/404 | OF-01 §2, p. 3 | Resuelto por enunciado; quedan CL-16, CL-17 y CL-18 para el docente |
+| Prioridad NORMAL o ALTA, 1 a 10 líneas, cantidades 1 a 500 | OF-01 §3 RF03, p. 4 | Resuelto por enunciado |
+| Zonas, formato de fecha, límite de observaciones, código | OF-01 §5 «Puntos que debe concretar el equipo» | Decisión del equipo: CL-01, CL-02, CL-03 y CL-10 |
+| Idempotencia: alcance y retención mínima | OF-01 §3 RF07, p. 4 | Resuelto; política de errores y reintentos es decisión del equipo (CL-04, CL-11) |
+| Campos del asistente y contrato de salida | OF-01 §4 RF10–RF11, p. 5; anexo `ai-output.schema.json` | Resuelto por enunciado |
+| Textos RNF01–RNF06 | OF-01 §5, p. 6 | Resuelto por enunciado |
+| Datos de prueba, cuentas y oráculos | Anexos `fixture-scenarios.json` y `acceptance-oracles.md` | Recibidos |
 
-## Permisos propuestos (sin aprobación)
+## Matriz oficial de permisos (enunciado §2)
 
-Todas las operaciones requieren sesión y organización resuelta por servidor. Un recurso ajeno se trata como inexistente (404); 403 indica operación prohibida dentro del alcance visible. Si se rechaza por rol antes de buscar el recurso, no revelar si el ID existe. Confirmar precedencia con CL-09.
+Todas las operaciones requieren identidad autenticada; organización y rol salen de la identidad, nunca del navegador. Un recurso inexistente o de otra organización responde 404; una acción prohibida sobre un recurso de su organización responde 403.
 
 | Operación | Solicitante | Coordinador | Bodega | Auditor |
 |---|---|---|---|---|
-| Crear/editar/enviar borrador | Solo propio | No | No | No |
-| Consultar solicitudes | Propias | Organización | Organización | Organización |
-| Reservar | No | Organización | No | No |
-| Cancelar ENVIADA/RESERVADA | No, pendiente docente | Organización | No | No |
-| Despachar/entregar | No | No | Organización | No |
-| Consultar inventario | No, pendiente docente | Organización | Organización | Organización |
-| Consultar historial | Propias | Organización | Organización | Organización |
-| Tablero | Propias, pendiente docente | Organización | Organización | Organización |
-| Generar/aprobar IA | No | Organización | No | No |
+| Crear y editar borrador | Solo los suyos | No | No | No |
+| Enviar solicitud | Solo la suya | No | No | No |
+| Consultar solicitudes | Solo las propias | Su organización | Su organización | Su organización |
+| Cancelar ENVIADA o RESERVADA | Solo las propias | No | No | No |
+| Reservar ENVIADA | No | Su organización | No | No |
+| Despachar RESERVADA | No | No | Su organización | No |
+| Registrar ENTREGADA sobre DESPACHADA | No | Su organización | No | No |
+| Consultar inventario | No | **Pendiente CL-16** (supuesto: lectura) | Su organización | Su organización |
+| Consultar auditoría | **Pendiente CL-17** (supuesto: no) | **Pendiente CL-17** (supuesto: no) | **Pendiente CL-17** (supuesto: no) | Su organización |
+| Tablero | **Pendiente CL-18** (supuesto: solo sus solicitudes) | Su organización | Su organización | Su organización |
+| Usar y aprobar resúmenes de IA | No | Su organización | No | No |
 
-La matriz no habilita implementación: requiere confirmación expresa y revisión de SPEC-01/03/04/05.
+La matriz 0.2 asignaba la cancelación al Coordinador y la entrega a Bodega; ambas asignaciones contradecían el enunciado y se corrigieron (diferencias D-01 y D-02 del cotejo).

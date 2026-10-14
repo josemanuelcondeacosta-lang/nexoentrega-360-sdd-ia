@@ -17,10 +17,16 @@ Autor de la ampliación: asistente Codex bajo instrucciones del usuario. No atri
 
 Artefactos: cinco SPEC y JSON derivados, constitution.md, requirements-source.md, clarification-log.md, risk-register.md, ai-trust-boundaries.md, coverage-matrix.md, initial-audit.md y evidencia documental en evidence/g1-validation.md.
 
+## Paquete candidato 0.3-draft — cotejo oficial
+
+Elaboración asistida por IA (Claude) a solicitud de Castro Edier, 2026-10-14 UTC; registro `docs/evidence/ai-log/AI-001-cotejo-oficial-g1.md`. Rama `docs/g1-edier-cotejo-oficial`, creada desde `6fa084c` de `docs/g1-specifications`; el SHA candidato es el del commit de esa rama que introduce este apartado. No acredita revisión humana de ningún integrante.
+
+Cambios: originales oficiales y anexos en `docs/examen-oficial/` con SHA-256; cotejo real en `cotejo-oficial-G1.md` (D-01 a D-24); SPEC 0.3-draft en el formato del anexo 13 con 68 AC; exportador, matriz y traza CSV regenerados desde la fuente única; registro de aclaraciones reclasificado (CL-16 a CL-18 para el docente).
+
 ## Lista de revisión humana
 
-- [ ] Se recibió enunciado oficial/anexos y se cotejaron RF01–RF12 y RNF01–RNF06.
-- [ ] Cinco historias y 57 AC con entradas/proceso/salidas, escenarios negativos y persistencia.
+- [ ] Se recibió enunciado oficial/anexos y se cotejaron RF01–RF12 y RNF01–RNF06 (cotejo preparado en 0.3; falta verificación humana fila por fila).
+- [ ] Cinco historias y 68 AC con entradas tipadas, proceso, salidas, escenarios positivos, negativos, límites, permisos y fallos, y efectos persistidos.
 - [ ] Se revisaron rol, permisos, fecha, catálogos, TTL y whitelist IA; supuestos pendientes visibles.
 - [ ] Reglas de concurrencia, reserva atómica, cancelación, despacho y auditoría son consistentes.
 - [ ] Contrato IA y degradación no permiten escrituras privilegiadas ni datos ajenos.
@@ -32,11 +38,13 @@ Artefactos: cinco SPEC y JSON derivados, constitution.md, requirements-source.md
 
 | ID | Hallazgo | Severidad | Disposición | Resolución humana |
 |---|---|---|---|---|
-| G1-H01 | Enunciado/anexos ausentes | Bloqueante para cierre | Solicitar y cotejar | Pendiente |
-| G1-H02 | Semántica y asignación RNF provisional | Bloqueante para cobertura definitiva | Confirmar CL-13 | Pendiente |
-| G1-H03 | Matriz de roles/HTTP/cancelación propuesta | Bloqueante para funcionalidades afectadas | Confirmar CL-09 | Pendiente |
-| G1-H04 | Whitelist y contrato IA sin anexo | Bloqueante para SPEC-05 | Confirmar CL-12 | Pendiente |
-| G1-H05 | TTL, errores y retención idempotente propuestos | Bloqueante para SPEC-03 | Confirmar CL-04/11 | Pendiente |
+| G1-H01 | Enunciado/anexos ausentes | Bloqueante para cierre | Recibidos y cotejados en 0.3 (`cotejo-oficial-G1.md`) | Pendiente: verificar el cotejo |
+| G1-H02 | Semántica y asignación RNF provisional | Bloqueante para cobertura definitiva | Textos oficiales aplicados; RNF04 corregido (D-06) | Pendiente |
+| G1-H03 | Matriz de roles/HTTP/cancelación propuesta | Bloqueante para funcionalidades afectadas | Matriz oficial aplicada (D-01, D-02); quedan CL-16 a CL-18 para el docente | Pendiente |
+| G1-H04 | Whitelist y contrato IA sin anexo | Bloqueante para SPEC-05 | Campos y esquema oficiales aplicados (D-04, D-05, D-17) | Pendiente |
+| G1-H05 | TTL, errores y retención idempotente propuestos | Bloqueante para SPEC-03 | RF07 aplicado; política de errores y retención como decisión del equipo (CL-04, CL-11) | Pendiente: acuerdo del equipo |
+| G1-H06 | Formato SPEC sin entradas tipadas ni AC dado/cuando/entonces | Alta para la rúbrica de especificaciones | Migrado al anexo 13 (D-15) | Pendiente |
+| G1-H07 | Sin CI de coincidencia JSON y constitution sin motivo/responsable | Media | Abiertos (D-20, D-21) | Pendiente |
 
 Decisión por SPEC: SPEC-01 pendiente; SPEC-02 pendiente; SPEC-03 pendiente; SPEC-04 pendiente; SPEC-05 pendiente. No basta una reacción informal sin identificar artefactos y SHA. La revisión no acredita que pruebas futuras hayan sido ejecutadas.
 

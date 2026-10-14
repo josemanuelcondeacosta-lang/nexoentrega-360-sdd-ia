@@ -14,20 +14,21 @@ class ExportSpecsTests(unittest.TestCase):
         self.root = Path(self.temp.name)
         shutil.copytree(ROOT / 'specs', self.root / 'specs')
 
-    def alter(self, old, new):
-        path = self.root / 'specs' / 'SPEC-01.md'
-        path.write_text(path.read_text(encoding='utf-8').replace(old, new, 1), encoding='utf-8')
+    def alter(self, old, new, spec='SPEC-01'):
+        path = self.root / 'specs' / f'{spec}.md'
+        content = path.read_text(encoding='utf-8')
+        self.assertIn(old, content, 'el texto a sustituir debe existir en la fuente')
+        path.write_text(content.replace(old, new, 1), encoding='utf-8')
 
     def test_roundtrip(self):
         count, criteria = export(self.root)
         self.assertEqual(count, 5)
-        self.assertGreater(criteria, 21)
+        self.assertGreaterEqual(criteria, 57)
         self.assertEqual(export(self.root, check=True), (count, criteria))
 
     def test_stale_json(self):
         export(self.root)
-        path = self.root / 'specs' / 'generated' / 'SPEC-01.json'
-        path.write_text('{}', encoding='utf-8')
+        (self.root / 'specs' / 'generated' / 'SPEC-01.json').write_text('{}', encoding='utf-8')
         with self.assertRaisesRegex(ValueError, 'no coincide'):
             export(self.root, check=True)
 
@@ -37,9 +38,8 @@ class ExportSpecsTests(unittest.TestCase):
             export(self.root)
 
     def test_duplicate_block(self):
-        path = self.root / 'specs' / 'SPEC-01.md'
-        with path.open('a', encoding='utf-8') as stream:
-            stream.write('\n```spec-json\n{}\n```\n')
+        with (self.root / 'specs' / 'SPEC-01.md').open('a', encoding='utf-8') as stream:
+            stream.write('\n<!-- spec-data:start -->\n```json\n{}\n```\n<!-- spec-data:end -->\n')
         with self.assertRaisesRegex(ValueError, 'exactamente un bloque'):
             export(self.root)
 
@@ -53,9 +53,36 @@ class ExportSpecsTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'ID no coincide'):
             export(self.root)
 
-    def test_markdown_json_divergence(self):
-        self.alter('- **AC-01-01:** Sin credenciales', '- **AC-01-01:** Con credenciales')
-        with self.assertRaisesRegex(ValueError, 'divergen'):
+    def test_ac_references_requirement_outside_spec(self):
+        self.alter('"requirements": ["RF01", "RNF01"],\n      "kind": "negativo"',
+                   '"requirements": ["RF03"],\n      "kind": "negativo"')
+        with self.assertRaisesRegex(ValueError, 'ausentes de la SPEC'):
+            export(self.root)
+
+    def test_requirement_without_ac(self):
+        self.alter('"requirements": ["RNF05"],\n      "kind": "positivo"',
+                   '"requirements": ["RF01"],\n      "kind": "positivo"')
+        with self.assertRaisesRegex(ValueError, 'requisitos sin AC'):
+            export(self.root)
+
+    def test_invalid_kind(self):
+        self.alter('"kind": "negativo"', '"kind": "feliz"')
+        with self.assertRaisesRegex(ValueError, 'kind'):
+            export(self.root)
+
+    def test_untyped_input(self):
+        self.alter('"type": "string; correo ficticio', '"tipo": "string; correo ficticio')
+        with self.assertRaisesRegex(ValueError, r'inputs\[1\]\.type'):
+            export(self.root)
+
+    def test_template_placeholder_rejected(self):
+        self.alter('"want": "iniciar y cerrar sesión', '"want": "[acción] iniciar y cerrar sesión')
+        with self.assertRaisesRegex(ValueError, 'marcador'):
+            export(self.root)
+
+    def test_ac_sequence(self):
+        self.alter('"id": "AC-01-02"', '"id": "AC-01-03"')
+        with self.assertRaisesRegex(ValueError, 'esperado AC-01-02'):
             export(self.root)
 
     def test_check_does_not_create_output_directory(self):
@@ -68,9 +95,8 @@ class ExportSpecsTests(unittest.TestCase):
         export(self.root)
         target = self.root / 'specs' / 'generated' / 'SPEC-01.json'
         original = target.read_bytes()
-        path = self.root / 'specs' / 'SPEC-05.md'
-        path.write_text(path.read_text(encoding='utf-8').replace('"inputs": [', '"inputs": null, "oldInputs": ['), encoding='utf-8')
-        with self.assertRaisesRegex(ValueError, 'inputs incompleto'):
+        self.alter('"inputs": [', '"inputs": null, "oldInputs": [', spec='SPEC-05')
+        with self.assertRaisesRegex(ValueError, 'inputs'):
             export(self.root)
         self.assertEqual(target.read_bytes(), original)
 

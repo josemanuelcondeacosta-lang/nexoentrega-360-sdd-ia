@@ -1,165 +1,240 @@
 # SPEC-02: Creación y envío de solicitudes
 
-**Versión:** 0.2-draft — **no aprobada para implementar**
+- **Versión:** 0.3-draft — **no aprobada para implementar**.
+- **Fuente vinculante:** `docs/examen-oficial/originales/Examen_Estudiantes_SDD_IA.pdf` §2 (p. 3), §3 RF03–RF04 (p. 4), §5 RNF01/RNF05 (p. 6), §8 ejemplo AC-RF03-01 (p. 9); anexos `16_ejemplo_sdd.md` y `fixture-scenarios.json`.
+- **Estado y aprobación:** versión 0.3 elaborada con asistencia de IA a solicitud de Castro Edier (registro `docs/evidence/ai-log/AI-001-cotejo-oficial-g1.md`). Revisor humano distinto del autor: **PENDIENTE**. Fecha UTC y commit revisado: **PENDIENTE**.
 
-Fuente: misión del usuario y borrador inicial. Enunciado oficial y anexos NO recibidos. RF/RNF conservan identificadores iniciales; significado de RNF pendiente de cotejo. HTTP, roles, catálogos y campos propuestos requieren revisión.
+El bloque siguiente es la fuente única. `specs/generated/SPEC-02.json` se genera con `python scripts/export_specs.py`; no editarlo a mano. Los AC son resultados **esperados**: ninguna prueba de producto se ha ejecutado.
 
-**RF:** RF03, RF04; **RNF:** RNF05
-
-## Historia de usuario HU-02
-
-Como solicitante, quiero crear, editar y enviar una solicitud válida, para solicitar kits de mi organización.
-
-## Entradas
-
-- Borrador: zona, prioridad, fecha requerida YYYY-MM-DD, observaciones y líneas {skuId, quantity}.
-- Líneas: 1–10 SKU activos distintos; quantity entero 1–500. Código, dueño y organización son generados por servidor.
-- Catálogo de zonas, prioridades y límite de observaciones son propuestas CL-01/02/03/07/10.
-
-## Procesos
-
-- Validar esquema y catálogo de la organización; persistir cabecera y líneas conjuntamente como BORRADOR.
-- Editar únicamente borrador del dueño; al enviar volver a validar líneas y fecha contra fecha local propuesta America/Bogota.
-- Persistir transición BORRADOR → ENVIADA y evento de auditoría en una unidad consistente.
-
-## Salidas y efectos persistidos
-
-- Creación: 201 con ID, código único, BORRADOR y líneas persistidas; edición/envío: 200.
-- 422 para datos inválidos, 403 para dueño no autorizado según CL-09, 404 para recurso ajeno, 409 para estado incompatible; sin efectos parciales.
-
-## Reglas y supuestos
-
-- Enviar no reserva inventario; operaciones posteriores se definen en SPEC-03.
-- Propuesta de prioridades: ALTA, MEDIA, BAJA; no considerarlas catálogo oficial hasta CL-10.
-- No aceptar cambios de código, dueño u organización desde cliente.
-
-## Límites y escenarios adversariales
-
-- 0/1/10/11 líneas; cantidad 0/1/500/501, decimal o string; SKU repetido, inactivo o ajeno; fecha inválida, ayer y hoy.
-
-## Criterios de aceptación
-
-Todos son resultados ESPERADOS; ninguna prueba de producto ejecutada. Conservar snapshots de base antes/después y evidencias según matriz.
-
-- **AC-02-01:** Se guarda borrador con 1–10 SKU activos distintos y cantidades enteras 1–500.
-- **AC-02-02:** Enviar línea con cantidad 0 retorna 422 sin solicitud enviada ni cambio de inventario.
-- **AC-02-03:** Solo el dueño edita BORRADOR; edición tras envío retorna 409 sin cambios.
-- **AC-02-04:** Enviar con fecha anterior a la fecha del envío retorna 422 sin transición.
-- **AC-02-05:** Crear borrador válido retorna 201: cabecera y todas las líneas persisten con código único y dueño/organización del servidor; inventario no cambia.
-- **AC-02-06:** Para 0 y 11 líneas, SKU duplicado/inactivo/ajeno, cantidades 0/501/decimal/string: 422, sin cabecera o líneas parciales ni evento de éxito.
-- **AC-02-07:** Aceptar límites 1 y 10 líneas y cantidades 1 y 500; rechazar propiedades privilegiadas sin reasignar dueño/organización/código.
-- **AC-02-08:** Enviar hoy o fecha futura válida retorna 200 y persiste ENVIADA con un evento; existencia y reservas no cambian.
-- **AC-02-09:** Editar solicitud de otro dueño de la misma organización retorna 403 según propuesta CL-09; conservar cabecera, líneas y estado.
-- **AC-02-10:** Reenviar ENVIADA o editar estado posterior retorna 409, sin segundo evento de envío ni cambios de inventario.
-- **AC-02-11:** Formulario operable con teclado, etiquetas asociadas, errores vinculados a campos y foco visible a 390 y 1366 px; prueba manual/E2E pendiente.
-
-## Fuente única estructurada
-
-El bloque se exporta automáticamente; no editar JSON derivado.
-
-```spec-json
+<!-- spec-data:start -->
+```json
 {
   "id": "SPEC-02",
-  "version": "0.2-draft",
-  "title": "Creación y envío de solicitudes",
-  "requirements": {
-    "rf": [
-      "RF03",
-      "RF04"
-    ],
-    "rnf": [
-      "RNF05"
-    ]
+  "version": "0.3-draft",
+  "name": "Creación y envío de solicitudes",
+  "status": "Borrador cotejado con el enunciado oficial; pendiente de revisión humana independiente",
+  "story": {
+    "id": "HU-02",
+    "as": "solicitante de una organización",
+    "want": "crear, editar y enviar una solicitud de kits válida",
+    "soThat": "el coordinador pueda evaluarla y reservar existencias sin datos incompletos ni inválidos"
   },
-  "userStory": "Como solicitante, quiero crear, editar y enviar una solicitud válida, para solicitar kits de mi organización.",
+  "requirements": ["RF03", "RF04", "RF09", "RNF01", "RNF05"],
+  "description": "Registro de solicitudes con código generado por el sistema, zona, prioridad NORMAL o ALTA, fecha requerida, observaciones opcionales y de 1 a 10 líneas con SKU activos distintos y cantidades enteras de 1 a 500; edición exclusiva del borrador por su dueño y transición BORRADOR a ENVIADA auditada. Enunciado §3.",
+  "actors": [
+    "Solicitante dueño de la solicitud",
+    "Coordinador, Bodega y Auditor: sin permiso para crear, editar ni enviar"
+  ],
+  "scope": [
+    "Crear borrador con cabecera y líneas",
+    "Editar el borrador propio",
+    "Enviar: transición BORRADOR a ENVIADA con evento de auditoría",
+    "Validaciones RF03 en el servidor y mensajes de error por campo"
+  ],
+  "exclusions": [
+    "Reserva, despacho, entrega y cancelación (SPEC-03)",
+    "Listados, filtros y tablero (SPEC-04)",
+    "Eliminación de borradores (no exigida por el enunciado)"
+  ],
   "inputs": [
-    "Borrador: zona, prioridad, fecha requerida YYYY-MM-DD, observaciones y líneas {skuId, quantity}.",
-    "Líneas: 1–10 SKU activos distintos; quantity entero 1–500. Código, dueño y organización son generados por servidor.",
-    "Catálogo de zonas, prioridades y límite de observaciones son propuestas CL-01/02/03/07/10."
+    {
+      "field": "zona",
+      "type": "string de catálogo",
+      "validation": ["Obligatoria", "Debe pertenecer al catálogo de zonas definido en CL-01 (propuesta: NORTE, SUR y CENTRO, valores del anexo)", "Zona desconocida produce 422"]
+    },
+    {
+      "field": "prioridad",
+      "type": "enum NORMAL o ALTA",
+      "validation": ["Obligatoria", "Cualquier otro valor produce 422"]
+    },
+    {
+      "field": "fechaRequerida",
+      "type": "string fecha y hora RFC 3339 en UTC, como en el anexo fixture-scenarios.json (supuesto CL-02)",
+      "validation": ["Obligatoria", "Formato inválido produce 422", "Al enviar no puede ser anterior al instante de envío del servidor; igual o posterior se acepta"]
+    },
+    {
+      "field": "observaciones",
+      "type": "string opcional, texto plano",
+      "validation": ["Máximo 1000 caracteres (supuesto CL-03)", "Se trata como dato no confiable y se escapa al mostrarse"]
+    },
+    {
+      "field": "lineas",
+      "type": "array de objetos con sku y cantidad",
+      "validation": ["Entre 1 y 10 elementos", "Sin SKU repetidos"]
+    },
+    {
+      "field": "lineas.sku",
+      "type": "string",
+      "validation": ["SKU activo del inventario de la organización autenticada", "Repetido, inactivo, inexistente o de otra organización produce 422"]
+    },
+    {
+      "field": "lineas.cantidad",
+      "type": "integer",
+      "validation": ["Entero entre 1 y 500 inclusive", "Cero, negativo, decimal, texto o ausente produce 422"]
+    },
+    {
+      "field": "codigo, solicitante, organizationId, estado",
+      "type": "generados por el servidor",
+      "validation": ["Si el cliente los envía la petición se rechaza con 422 y nunca se reasignan"]
+    }
   ],
   "process": [
-    "Validar esquema y catálogo de la organización; persistir cabecera y líneas conjuntamente como BORRADOR.",
-    "Editar únicamente borrador del dueño; al enviar volver a validar líneas y fecha contra fecha local propuesta America/Bogota.",
-    "Persistir transición BORRADOR → ENVIADA y evento de auditoría en una unidad consistente."
+    "Autenticar y autorizar según SPEC-01: solo el rol Solicitante crea borradores",
+    "Validar esquema y reglas RF03 de cabecera y líneas; si falla responder 422 con el error asociado a cada campo, sin persistir nada",
+    "Persistir cabecera y líneas en una transacción como BORRADOR con código único generado, solicitante y organización tomados de la identidad",
+    "Editar: comprobar dueño y estado BORRADOR, revalidar y reemplazar cabecera y líneas de forma atómica",
+    "Enviar: en una transacción bloquear la solicitud, comprobar dueño y estado BORRADOR, revalidar RF03 incluida fechaRequerida contra el instante de envío, cambiar a ENVIADA y registrar el evento de auditoría",
+    "Responder con el estado confirmado; enviar no modifica el inventario"
   ],
   "outputs": [
-    "Creación: 201 con ID, código único, BORRADOR y líneas persistidas; edición/envío: 200.",
-    "422 para datos inválidos, 403 para dueño no autorizado según CL-09, 404 para recurso ajeno, 409 para estado incompatible; sin efectos parciales."
+    {"condition": "Creación válida", "result": "201 con id, código, estado BORRADOR y líneas persistidas; inventario sin cambios"},
+    {"condition": "Edición válida del borrador propio", "result": "200 con el borrador actualizado"},
+    {"condition": "Envío válido", "result": "200 con estado ENVIADA; un evento de auditoría; existencia física y reservada sin cambios"},
+    {"condition": "Datos inválidos", "result": "422 con el campo inválido; ninguna cabecera, línea ni evento persistido"},
+    {"condition": "Edición o envío por un rol distinto de Solicitante o por otro solicitante de su organización", "result": "403 sin cambios"},
+    {"condition": "Solicitud inexistente o de otra organización", "result": "404"},
+    {"condition": "Edición o envío fuera de BORRADOR", "result": "409 sin cambios"}
   ],
-  "rules": [
-    "Enviar no reserva inventario; operaciones posteriores se definen en SPEC-03.",
-    "Propuesta de prioridades: ALTA, MEDIA, BAJA; no considerarlas catálogo oficial hasta CL-10.",
-    "No aceptar cambios de código, dueño u organización desde cliente."
+  "businessRules": [
+    "RF03: la solicitud contiene código generado, solicitante, organización, zona, prioridad NORMAL o ALTA, fecha requerida, observaciones opcionales y de 1 a 10 líneas distintas",
+    "Cada línea usa un SKU activo y una cantidad entera de 1 a 500; no se aceptan SKU repetidos, negativos, decimales ni una fecha anterior al momento de envío",
+    "Solo el borrador es editable y solo su dueño lo edita y lo envía",
+    "Enviar no reserva inventario; la reserva pertenece a SPEC-03",
+    "La validación ocurre en el servidor aunque la interfaz también valide",
+    "El envío exitoso registra un evento de auditoría con los campos de RF09 en la misma transacción"
   ],
   "edgeCases": [
-    "0/1/10/11 líneas; cantidad 0/1/500/501, decimal o string; SKU repetido, inactivo o ajeno; fecha inválida, ayer y hoy."
+    "0, 1, 10 y 11 líneas",
+    "Cantidades 0, 1, 500, 501, -1, 2.5, el texto 5 y cantidad ausente",
+    "SKU repetido, inactivo, inexistente y de ORG-B",
+    "Zona desconocida y prioridad MEDIA",
+    "fechaRequerida con formato inválido, anterior, igual y posterior al instante de envío",
+    "Observaciones de 1000 y 1001 caracteres",
+    "Cuerpo con codigo, organizationId, estado o solicitante",
+    "Doble envío de la misma solicitud"
+  ],
+  "assumptions": [
+    "Los borradores se validan al crear, al editar y de nuevo al enviar",
+    "Formato de fecha y zona horaria de visualización (America/Bogota) según CL-02, decisión del equipo",
+    "Límite de observaciones de 1000 caracteres según CL-03, decisión del equipo",
+    "Formato del código generado según CL-10, decisión del equipo"
+  ],
+  "openQuestions": [
+    "CL-01: catálogo definitivo de zonas y tratamiento de zona desconocida (decisión del equipo)",
+    "CL-02: formato de fecha y visualización horaria (decisión del equipo)"
+  ],
+  "dependencies": [
+    "SPEC-01: identidad y permisos",
+    "Catálogo de SKU activos por organización sembrado (anexo fixture-scenarios.json)",
+    "SPEC-04: estructura del evento de auditoría"
   ],
   "acceptanceCriteria": [
     {
       "id": "AC-02-01",
-      "expected": "Se guarda borrador con 1–10 SKU activos distintos y cantidades enteras 1–500.",
-      "status": "draft"
+      "requirements": ["RF03"],
+      "kind": "positivo",
+      "given": "un solicitante de ORG-A autenticado y los SKU KIT-ALIMENTO y KIT-AGUA activos",
+      "when": "crea un borrador con zona NORTE, prioridad ALTA, fechaRequerida futura y dos líneas distintas con cantidades válidas",
+      "then": "recibe 201; la base contiene la cabecera en BORRADOR y ambas líneas; el inventario no cambia"
     },
     {
       "id": "AC-02-02",
-      "expected": "Enviar línea con cantidad 0 retorna 422 sin solicitud enviada ni cambio de inventario.",
-      "status": "draft"
+      "requirements": ["RF03", "RNF01"],
+      "kind": "negativo",
+      "given": "un solicitante de ORG-A autenticado y un SKU activo",
+      "when": "crea, edita o envía una solicitud cuya línea tiene cantidad 0",
+      "then": "recibe 422 con un error asociado a la cantidad; el borrador conserva su estado previo, no existe una solicitud ENVIADA nueva y el inventario y la auditoría de transiciones no cambian"
     },
     {
       "id": "AC-02-03",
-      "expected": "Solo el dueño edita BORRADOR; edición tras envío retorna 409 sin cambios.",
-      "status": "draft"
+      "requirements": ["RF04"],
+      "kind": "negativo",
+      "given": "una solicitud propia en ENVIADA",
+      "when": "el solicitante dueño intenta editarla",
+      "then": "recibe 409; cabecera, líneas y estado no cambian"
     },
     {
       "id": "AC-02-04",
-      "expected": "Enviar con fecha anterior a la fecha del envío retorna 422 sin transición.",
-      "status": "draft"
+      "requirements": ["RF03"],
+      "kind": "limite",
+      "given": "un borrador válido, el reloj de prueba en 2030-01-10T14:00:00Z y fechaRequerida 2030-01-10T13:59:59Z",
+      "when": "el dueño lo envía",
+      "then": "recibe 422 asociado a fechaRequerida; la solicitud sigue en BORRADOR y no se registra evento"
     },
     {
       "id": "AC-02-05",
-      "expected": "Crear borrador válido retorna 201: cabecera y todas las líneas persisten con código único y dueño/organización del servidor; inventario no cambia.",
-      "status": "draft"
+      "requirements": ["RF03"],
+      "kind": "positivo",
+      "given": "un solicitante de ORG-A autenticado",
+      "when": "crea dos borradores válidos",
+      "then": "cada uno recibe un código distinto generado por el sistema; solicitante es la cuenta autenticada y organización es ORG-A en ambos"
     },
     {
       "id": "AC-02-06",
-      "expected": "Para 0 y 11 líneas, SKU duplicado/inactivo/ajeno, cantidades 0/501/decimal/string: 422, sin cabecera o líneas parciales ni evento de éxito.",
-      "status": "draft"
+      "requirements": ["RF03", "RNF01"],
+      "kind": "negativo",
+      "given": "un solicitante de ORG-A autenticado",
+      "when": "crea o envía con 0 u 11 líneas, SKU repetido, inactivo, inexistente o de ORG-B, cantidad -1, 501, 2.5 o texto, zona desconocida, prioridad MEDIA, observaciones de 1001 caracteres, o incluye codigo, organizationId, estado o solicitante en el cuerpo",
+      "then": "cada caso recibe 422 con el campo inválido; no quedan cabeceras ni líneas parciales, no hay evento de éxito y el inventario no cambia"
     },
     {
       "id": "AC-02-07",
-      "expected": "Aceptar límites 1 y 10 líneas y cantidades 1 y 500; rechazar propiedades privilegiadas sin reasignar dueño/organización/código.",
-      "status": "draft"
+      "requirements": ["RF03", "RNF01"],
+      "kind": "limite",
+      "given": "un solicitante de ORG-A autenticado",
+      "when": "crea borradores con 1 línea y con 10 líneas distintas, cantidades 1 y 500 y observaciones vacías y de 1000 caracteres",
+      "then": "todos se aceptan con 201 y se persisten completos"
     },
     {
       "id": "AC-02-08",
-      "expected": "Enviar hoy o fecha futura válida retorna 200 y persiste ENVIADA con un evento; existencia y reservas no cambian.",
-      "status": "draft"
+      "requirements": ["RF04", "RF09"],
+      "kind": "positivo",
+      "given": "un borrador válido propio con fechaRequerida igual o posterior al instante de envío",
+      "when": "el dueño lo envía",
+      "then": "recibe 200; la solicitud queda en ENVIADA con exactamente un evento de envío que registra identidad, organización, recurso, acción, fecha UTC y correlationId; existencia física y reservada no cambian"
     },
     {
       "id": "AC-02-09",
-      "expected": "Editar solicitud de otro dueño de la misma organización retorna 403 según propuesta CL-09; conservar cabecera, líneas y estado.",
-      "status": "draft"
+      "requirements": ["RF04"],
+      "kind": "permiso",
+      "given": "un borrador del solicitante de ORG-A",
+      "when": "el coordinador, la bodega o el auditor de ORG-A intentan editarlo o enviarlo",
+      "then": "cada intento recibe 403; cabecera, líneas y estado se conservan"
     },
     {
       "id": "AC-02-10",
-      "expected": "Reenviar ENVIADA o editar estado posterior retorna 409, sin segundo evento de envío ni cambios de inventario.",
-      "status": "draft"
+      "requirements": ["RF04"],
+      "kind": "negativo",
+      "given": "solicitudes propias en ENVIADA, RESERVADA y DESPACHADA",
+      "when": "el dueño reenvía la ENVIADA o intenta editar las demás",
+      "then": "cada intento recibe 409, sin segundo evento de envío ni cambios de datos o inventario"
     },
     {
       "id": "AC-02-11",
-      "expected": "Formulario operable con teclado, etiquetas asociadas, errores vinculados a campos y foco visible a 390 y 1366 px; prueba manual/E2E pendiente.",
-      "status": "draft"
+      "requirements": ["RNF05"],
+      "kind": "positivo",
+      "given": "el formulario de creación y edición a 390 y 1366 px de ancho",
+      "when": "se completa y envía solo con teclado, provocando también un error de validación",
+      "then": "no hay desbordamiento horizontal; cada campo tiene etiqueta; los errores quedan asociados a su campo y el foco es visible; la verificación manual se registra sin afirmar conformidad WCAG total"
     }
-  ],
-  "approvalStatus": "pending-human-review",
-  "sourceStatus": "mission-provided-official-exam-missing",
-  "userStoryId": "HU-02"
+  ]
 }
 ```
+<!-- spec-data:end -->
 
-## Pendientes de revisión
+## Decisiones y aclaraciones
 
-- Cotejar con enunciado/anexos y resolver aclaraciones relacionadas.
-- Revisar criterios, matriz de permisos y asignación RNF por una persona distinta al autor.
-- Registrar revisión con SHA en docs/reviews/gate-review-G1.md.
-- Código, pruebas de producto, PR revisado y evidencias: PENDIENTES; implementación bloqueada por G1.
+- Prioridad oficial NORMAL o ALTA (RF03); la propuesta 0.2 ALTA/MEDIA/BAJA queda retirada (diferencia D-03).
+- fechaRequerida como instante UTC para alinear con «momento de envío» (RF03) y con el anexo de datos; el equipo debe confirmar el supuesto CL-02 (diferencia D-13).
+- AC-02-02 adopta la granularidad del ejemplo oficial AC-RF03-01.
+
+## Riesgos y plan de prueba
+
+- Pruebas de dominio para límites RF03; API con base real para persistencia y ausencia de efectos parciales; E2E del envío; revisión manual de teclado y anchos.
+- Oráculo del ejemplo oficial: antes y después del rechazo, estado BORRADOR, físico 10, reservado 0 y mismo número de eventos.
+
+## Cambios de versión
+
+- 0.1: borrador inicial (commit `1aeacbf`).
+- 0.2-draft: ampliación a 11 AC sin fuente oficial.
+- 0.3-draft: cotejo con el enunciado; prioridades oficiales, fecha como instante, entradas tipadas, AC dado/cuando/entonces, vínculo de RNF01 y del evento RF09.
