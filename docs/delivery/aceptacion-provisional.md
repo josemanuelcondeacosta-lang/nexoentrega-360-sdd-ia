@@ -6,6 +6,6 @@ Alcance: frontend y API locales para ocho cuentas ficticias, solicitudes, flujo 
 
 Estado de aceptación: **PROVISIONAL / NO ACEPTADO COMO ENTREGA FINAL**. El informe de ejecución consigna qué pruebas se ejecutaron y sus resultados. Revisor independiente, fecha de aceptación, firmas y decisiones finales: pendientes.
 
-Brechas antes de release-examen: proveedor/reproducción real y validación completa IA, pruebas por todos los AC, carga exigida, pruebas concurrentes/regresión pendientes según informe, revisión de secretos/dependencias con evidencia, CI remoto, aportes personales de código/pruebas de todos, pruebas del mismo SHA candidato, convergencia y revisión humana final. No generar aprobación ficticia ni tag release-examen para esconder brechas.
+Brechas antes de release-examen: proveedor/reproducción real y validación completa IA, pruebas por todos los AC, carga exigida, escenarios adicionales de concurrencia/fallos/TTL, restauración y aceptación manual, aportes personales de código/pruebas de todos, convergencia y revisión humana final. Ya existen suite PostgreSQL, E2E responsive, un escenario concurrente, revisión automatizada limitada de secretos/dependencias y CI remoto correctos sobre el candidato indicado en verification.md; no prueban todos los requisitos. No generar aprobación ficticia ni tag release-examen para esconder brechas.
 
 El PDF consolidado provisional permite revisar el estado; los cuatro deben entregar **el mismo PDF final** después de corregir y verificar esas brechas, no cuatro versiones distintas.

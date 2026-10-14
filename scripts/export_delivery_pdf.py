@@ -42,7 +42,7 @@ def main():
         ('Especificaciones y cinco historias',[f'specs/SPEC-{n:02}.md' for n in range(1,6)]),
         ('Arquitectura, datos y contratos',[str(p.relative_to(ROOT)).replace('\\','/') for p in sorted((ROOT/'docs/adr').glob('ADR-*.md'))]+[str(p.relative_to(ROOT)).replace('\\','/') for p in sorted((ROOT/'docs/architecture').glob('*.md'))]+['contracts/README.md','contracts/openapi.yaml','contracts/ai-output.schema.json']),
         ('Uso de IA y revisión',[str(p.relative_to(ROOT)).replace('\\','/') for p in sorted((ROOT/'docs/evidence/ai-log').glob('AI-*.md'))]+['docs/reviews/coordinacion-cierre-G1-G2.md']),
-        ('Trazabilidad, riesgos y aceptación',['docs/coverage-matrix.md','docs/risks/risk-register.md','docs/delivery/aceptacion-provisional.md'])]
+        ('Trazabilidad, riesgos y aceptación',['docs/coverage-matrix.md','docs/evidence/runtime/spec-vs-code.csv','docs/risks/risk-register.md','docs/delivery/aceptacion-provisional.md','docs/delivery/checklist-entrega.md'])]
     for title,files in groups:
         parts.extend([Paragraph(title,styles['Heading1']),Spacer(1,10)])
         for filename in files:

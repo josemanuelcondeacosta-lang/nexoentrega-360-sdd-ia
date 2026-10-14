@@ -1,0 +1,22 @@
+{
+    "result":  "passed",
+    "database":  "PostgreSQL",
+    "responses":  [
+                      200,
+                      409
+                  ],
+    "stockAfter":  [
+                       4,
+                       3,
+                       1
+                   ],
+    "reserveEvents":  1,
+    "stockAfterCancel":  [
+                             4,
+                             0,
+                             4
+                         ],
+    "candidate":  "f33183aa72c261bb513cf8aada1113605b461262",
+    "executedAtUtc":  "2026-10-14T20:22:59.5296802Z",
+    "executedBy":  "Codex"
+}
