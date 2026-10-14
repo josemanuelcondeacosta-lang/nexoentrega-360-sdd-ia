@@ -31,7 +31,7 @@ Continuación en la misma sesión: «Ya, hagamos lo otro que me falta».
 | Cambio | Decisión de Vega (aceptada / corregida / descartada) | Motivo | Fecha UTC |
 |---|---|---|---|
 | Revisión del PR #5 | Aceptada | Hallazgos R-V01 a R-V03 comprobados con los comandos y publicados en GitHub | 2026-10-14 |
-| Corrección R-V01 en `openapi-ia.yaml` | PENDIENTE | | |
+| Corrección R-V01 en `openapi-ia.yaml` | Aprobada | Revisé que CsrfToken aparece en las dos rutas de IA y components | 2026-10-14 |
 
 ## Verificación
 
