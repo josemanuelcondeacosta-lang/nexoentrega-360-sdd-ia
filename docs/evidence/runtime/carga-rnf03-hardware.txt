@@ -1,0 +1,1 @@
+﻿Equipo: AMD Ryzen 9 4900HS with Radeon Graphics         ; RAM: 23.4 GB; Microsoft Windows 11 Home Single Language; Docker version 29.8.2, build 7fc2dff
