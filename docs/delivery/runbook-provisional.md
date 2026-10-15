@@ -42,4 +42,18 @@ Playwright utiliza su Chromium aislado; para probar Edge adicionalmente, definir
 
 Para detener sin borrar datos: `docker compose stop`. Antes de modificar migraciones, crear backup `pg_dump` y probar restauración en otra base. Una imagen anterior de aplicación solo debe levantarse si es compatible con el esquema actual. Esta versión crea esquema inicial: no prometer rollback de datos mediante `migrate:rollback`; restaura solo un backup verificado en base nueva y cambia conexión tras comprobarlo. No se declara restauración probada hasta ejecutarla.
 
-IA provisional: fallback determinista visible, aprobación con auditoría y sin inventario. **Pendientes:** proveedor real/replay y validador completo de salida IA, carga 20VU/60s, trazabilidad de todos AC, secret scan, revisión independiente y gates. Reportes de ejecución se registran separadamente. No crear `release-examen` ni declarar aceptación completa mientras existan incumplimientos.
+IA candidata: Gemini configurable exclusivamente en backend, validador estricto, replay declarado y fallback por defecto (`AI_PROVIDER=none`); aprobación con auditoría sin modificar inventario. La captura publicada tardó 18,9s y no acredita el límite de 5s; el corte a 5s se verificó por separado contra un servidor local sin respuesta. Carga, carreras, restauración y matriz por AC ya tienen evidencia en `docs/evidence/runtime/candidate/`. **Pendientes:** variantes de esa matriz, acceso docente, inspección/aceptación manual y decisiones independientes G1/G2. No crear `release-examen` ni declarar aceptación completa mientras existan incumplimientos.
+
+## Backup y recuperación en una base nueva
+
+Ejemplo para el proyecto de evaluación `nexo-candidate`; adaptar únicamente si se conoce la base elegida. Crear antes una carpeta local privada `test-results` y comprobar que `nexo_restore_revision` no existe. Los nombres nuevos evitan sobrescribir bases previas. No publicar el dump: puede contener hashes de cuentas y sesiones.
+
+```powershell
+docker compose -p nexo-candidate exec -T database pg_dump -U nexo -d nexo -Fc -f /tmp/nexo_revision.dump
+docker compose -p nexo-candidate cp database:/tmp/nexo_revision.dump test-results/nexo_revision.dump
+Get-FileHash test-results/nexo_revision.dump -Algorithm SHA256
+docker compose -p nexo-candidate exec -T database createdb -U nexo nexo_restore_revision
+docker compose -p nexo-candidate exec -T database pg_restore -U nexo --no-owner --exit-on-error -d nexo_restore_revision /tmp/nexo_revision.dump
+```
+
+Comprobar el código de salida después de cada comando y detenerse si falla. Comparar todas las tablas en número y contenido antes de utilizar la restauración; comprobar restricciones y acceso de la aplicación si se cambia la conexión. El ensayo ya ejecutado usó `nexo_restore_candidate` y comparó las 17 tablas; su informe `restore.json` conserva los digests y el SHA-256 del backup. Ese resultado acredita ese ensayo, no cualquier backup posterior.

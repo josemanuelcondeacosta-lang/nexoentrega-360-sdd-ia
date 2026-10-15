@@ -1,5 +1,6 @@
 """Informe editorial Word/PDF desde fuentes del repositorio, sin aprobar gates."""
 import argparse
+import csv
 import hashlib
 import json
 import re
@@ -99,6 +100,8 @@ def content(sha):
     heading('1.1 Qué funciona y qué falta', 2)
     paragraph('La candidata integra sesiones, ocho cuentas ficticias, solicitudes, transiciones, reserva atómica, idempotencia, inventario y recorrido cronológico. El aporte de Vega añade proveedor Gemini, validación estricta, fallback y reproducción declarada de una captura real. El proveedor predeterminado sigue siendo none: no necesita clave para funcionar. La captura publicada tardó 18,9s y no demuestra el plazo de producto de 5s; la reproducción no es una llamada nueva.')
     paragraph('Pendientes de cierre: decisiones humanas sobre las versiones correspondientes, verificación completa de todos los criterios y aceptación manual. Los resultados candidatos y sus límites se desarrollan en el apartado 5. Adelantar implementación por instrucción del coordinador no subsana la revisión previa requerida por el examen.')
+    heading('1.3 Cotejo con la entrega exigida en el aula', 2)
+    markdown('docs/delivery/cotejo-contenido-pdf.md', 3)
     source('docs/examen-oficial/anexos/09_pdf-delivery-template.md', sha)
     heading('1.2 Aportes comprobados directamente en GitHub', 2)
     paragraph('Consulta de evidencia: ' + github['fetchedAtUtc'] + '. Se revisaron PR, comentarios, revisiones y ejecuciones; se conserva una instantánea local verificable. Un PR abierto no significa aporte fusionado ni aprobación del paquete. Los nombres de cuenta identifican publicaciones, no prueban autoría manual de contenido asistido por IA.')
@@ -233,6 +236,18 @@ def content(sha):
     heading('5.3 Trazabilidad SPEC frente a código', 2)
     modules = ['Identity / middleware', 'Requests / interfaz', 'Inventory / transacciones', 'Queries / interfaz', 'AI / proveedor, validación y fallback']
     table(['SPEC', 'Código relacionado', 'Límite de la evidencia'], [[s['id'] + f" ({len(s['acceptanceCriteria'])} AC)", modules[i], 'Escenarios parciales ejecutados; aceptación completa pendiente'] for i, s in enumerate(specs)])
+    paragraph('La siguiente comparación desarrolla dentro del PDF los 73 criterios frente al código, pruebas y evidencia del candidato. Todos mantienen aceptación pendiente; evidencia parcial significa que faltan variantes o revisión del AC completo, no un resultado satisfactorio inventado. El esperado de cada criterio está desarrollado en el apartado 2.')
+    with (ROOT / 'docs/evidence/runtime/candidate/ac-evidence.csv').open(encoding='utf-8-sig', newline='') as stream:
+        ac_rows = list(csv.DictReader(stream))
+    for spec in specs:
+        heading('Comparación detallada ' + spec['id'], 3)
+        selected = [row for row in ac_rows if row['AC'].startswith('AC-' + spec['id'][-2:] + '-')]
+        table(['AC / requisitos', 'Código y comprobación', 'Evidencia / brecha restante'], [
+            [row['AC'] + '\n' + row['Requirements'], row['CodePath'] + '\n' + row['Tests'],
+             Path(row['Evidence']).name + '\n' + row['Status'] + '\n' + row['RemainingVerification']]
+            for row in selected])
+    paragraph('SHA del código y evidencia de la matriz: 6a751d477e2e10939f0081050fb9bb996ede3d05. Los archivos de reportes de la tabla están en docs/evidence/runtime/candidate/. Las filas no heredan aprobación humana de otros SHA.')
+    source('docs/evidence/runtime/candidate/ac-evidence.csv', sha)
     paragraph('La matriz completa de 73 AC se conserva en docs/evidence/runtime/spec-vs-code.csv, con estado NOT_VERIFIED_IN_FULL. Cada AC completo está descrito en el apartado 2. La matriz documental enlaza pruebas planificadas; solo los reportes ejecutados acreditan resultados observados.')
     source('docs/evidence/runtime/spec-vs-code.csv', sha)
     source('docs/coverage-matrix.md', sha)
@@ -301,6 +316,22 @@ def content(sha):
                     add('link', ('Comentario original de Carolina', comment['url']))
     paragraph('Los enlaces a PR se consultan en el repositorio: #2/#8 (Edier), #3/#4 (Vega), #7/#10 (Carolina y consolidación), #12 (frontend/integración provisional). Las revisiones válidas requieren autor real, SHA y decisión. Las tareas propuestas no acreditan su realización.')
     source('docs/team/plan-colaboracion.md', sha)
+    heading('9.2 Decisiones humanas publicadas sobre los artefactos', 2)
+    for pr in github['pullRequests']:
+        if pr['number'] not in [10, 14]:
+            continue
+        for comment in pr['comments']:
+            if comment['author'] not in ['eblanquiceth13-cmyk', 'josevegalago2006-cpu']:
+                continue
+            heading(f"PR #{pr['number']} · comentario de {comment['author']}", 3)
+            paragraph('Publicación GitHub: ' + comment['date'] + '. Se reproduce la declaración con su alcance; no se amplía al candidato actual.')
+            for line in comment['body'].splitlines():
+                if line.strip():
+                    paragraph(line)
+            add('link', ('Evidencia original de la decisión', comment['url']))
+    paragraph('G1 global pendiente: revisión independiente SPEC-02/03 y correcciones documentales. G2 global pendiente: ADR-001 corregido, complemento ADR-003 y revisión independiente del modelo/ADR-002. Los registros por SHA no se convierten en aprobación de la candidata actual.')
+    source('docs/reviews/gate-review-G1.md', sha)
+    source('docs/reviews/gate-review-G2.md', sha)
     heading('Fuentes y control de edición', 2)
     paragraph('Esta edición transforma la presentación, sin sustituir las fuentes oficiales ni modificar las cinco SPECS. El Word es editable; si se cambia su contenido, el PDF debe regenerarse y cotejarse para que los cuatro integrantes entreguen el mismo archivo final. La portada no incluye institución, curso o docente no confirmados.')
 
@@ -350,13 +381,16 @@ def word(sha):
         t = OxmlElement('w:t'); t.text = label; r.append(t); h.append(r); p._p.append(h)
     for kind, value in blocks:
         if kind == 'cover':
-            d.add_paragraph('INGENIERÍA DE SOFTWARE · EXAMEN DE EQUIPO', 'Subtitle')
+            d.add_paragraph('EXAMEN DE EQUIPO · SDD CON IA', 'Subtitle')
             d.add_paragraph('EXAMEN · SPEC DRIVEN DEVELOPMENT CON IA', 'Subtitle')
             p = d.add_paragraph(); p.paragraph_format.space_before = Pt(45)
             r = p.add_run('NexoEntrega\n360'); r.bold = True; r.font.size = Pt(44); r.font.color.rgb = RGBColor.from_string(GREEN)
             d.add_paragraph('Informe técnico y evidencias', 'Title')
             d.add_paragraph('Especificaciones · Arquitectura · Validación · Equipo', 'Subtitle')
             d.add_paragraph('EDICIÓN PROVISIONAL PARA REVISIÓN — 14 DE OCTUBRE DE 2026')
+            d.add_paragraph('Equipo: NexoEntrega 360')
+            d.add_paragraph('Curso: nombre exacto pendiente de confirmar')
+            d.add_paragraph('Proyecto integrador de origen: pendiente de confirmar')
             t = d.add_table(rows=0, cols=2); t.style = 'Light Shading Accent 1'
             for a, b in [('Cantillo Carolina', '20231153656'), ('Castro Edier', '202311254074'), ('Conde José', '202321256268'), ('Vega José', '202321256198')]:
                 c = t.add_row().cells; c[0].text = a; c[1].text = b
@@ -459,8 +493,9 @@ def pdf(sha):
     parts = []
     for kind, value in blocks:
         if kind == 'cover':
-            parts.append(p('INGENIERÍA DE SOFTWARE · EXAMEN DE EQUIPO'))
+            parts.append(p('EXAMEN DE EQUIPO · SDD CON IA'))
             parts += [Spacer(1, 35), p('EXAMEN · SDD CON IA'), Spacer(1, 35), Paragraph('NexoEntrega<br/>360', ParagraphStyle('Cover', fontName='NexoBold', fontSize=49, leading=56, textColor=colors.HexColor('#' + GREEN))), Spacer(1, 20), p('Informe técnico y evidencias', 'Subsection'), p('Especificaciones · Arquitectura · Validación · Equipo'), Spacer(1, 26), p('EDICIÓN PROVISIONAL PARA REVISIÓN', 'Callout'), p('14 de octubre de 2026'), Spacer(1, 18)]
+            parts += [p('Equipo: NexoEntrega 360'), p('Curso: nombre exacto pendiente de confirmar'), p('Proyecto integrador de origen: pendiente de confirmar'), Spacer(1, 10)]
             for name, code in [('Cantillo Carolina', '20231153656'), ('Castro Edier', '202311254074'), ('Conde José', '202321256268'), ('Vega José', '202321256198')]:
                 parts.append(p(name + '  ·  ' + code))
             parts += [Spacer(1, 20), p('Código de referencia'), p(sha, 'Cell'), p('Sin aceptación final ni aprobación humana implícita.'), PageBreak()]
