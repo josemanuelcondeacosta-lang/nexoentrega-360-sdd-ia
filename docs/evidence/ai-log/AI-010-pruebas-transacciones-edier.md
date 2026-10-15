@@ -37,10 +37,10 @@ Continuación en la misma sesión: «ayudame con lo mio, empecemos».
 
 | Cambio | Decisión de Edier (aceptada / corregida / descartada) | Motivo | Fecha UTC |
 |---|---|---|---|
-| Revisión del PR #10 (comentario `#issuecomment-6180730745`) | PENDIENTE | | |
-| Revisión del PR #11 | PENDIENTE | | |
-| Revisión del PR #12 (comentario `#issuecomment-6181132070`) | PENDIENTE | | |
-| Pruebas `TransactionIntegrityTest.php` y `races.mjs`, y paso del CI | PENDIENTE | | |
+| Revisión del PR #10 (comentario `#issuecomment-6180730745`) | Aceptada | Comprobé H-E01, H-E02 y H-E05 en el diff; añadí R-E02 por las versiones sin fijar del ADR-001 | 2026-10-14T23:23Z |
+| Revisión del PR #11 | Aceptada | Revisé el workflow y la ejecución número 3 en verde; añadí O-1 y R-E03 | 2026-10-14T23:48Z |
+| Revisión del PR #12 (comentario `#issuecomment-6181132070`) | Aceptada | Comprobé orden, bloqueos, idempotencia y restricciones contra mi ADR-002; añadí R-E04 y R-E05 | 2026-10-14T23:56Z |
+| Pruebas `TransactionIntegrityTest.php` y `races.mjs`, y paso del CI | Aceptada | Las ejecuté en mi PC con Docker y pasaron; cubren R-E04 y R-E05 | 2026-10-15T00:27Z |
 
 ## Verificación
 
@@ -50,6 +50,8 @@ Ejecutada por el asistente en su espacio de trabajo el 2026-10-15 (UTC), sobre `
 - Pruebas de mutación: con `gt` cambiado a `gte` en la expiración, la prueba de 24 h falla (200 en lugar de 409); con la auditoría movida fuera de la transacción, la prueba de AC-03-09 falla. Código restaurado después.
 - Servidor con `PHP_CLI_SERVER_WORKERS=4` sobre base recién sembrada: `concurrency.mjs` correcto y `races.mjs` correcto en 20 rondas por carrera. Ganaron ambas peticiones en distintas rondas (reservas 13/7; despacho 11 y cancelación 9), lo que muestra intercalado real.
 - `vendor/bin/pint --test` sobre la prueba nueva: correcto. `actionlint` sobre el workflow: sin errores.
+
+Ejecución de Edier, 2026-10-15T00:27Z (aprox.), Windows con Docker Desktop (PHP 8.5.0, PostgreSQL 17.6): `php artisan test` sobre `nexo_test` → 11 pruebas, 110 aserciones correctas; `node tests/integration/races.mjs` → passed, 20 rondas por carrera; reservas ganadas 10 y 10; despacho 11 y cancelación 9; en la ronda del oráculo ganó la cancelación (10/0/10).
 
 La ejecución válida para el proyecto es la de Edier con Docker y la del CI de GitHub sobre el SHA del PR; deben registrarse con sus resultados reales.
 
