@@ -14,7 +14,7 @@ services:
       - nexo_data:/var/lib/postgresql/data
   app:
     build: ./apps/nexo
-    ports: ["127.0.0.1:8000:8000"]
+    ports: ["127.0.0.1:${APP_PORT:-8000}:8000"]
     environment:
       APP_ENV: local
       APP_DEBUG: "false"

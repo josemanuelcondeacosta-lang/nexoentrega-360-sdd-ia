@@ -3,7 +3,7 @@
 **Estado: pendiente de revisión humana G1.**
 
 1. **Fuente verificable:** cada funcionalidad se aprueba mediante SPEC versionada antes de modificar código. Comprobación: fecha/commit G1 y PR asociado.
-2. **Aislamiento:** organización y rol provienen de autenticación; solicitudes ajenas dan 404; pruebas de lecturas y escrituras cruzadas.
+2. **Aislamiento:** organización y rol provienen de autenticación; sin identidad, 401; recurso existente de la misma organización con acceso prohibido por rol o dueño, 403; recurso inexistente, identificador inválido u otra organización, 404 sin revelar datos. Verificar lecturas y escrituras cruzadas y del mismo ámbito con distinto dueño.
 3. **Integridad del inventario:** disponible = físico − reservado; nunca negativo; transacción atómica y pruebas concurrentes sobre base real.
 4. **Estados controlados:** únicamente transiciones RF04; rechazos 409 sin modificar estado, stock ni generar un evento de éxito. Conservar respuesta idempotente de un 409 de negocio puede ser válido según política explícita CL-04; no equivale a reservar.
 5. **Trazabilidad:** cada RF/RNF conecta HU, SPEC, AC, módulo, prueba, PR y evidencia; registrar brechas honestamente.
@@ -44,7 +44,9 @@ Corrección documental D-21 según anexo oficial `01_constitution.md`; preparada
 | P-09 | Revisión independiente de cambios | Detectar defectos y acreditar colaboración | Cuenta real del revisor, comentario crítico, SHA y decisión; sin autoaprobación | Todos; coordinación Conde José |
 | P-10 | Entrega reproducible y aceptación honesta | Permitir evaluar mismo artefacto | Clon limpio RNF04, tags/SHA reales, PDF idéntico y brechas; RNF03/05/06 comprobados | Conde José; calidad Vega José |
 
-Los responsables orientan tareas; no acreditan contribuciones realizadas. CL-16/17/18 requieren docente; sin respuesta no ampliar permisos de inventario/auditoría como decisión confirmada.
+Los responsables orientan tareas; no acreditan contribuciones realizadas. CL-16/17/18 cuentan con confirmación afirmativa comunicada por el coordinador y captura aportada: Coordinador consulta inventario e historial de su organización; Solicitante consulta historial y tablero propios, sin inventario. Se conserva la procedencia en docs/evidence/respuesta-docente-CL16-18.md; no se inventa una respuesta nueva ni se amplía el permiso de Bodega.
+
+Correcciones R-C01/R-C02 preparadas por Codex tras aviso al equipo confirmado por el coordinador. Revisión humana de esta versión: pendiente. La implementación adelantada no se convierte en una excepción que subsane la revisión previa del examen (riesgo R-08).
 
 ## Criterio de excepción
 

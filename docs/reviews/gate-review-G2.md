@@ -1,6 +1,6 @@
 # Revisión G2 — paquete parcial de arquitectura
 
-Actualización de coordinación: Carolina aprobó plan/tareas del SHA c70e431; posterior ajuste de rangos AC requiere revisión. Paquete de cuatro ADR/diagramas/contrato aún requiere decisiones independientes de Edier/Vega. Ver `coordinacion-cierre-G1-G2.md`. No usar las tablas históricas posteriores como decisión del corte actual.
+Actualización del corte de integración: **G2 global pendiente**. Carolina aprobó plan/tareas de c70e431; los ajustes posteriores requieren revisión. Edier señaló R-E02 en ADR-001 en [PR #10](https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/10#issuecomment-6180730745): versiones corregidas en la candidata, nueva revisión pendiente. El complemento técnico de ADR-003 también permanece propuesto. ADR-002/modelo de datos requieren revisión independiente de su coautor; conservar las decisiones parciales de Edier sobre transacciones en [PR #12](https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/12#issuecomment-6181132070), sin extenderlas al paquete completo. Ver `coordinacion-cierre-G1-G2.md`. Las tablas siguientes conservan cortes históricos; no son el estado de aceptación del candidato actual.
 
 Estado: **PROPUESTO, SIN APROBACIÓN**. Rama `docs/g2-architecture`, basada en `origin/docs/g2-vega-ia` (`a13aa17`); no se fusionan PR G1 pendientes. G1 todavía pendiente por SPEC. Diseño documental permitido; implementación no iniciada.
 

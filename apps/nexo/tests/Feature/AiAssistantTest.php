@@ -292,6 +292,46 @@ class AiAssistantTest extends TestCase
         }
     }
 
+    public static function incompatibleReplayContexts(): array
+    {
+        return [['subset'], ['priority'], ['observation'], ['date']];
+    }
+
+    #[DataProvider('incompatibleReplayContexts')]
+    public function test_replay_rejects_a_different_selection_or_context(string $change): void
+    {
+        $file = 'gemini-20261015T013600Z.json';
+        $capture = (new ReplayProvider($file))->capture();
+        $ids = [];
+        foreach ($capture['input']['data'] as $row) {
+            $ids[] = $this->sent($row['requestId'], $row['prioridad'], $row['zona'], 'A', $row['fechaRequerida'], $row['observaciones']);
+        }
+        if ($change === 'subset') {
+            $ids = [$ids[0]];
+        } else {
+            $field = ['priority' => 'prioridad', 'observation' => 'observaciones', 'date' => 'fecha_requerida'][$change];
+            $value = ['priority' => 'NORMAL', 'observation' => 'Contexto diferente', 'date' => '2031-01-01 12:00:00'][$change];
+            DB::table('requests')->where('id', $ids[0])->update([$field => $value]);
+        }
+        config(['ai.provider' => 'replay', 'ai.replay_file' => $file]);
+        $before = $this->snapshot();
+        $this->summarize($ids)->assertOk()->assertJsonPath('origin.type', 'fallback')->assertJsonPath('recommendations', []);
+        $this->assertSame($before, $this->snapshot());
+        $this->assertSame('replay_contexto_distinto', DB::table('ai_attempts')->value('reason'));
+    }
+
+    public function test_replay_accepts_identical_context_in_a_different_selection_order(): void
+    {
+        $file = 'gemini-20261015T013600Z.json';
+        $capture = (new ReplayProvider($file))->capture();
+        $ids = [];
+        foreach ($capture['input']['data'] as $row) {
+            $ids[] = $this->sent($row['requestId'], $row['prioridad'], $row['zona'], 'A', $row['fechaRequerida'], $row['observaciones']);
+        }
+        config(['ai.provider' => 'replay', 'ai.replay_file' => $file]);
+        $this->summarize(array_reverse($ids))->assertOk()->assertJsonPath('origin.type', 'replay')->assertJsonPath('summary', json_decode($capture['rawOutput'], true)['summary']);
+    }
+
     /** El adaptador de Gemini envía la clave en el encabezado, pide JSON y desactiva el pensamiento en 2.5 Flash para cumplir el plazo. */
     public function test_gemini_pide_json_sin_pensamiento_y_clave_en_encabezado(): void
     {
