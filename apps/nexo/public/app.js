@@ -55,7 +55,7 @@ async function selectTab(tab) {
     }
     if(tab==='ai') {
         const data=await api('/requests?estado=ENVIADA&pageSize=100');
-        $('ai-selection').innerHTML=data.items.length?data.items.map(row=>`<label class="ai-option"><input type="checkbox" name="ai-request" value="${row.id}"> <span>${escapeHtml(row.codigo)} · ${escapeHtml(row.zona)} <small>${escapeHtml(row.prioridad)}</small></span></label>`).join(''):'<p>No hay solicitudes enviadas para revisar.</p>';
+        $('ai-selection').innerHTML=data.items.length?data.items.map(row=>`<label class="ai-option"><input type="checkbox" name="ai-request" value="${escapeHtml(row.id)}" data-code="${escapeHtml(row.codigo)}"> <span>${escapeHtml(row.codigo)} · ${escapeHtml(row.zona)} <small>${escapeHtml(row.prioridad)}</small></span></label>`).join(''):'<p>No hay solicitudes enviadas para revisar.</p>';
         $('generate-ai').disabled=!data.items.length;$('ai-result').hidden=true;
     }
 }
@@ -126,7 +126,15 @@ $('request-form').addEventListener('submit',async event=>{
 });
 $('generate-ai').addEventListener('click',()=>run((async()=>{
     const ids=Array.from(document.querySelectorAll('[name="ai-request"]:checked')).map(el=>el.value);if(ids.length<1||ids.length>20){notice('Selecciona entre 1 y 20 solicitudes.',true);return;}
-    const data=await api('/ai/summaries','POST',{requestIds:ids});const result=$('ai-result');result.hidden=false;result.innerHTML=`<span class="eyebrow">ASISTENCIA · ${escapeHtml(data.origin.type)}</span><h3>Resumen para tu revisión</h3><p>${escapeHtml(data.message)}</p><p>${escapeHtml(data.summary)}</p><button class="secondary" id="approve-ai">Aprobar resumen</button>`;
+    const result=$('ai-result');result.hidden=false;result.setAttribute('aria-busy','true');result.innerHTML='<p role="status">Preparando resumen…</p>';
+    let data;try{data=await api('/ai/summaries','POST',{requestIds:ids});}catch(error){result.innerHTML=`<p class="error" role="alert">${escapeHtml(error.message)}</p>`;result.removeAttribute('aria-busy');return;}
+    // Todo texto del modelo se escapa (AC-05-17): summary y reason nunca se insertan como HTML.
+    const codes=Object.fromEntries(Array.from(document.querySelectorAll('[name="ai-request"]')).map(el=>[el.value,el.dataset.code||el.value]));
+    const originNames={provider:'modelo en vivo',replay:'reproducción declarada de una respuesta real',fixture:'fixture de prueba',fallback:'resumen automático'};
+    const origin=[originNames[data.origin.type]||data.origin.type,data.origin.provider,data.origin.model,data.origin.type==='replay'||data.origin.type==='fixture'?data.origin.fixtureId:null].filter(Boolean).join(' · ');
+    const recommendations=data.recommendations.length?`<h4>Recomendaciones (no se aplican solas)</h4><ul class="ai-recommendations">${data.recommendations.map(rec=>`<li><strong>${escapeHtml(codes[rec.requestId]||rec.requestId)}</strong>: ${escapeHtml(rec.reason)} <small>Evidencia: ${rec.evidenceFields.map(escapeHtml).join(', ')}</small></li>`).join('')}</ul>`:'';
+    result.removeAttribute('aria-busy');
+    result.innerHTML=`<span class="eyebrow">ASISTENCIA DE IA · BORRADOR</span><h3>Resumen para tu revisión</h3><p class="muted">Origen: ${escapeHtml(origin)}</p>${data.message?`<p role="status">${escapeHtml(data.message)}</p>`:''}<p class="ai-summary">${escapeHtml(data.summary)}</p>${recommendations}<button class="secondary" id="approve-ai">Aprobar resumen</button>`;
     $('approve-ai').addEventListener('click',()=>run((async()=>{await api('/ai/summaries/'+data.id+'/approve','POST',{});$('approve-ai').disabled=true;$('approve-ai').textContent='Resumen aprobado';notice('Aprobación registrada; no cambia solicitudes ni inventario.');})()));
 })()));
 (async()=>{try{await api('/auth/csrf');identity=await api('/auth/me');catalog=await api('/catalog');renderIdentity();await selectTab('requests');}catch(error){if(error.status!==401)$('login-error').textContent='No se pudo conectar con la API.';}})();
