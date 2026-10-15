@@ -1,0 +1,9 @@
+﻿{
+    "os":  "Microsoft Windows NT 10.0.26200.0",
+    "ramBytes":  8279613440,
+    "docker":  "29.8.2",
+    "utc":  "2026-10-15T02:56:24.0360537Z",
+    "sourceSha":  "6a751d477e2e10939f0081050fb9bb996ede3d05",
+    "concurrentWork":  "Otras instancias Docker y construcción de clon limpio durante la medición",
+    "cpu":  "12th Gen Intel(R) Core(TM) i5-12450H"
+}

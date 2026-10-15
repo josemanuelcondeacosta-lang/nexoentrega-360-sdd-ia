@@ -82,7 +82,7 @@ def markdown(path, min_level=2):
 
 
 def content(sha):
-    github = json.loads((ROOT / 'docs/evidence/github/snapshot.json').read_text(encoding='utf-8'))
+    github = json.loads((ROOT / 'docs/evidence/github/candidate-snapshot.json').read_text(encoding='utf-8'))
     current_ci = json.loads((ROOT / 'docs/evidence/github/current-ci.json').read_text(encoding='utf-8'))
     add('cover', sha)
     add('toc')
@@ -97,8 +97,8 @@ def content(sha):
         ['Originales oficiales', 'docs/examen-oficial/originales/ y docs/examen-oficial/anexos/'],
         ['Procedencia editorial', 'Edición asistida por Codex. No cambia requisitos ni atribuye firmas o trabajo humano.']])
     heading('1.1 Qué funciona y qué falta', 2)
-    paragraph('La aplicación provisional incluye sesiones, ocho cuentas ficticias, formulario de solicitudes, transiciones por rol, reserva transaccional, idempotencia, inventario, listados, tablero e historial. El asistente integrado utiliza únicamente fallback determinista, visible como tal; no se ha demostrado una salida de un LLM real en esta aplicación.')
-    paragraph('Pendientes de cierre: revisión humana de las versiones correspondientes, proveedor IA y validación estricta completa, carga exigida, pruebas de todos los criterios, restauración y aceptación manual. Adelantar implementación por instrucción del coordinador no subsana la revisión previa requerida por el examen.')
+    paragraph('La candidata integra sesiones, ocho cuentas ficticias, solicitudes, transiciones, reserva atómica, idempotencia, inventario y recorrido cronológico. El aporte de Vega añade proveedor Gemini, validación estricta, fallback y reproducción declarada de una captura real. El proveedor predeterminado sigue siendo none: no necesita clave para funcionar. La captura publicada tardó 18,9s y no demuestra el plazo de producto de 5s; la reproducción no es una llamada nueva.')
+    paragraph('Pendientes de cierre: decisiones humanas sobre las versiones correspondientes, verificación completa de todos los criterios y aceptación manual. Los resultados candidatos y sus límites se desarrollan en el apartado 5. Adelantar implementación por instrucción del coordinador no subsana la revisión previa requerida por el examen.')
     source('docs/examen-oficial/anexos/09_pdf-delivery-template.md', sha)
     heading('1.2 Aportes comprobados directamente en GitHub', 2)
     paragraph('Consulta de evidencia: ' + github['fetchedAtUtc'] + '. Se revisaron PR, comentarios, revisiones y ejecuciones; se conserva una instantánea local verificable. Un PR abierto no significa aporte fusionado ni aprobación del paquete. Los nombres de cuenta identifican publicaciones, no prueban autoría manual de contenido asistido por IA.')
@@ -147,8 +147,8 @@ def content(sha):
         ['Requests', 'Cabeceras y líneas, edición de borradores', 'Dueño y organización verificables'],
         ['Inventory', 'Reserva, despacho, cancelación y entrega', 'Bloqueos, invariantes y transacción'],
         ['Queries / Audit', 'Consultas y eventos', 'Alcance propio u organizacional según rol'],
-        ['AI', 'Resumen alternativo y aprobación', 'Sin escritura privilegiada de stock; proveedor real pendiente']])
-    paragraph('Diferencia de implementación que requiere revisión: ADR-001 propone capas internas y routes/api.php; la versión provisional utiliza clases por módulo y rutas en routes/web.php para sesiones y CSRF. No se presenta esta diferencia como una nueva decisión del cliente ni como conformidad completa con el ADR.')
+        ['AI', 'Proveedor, validación, fallback y aprobación', 'Sin escritura privilegiada de stock; replay limitado al contexto original']])
+    paragraph('ADR-001 se alinea con módulos Laravel y rutas en routes/web.php para sesiones y CSRF, PHP 8.5.0, Laravel 12.70.0 y PostgreSQL 17.6. La corrección de versiones y el complemento de ADR-003 permanecen propuestos hasta revisión humana del SHA actualizado.')
     heading('3.2 Diagramas y modelo de datos', 2)
     table(['Artefacto', 'Qué documenta'], [
         ['contexto.md', 'Actores, sistema y servicios externos'], ['componentes.md', 'Módulos y fronteras'],
@@ -190,7 +190,7 @@ def content(sha):
         source(p.relative_to(ROOT).as_posix(), sha)
 
     heading('4. Uso crítico de IA y verificación')
-    paragraph('La bitácora diferencia el uso de IA para preparar el proyecto del asistente integrado en la aplicación. Se incluyen ocho registros existentes, siete de la consolidación y AI-008 del PR #11; la autoría y las verificaciones se reproducen como están documentadas, sin crear decisiones humanas nuevas. El asistente actual solo produce fallback: falta demostrar el proveedor real y su validación estricta.')
+    paragraph('La bitácora diferencia la asistencia durante el desarrollo del asistente integrado. Se conservan los registros originales del equipo. La antigua AI-007 del frontend se renombra AI-013 para evitar colisión con AI-007 de Vega; AI-008 se importa desde su rama documental. La reproducción valida contexto e instrucciones y devuelve fallback si difieren. Ningún registro equivale a una firma humana nueva.')
     for p in sorted((ROOT / 'docs/evidence/ai-log').glob('AI-*.md')):
         heading(p.stem, 2)
         markdown(p.relative_to(ROOT).as_posix(), 3)
@@ -200,7 +200,14 @@ def content(sha):
     add('link', ('Fuente original de AI-008 en GitHub', REPO + '/blob/435651b48e37729133e4db15f9ec8540123c7162/docs/evidence/ai-log/AI-008-ci-documental.md'))
 
     heading('5. Validación, trazabilidad y resultados')
-    add('callout', 'Ocho pruebas PHP correctas no significan 73 criterios aceptados. Los resultados se vinculan a sus versiones; no se trasladan automáticamente a una versión posterior.')
+    add('callout', 'Los resultados siguientes conservan su SHA y alcance. Una suite verde no significa 73 criterios aceptados; los resultados históricos no se trasladan automáticamente a una versión posterior.')
+    heading('5.0 Resultados del candidato de integración', 2)
+    markdown('docs/evidence/runtime/candidate/verification.md', 3)
+    paragraph('Matriz candidata: docs/evidence/runtime/candidate/ac-evidence.csv. Enlaza los 73 AC con archivos de código, pruebas e informes reales y mantiene brechas explícitas. La tabla siguiente conserva resultados históricos para trazabilidad; no describe el corte actual.')
+    candidate_runs = [run for run in github['runs'] if run['head_sha'] == '6a751d477e2e10939f0081050fb9bb996ede3d05']
+    for run in candidate_runs:
+        paragraph('CI candidata: ' + run['head_sha'] + ' · ' + run['status'] + ' / ' + str(run['conclusion']))
+        add('link', ('Ver CI del candidato', run['html_url']))
     table(['Prueba / versión', 'Esperado', 'Observado y evidencia'], [
         ['PostgreSQL, corrección dd806db', 'Historial propio sin error; sin fuga entre dueños u organizaciones', '8 correctas, 67 aserciones, 1,47 s; phpunit-audit.xml'],
         ['Pint, corrección dd806db', 'Estilo conforme', '35 archivos correctos'],
@@ -224,7 +231,7 @@ def content(sha):
     heading('5.2 Defecto observado y corrección', 2)
     markdown('docs/evidence/runtime/correccion-auditoria.md', 3)
     heading('5.3 Trazabilidad SPEC frente a código', 2)
-    modules = ['Identity / middleware', 'Requests / interfaz', 'Inventory / transacciones', 'Queries / interfaz', 'AI / fallback']
+    modules = ['Identity / middleware', 'Requests / interfaz', 'Inventory / transacciones', 'Queries / interfaz', 'AI / proveedor, validación y fallback']
     table(['SPEC', 'Código relacionado', 'Límite de la evidencia'], [[s['id'] + f" ({len(s['acceptanceCriteria'])} AC)", modules[i], 'Escenarios parciales ejecutados; aceptación completa pendiente'] for i, s in enumerate(specs)])
     paragraph('La matriz completa de 73 AC se conserva en docs/evidence/runtime/spec-vs-code.csv, con estado NOT_VERIFIED_IN_FULL. Cada AC completo está descrito en el apartado 2. La matriz documental enlaza pruebas planificadas; solo los reportes ejecutados acreditan resultados observados.')
     source('docs/evidence/runtime/spec-vs-code.csv', sha)
@@ -239,25 +246,27 @@ def content(sha):
     risk_evidence = {
         'R-01': 'Reserva concurrente f33183a: 200/409 y un evento. Residual por evaluar: faltan más intercalados y carga.',
         'R-02': 'Suite relacional con aislamiento; regresión dd806db verifica historial propio y ajeno. Residual por evaluar: matriz completa pendiente.',
-        'R-03': 'Replay y conflicto de clave comprobados en PostgreSQL. Residual por evaluar: TTL y escenarios concurrentes adicionales pendientes.',
-        'R-04': 'Proveedor y validador completo no implementados; riesgo alto hasta probar salida externa e inyección.',
-        'R-05': 'Fallback y aprobación sin stock comprobados. Residual por evaluar: falta fallo real del proveedor y timeout.',
-        'R-06': 'CI en GitHub correcto para 02ef410; Docker y lockfiles existentes. Residual por evaluar: aceptación de clon limpio y recuperación pendientes.',
+        'R-03': 'Replay, conflicto, TTL 23h59/24h y ámbito por usuario comprobados en PostgreSQL. Revisar matriz completa antes de aceptar.',
+        'R-04': 'Validador estricto, siete fixtures oficiales y regresión de contexto replay ejecutados. Captura real reproducida; no equivale a una nueva llamada.',
+        'R-05': 'Fallback, aprobación sin stock y corte de proveedor a 5s comprobados localmente; disponibilidad del proveedor externo no garantizada.',
+        'R-06': 'Clon remoto cronometrado y backup/restauración ejecutados; consultar límites de caché y comparación de tablas en evidencia candidata. Aceptación humana pendiente.',
         'R-07': 'Originales oficiales recibidos y cotejo documental existente. Residual: vigilar cambios de versión; no afirmar revisión humana completa.',
         'R-08': 'Implementación adelantada por autorización del coordinador. Residual alto: no sustituye el gate previo exigido.',
         'R-09': 'Snapshot GitHub y reportes separan publicaciones y pruebas de tareas propuestas. Residual: validación humana de la contribución personal pendiente.',
-        'R-10': 'Cuatro E2E a 390/1366 pasaron en f33183a y la CI de 02ef410 es correcta. Residual: accesibilidad manual y carga/p95 pendientes.',
-        'R-11': 'Transacciones y rechazo parcial comprobados. Residual por evaluar: falta fallo inducido exhaustivo de auditoría antes de commit.',
+        'R-10': 'Cuatro E2E candidatos a 390/1366 y carga RNF03 ejecutados; inspección manual completa pendiente.',
+        'R-11': 'Fallo inducido de auditoría antes del commit revierte negocio e idempotencia en la suite de Edier; revisión independiente pendiente.',
         'R-12': 'Confirmación afirmativa reportada con captura de CL-16/17/18. No se mantiene la consulta como no enviada; conservar evidencia original y alcance concreto.'
     }
     for line in (ROOT / 'docs/risks/risk-register.md').read_text(encoding='utf-8').splitlines():
         if line.startswith('| R-'):
             c = [v.strip() for v in line.strip('|').split('|')]
+            if len(c) != 8 or c[0] not in risk_evidence:
+                continue
             heading(c[0] + ' · ' + c[1], 3)
             paragraph('Probabilidad: ' + c[3] + '. Impacto: ' + c[2] + '. Responsable en el registro: ' + c[5] + '.')
             paragraph('Control documentado: ' + c[4] + '. Evidencia en la fuente histórica: ' + c[6] + '. Residual registrado: ' + c[7] + '.')
             paragraph('Estado actual del control: ' + risk_evidence[c[0]])
-    paragraph('Actualización de lectura: hay evidencia parcial de reserva, aislamiento, idempotencia y ejecución; el material oficial ya está recibido y CL-16/17/18 cuentan con respuesta reportada. El registro fuente contiene textos históricos pendientes de armonización. Se mantiene alto el riesgo de proceso por cierre humano pendiente; IA, carga y recuperación siguen sin aceptación completa.')
+    paragraph('La candidata añade evidencia ejecutada de IA, concurrencia, carga, clon y recuperación. Se mantiene alto el riesgo de proceso por revisión previa incompleta; los resultados técnicos no sustituyen las decisiones humanas ni las variantes por criterio todavía pendientes.')
     source('docs/risks/risk-register.md', sha)
 
     heading('7. Ejecución reproducible y recuperación')
@@ -502,7 +511,12 @@ def pdf(sha):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__); parser.add_argument('--sha', required=True); args = parser.parse_args()
+    global OUT
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--sha', required=True)
+    parser.add_argument('--output-dir', default='deliverables/revision-editorial')
+    args = parser.parse_args()
+    OUT = ROOT / args.output_dir
     sha = subprocess.check_output(['git', 'rev-parse', args.sha], cwd=ROOT, text=True).strip()
     OUT.mkdir(parents=True, exist_ok=True)
     content(sha); word(sha); pdf(sha)
