@@ -1,6 +1,14 @@
 # Gate review G1 — plantilla sin aprobación
 
-Estado actualizado por alcance: Carolina aprueba SPEC-04 0.3.2 en c70e431 (enlace en su aporte); SPEC-01/03/05 0.4-draft y confirmación coherente de SPEC-02 pendientes. Correcciones H-V/H-E preparadas en `coordinacion-cierre-G1-G2.md`; G1 global no aprobado.
+Estado del corte de integración: **G1 global pendiente**. Se conservan las decisiones humanas recibidas por alcance y SHA; los apartados posteriores documentan cortes históricos.
+
+| Persona / evidencia | SHA revisado | Alcance declarado |
+|---|---|---|
+| [Carolina, PR #10](https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/10#issuecomment-6176370904), UTC declarada 2026-10-14T19:15:00Z | c70e431a1099b47bdd1a0dc79802c7af54cf6109 | SPEC-04 0.3.2 y plan/tareas de ese corte |
+| [Vega, PR #10](https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/10#issuecomment-6181833055), 2026-10-15T00:52:14Z | 088621981b2e1f1eae951790cf02b57b9707be47 | SPEC-01 y SPEC-05 0.4; cierre documental H-V01..07 y R-V02 |
+| [Edier, PR #10](https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia/pull/10#issuecomment-6180730745), 2026-10-14T23:23:44Z | 088621981b2e1f1eae951790cf02b57b9707be47 | Cierre H-E01/H-E02/H-E05; no aprueba SPEC-03 por coautoría |
+
+Faltan revisión independiente de SPEC-02/03 y decisión sobre constitution y plan/tareas actualizados. Propuesta: Carolina revisa especificaciones y documentación; Edier/Vega revisan los cambios técnicos ajenos. Las correcciones preparadas por Codex no se atribuyen como aprobación de ningún integrante. La implementación adelantada no subsana el requisito de revisión previa.
 
 - Fecha y hora UTC: PENDIENTE
 - Artefactos, versiones y SHA: PENDIENTE

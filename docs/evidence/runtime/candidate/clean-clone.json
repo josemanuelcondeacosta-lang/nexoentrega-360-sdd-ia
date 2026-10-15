@@ -1,0 +1,17 @@
+{
+  "sourceSha": "6a751d477e2e10939f0081050fb9bb996ede3d05",
+  "startedUtc": "2026-10-15T02:55:18.345840+00:00",
+  "totalSeconds": 21.36,
+  "under15Minutes": true,
+  "project": "nexo-cleanclone-final-check",
+  "port": 8003,
+  "stages": {
+    "cloneSeconds": 5.328,
+    "buildSeconds": 3.531,
+    "upSeconds": 6.782
+  },
+  "downloadsIncluded": true,
+  "cachedDockerLayers": true,
+  "firstEverDownloadBenchmark": false,
+  "limitation": "Clon nuevo; imágenes/capas Docker previamente disponibles. No representa una máquina sin caché."
+}

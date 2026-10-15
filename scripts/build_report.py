@@ -1,5 +1,6 @@
 """Informe editorial Word/PDF desde fuentes del repositorio, sin aprobar gates."""
 import argparse
+import csv
 import hashlib
 import json
 import re
@@ -22,6 +23,7 @@ from reportlab.platypus.tableofcontents import TableOfContents
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'deliverables/revision-editorial'
+DOC_STEM = 'Examen_SDD_IA_Equipo_NexoEntrega360'
 REPO = 'https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia'
 GREEN = '193E35'
 blocks = []
@@ -82,7 +84,7 @@ def markdown(path, min_level=2):
 
 
 def content(sha):
-    github = json.loads((ROOT / 'docs/evidence/github/snapshot.json').read_text(encoding='utf-8'))
+    github = json.loads((ROOT / 'docs/evidence/github/candidate-snapshot.json').read_text(encoding='utf-8'))
     current_ci = json.loads((ROOT / 'docs/evidence/github/current-ci.json').read_text(encoding='utf-8'))
     add('cover', sha)
     add('toc')
@@ -97,8 +99,10 @@ def content(sha):
         ['Originales oficiales', 'docs/examen-oficial/originales/ y docs/examen-oficial/anexos/'],
         ['Procedencia editorial', 'Edición asistida por Codex. No cambia requisitos ni atribuye firmas o trabajo humano.']])
     heading('1.1 Qué funciona y qué falta', 2)
-    paragraph('La aplicación provisional incluye sesiones, ocho cuentas ficticias, formulario de solicitudes, transiciones por rol, reserva transaccional, idempotencia, inventario, listados, tablero e historial. El asistente integrado utiliza únicamente fallback determinista, visible como tal; no se ha demostrado una salida de un LLM real en esta aplicación.')
-    paragraph('Pendientes de cierre: revisión humana de las versiones correspondientes, proveedor IA y validación estricta completa, carga exigida, pruebas de todos los criterios, restauración y aceptación manual. Adelantar implementación por instrucción del coordinador no subsana la revisión previa requerida por el examen.')
+    paragraph('La candidata integra sesiones, ocho cuentas ficticias, solicitudes, transiciones, reserva atómica, idempotencia, inventario y recorrido cronológico. El aporte de Vega añade proveedor Gemini, validación estricta, fallback y reproducción declarada de una captura real. El proveedor predeterminado sigue siendo none: no necesita clave para funcionar. La captura publicada tardó 18,9s y no demuestra el plazo de producto de 5s; la reproducción no es una llamada nueva.')
+    paragraph('Pendientes de cierre: decisiones humanas sobre las versiones correspondientes, verificación completa de todos los criterios y aceptación manual. Los resultados candidatos y sus límites se desarrollan en el apartado 5. Adelantar implementación por instrucción del coordinador no subsana la revisión previa requerida por el examen.')
+    heading('1.3 Cotejo con la entrega exigida en el aula', 2)
+    markdown('docs/delivery/cotejo-contenido-pdf.md', 3)
     source('docs/examen-oficial/anexos/09_pdf-delivery-template.md', sha)
     heading('1.2 Aportes comprobados directamente en GitHub', 2)
     paragraph('Consulta de evidencia: ' + github['fetchedAtUtc'] + '. Se revisaron PR, comentarios, revisiones y ejecuciones; se conserva una instantánea local verificable. Un PR abierto no significa aporte fusionado ni aprobación del paquete. Los nombres de cuenta identifican publicaciones, no prueban autoría manual de contenido asistido por IA.')
@@ -147,8 +151,8 @@ def content(sha):
         ['Requests', 'Cabeceras y líneas, edición de borradores', 'Dueño y organización verificables'],
         ['Inventory', 'Reserva, despacho, cancelación y entrega', 'Bloqueos, invariantes y transacción'],
         ['Queries / Audit', 'Consultas y eventos', 'Alcance propio u organizacional según rol'],
-        ['AI', 'Resumen alternativo y aprobación', 'Sin escritura privilegiada de stock; proveedor real pendiente']])
-    paragraph('Diferencia de implementación que requiere revisión: ADR-001 propone capas internas y routes/api.php; la versión provisional utiliza clases por módulo y rutas en routes/web.php para sesiones y CSRF. No se presenta esta diferencia como una nueva decisión del cliente ni como conformidad completa con el ADR.')
+        ['AI', 'Proveedor, validación, fallback y aprobación', 'Sin escritura privilegiada de stock; replay limitado al contexto original']])
+    paragraph('ADR-001 se alinea con módulos Laravel y rutas en routes/web.php para sesiones y CSRF, PHP 8.5.0, Laravel 12.70.0 y PostgreSQL 17.6. La corrección de versiones y el complemento de ADR-003 permanecen propuestos hasta revisión humana del SHA actualizado.')
     heading('3.2 Diagramas y modelo de datos', 2)
     table(['Artefacto', 'Qué documenta'], [
         ['contexto.md', 'Actores, sistema y servicios externos'], ['componentes.md', 'Módulos y fronteras'],
@@ -190,7 +194,7 @@ def content(sha):
         source(p.relative_to(ROOT).as_posix(), sha)
 
     heading('4. Uso crítico de IA y verificación')
-    paragraph('La bitácora diferencia el uso de IA para preparar el proyecto del asistente integrado en la aplicación. Se incluyen ocho registros existentes, siete de la consolidación y AI-008 del PR #11; la autoría y las verificaciones se reproducen como están documentadas, sin crear decisiones humanas nuevas. El asistente actual solo produce fallback: falta demostrar el proveedor real y su validación estricta.')
+    paragraph('La bitácora diferencia la asistencia durante el desarrollo del asistente integrado. Se conservan los registros originales del equipo. La antigua AI-007 del frontend se renombra AI-013 para evitar colisión con AI-007 de Vega; AI-008 se importa desde su rama documental. La reproducción valida contexto e instrucciones y devuelve fallback si difieren. Ningún registro equivale a una firma humana nueva.')
     for p in sorted((ROOT / 'docs/evidence/ai-log').glob('AI-*.md')):
         heading(p.stem, 2)
         markdown(p.relative_to(ROOT).as_posix(), 3)
@@ -200,7 +204,14 @@ def content(sha):
     add('link', ('Fuente original de AI-008 en GitHub', REPO + '/blob/435651b48e37729133e4db15f9ec8540123c7162/docs/evidence/ai-log/AI-008-ci-documental.md'))
 
     heading('5. Validación, trazabilidad y resultados')
-    add('callout', 'Ocho pruebas PHP correctas no significan 73 criterios aceptados. Los resultados se vinculan a sus versiones; no se trasladan automáticamente a una versión posterior.')
+    add('callout', 'Los resultados siguientes conservan su SHA y alcance. Una suite verde no significa 73 criterios aceptados; los resultados históricos no se trasladan automáticamente a una versión posterior.')
+    heading('5.0 Resultados del candidato de integración', 2)
+    markdown('docs/evidence/runtime/candidate/verification.md', 3)
+    paragraph('Matriz candidata: docs/evidence/runtime/candidate/ac-evidence.csv. Enlaza los 73 AC con archivos de código, pruebas e informes reales y mantiene brechas explícitas. La tabla siguiente conserva resultados históricos para trazabilidad; no describe el corte actual.')
+    candidate_runs = [run for run in github['runs'] if run['head_sha'] == '6a751d477e2e10939f0081050fb9bb996ede3d05']
+    for run in candidate_runs:
+        paragraph('CI candidata: ' + run['head_sha'] + ' · ' + run['status'] + ' / ' + str(run['conclusion']))
+        add('link', ('Ver CI del candidato', run['html_url']))
     table(['Prueba / versión', 'Esperado', 'Observado y evidencia'], [
         ['PostgreSQL, corrección dd806db', 'Historial propio sin error; sin fuga entre dueños u organizaciones', '8 correctas, 67 aserciones, 1,47 s; phpunit-audit.xml'],
         ['Pint, corrección dd806db', 'Estilo conforme', '35 archivos correctos'],
@@ -224,8 +235,20 @@ def content(sha):
     heading('5.2 Defecto observado y corrección', 2)
     markdown('docs/evidence/runtime/correccion-auditoria.md', 3)
     heading('5.3 Trazabilidad SPEC frente a código', 2)
-    modules = ['Identity / middleware', 'Requests / interfaz', 'Inventory / transacciones', 'Queries / interfaz', 'AI / fallback']
+    modules = ['Identity / middleware', 'Requests / interfaz', 'Inventory / transacciones', 'Queries / interfaz', 'AI / proveedor, validación y fallback']
     table(['SPEC', 'Código relacionado', 'Límite de la evidencia'], [[s['id'] + f" ({len(s['acceptanceCriteria'])} AC)", modules[i], 'Escenarios parciales ejecutados; aceptación completa pendiente'] for i, s in enumerate(specs)])
+    paragraph('La siguiente comparación desarrolla dentro del PDF los 73 criterios frente al código, pruebas y evidencia del candidato. Todos mantienen aceptación pendiente; evidencia parcial significa que faltan variantes o revisión del AC completo, no un resultado satisfactorio inventado. El esperado de cada criterio está desarrollado en el apartado 2.')
+    with (ROOT / 'docs/evidence/runtime/candidate/ac-evidence.csv').open(encoding='utf-8-sig', newline='') as stream:
+        ac_rows = list(csv.DictReader(stream))
+    for spec in specs:
+        heading('Comparación detallada ' + spec['id'], 3)
+        selected = [row for row in ac_rows if row['AC'].startswith('AC-' + spec['id'][-2:] + '-')]
+        table(['AC / requisitos', 'Código y comprobación', 'Evidencia / brecha restante'], [
+            [row['AC'] + '\n' + row['Requirements'], row['CodePath'] + '\n' + row['Tests'],
+             Path(row['Evidence']).name + '\n' + row['Status'] + '\n' + row['RemainingVerification']]
+            for row in selected])
+    paragraph('SHA del código y evidencia de la matriz: 6a751d477e2e10939f0081050fb9bb996ede3d05. Los archivos de reportes de la tabla están en docs/evidence/runtime/candidate/. Las filas no heredan aprobación humana de otros SHA.')
+    source('docs/evidence/runtime/candidate/ac-evidence.csv', sha)
     paragraph('La matriz completa de 73 AC se conserva en docs/evidence/runtime/spec-vs-code.csv, con estado NOT_VERIFIED_IN_FULL. Cada AC completo está descrito en el apartado 2. La matriz documental enlaza pruebas planificadas; solo los reportes ejecutados acreditan resultados observados.')
     source('docs/evidence/runtime/spec-vs-code.csv', sha)
     source('docs/coverage-matrix.md', sha)
@@ -239,25 +262,27 @@ def content(sha):
     risk_evidence = {
         'R-01': 'Reserva concurrente f33183a: 200/409 y un evento. Residual por evaluar: faltan más intercalados y carga.',
         'R-02': 'Suite relacional con aislamiento; regresión dd806db verifica historial propio y ajeno. Residual por evaluar: matriz completa pendiente.',
-        'R-03': 'Replay y conflicto de clave comprobados en PostgreSQL. Residual por evaluar: TTL y escenarios concurrentes adicionales pendientes.',
-        'R-04': 'Proveedor y validador completo no implementados; riesgo alto hasta probar salida externa e inyección.',
-        'R-05': 'Fallback y aprobación sin stock comprobados. Residual por evaluar: falta fallo real del proveedor y timeout.',
-        'R-06': 'CI en GitHub correcto para 02ef410; Docker y lockfiles existentes. Residual por evaluar: aceptación de clon limpio y recuperación pendientes.',
+        'R-03': 'Replay, conflicto, TTL 23h59/24h y ámbito por usuario comprobados en PostgreSQL. Revisar matriz completa antes de aceptar.',
+        'R-04': 'Validador estricto, siete fixtures oficiales y regresión de contexto replay ejecutados. Captura real reproducida; no equivale a una nueva llamada.',
+        'R-05': 'Fallback, aprobación sin stock y corte de proveedor a 5s comprobados localmente; disponibilidad del proveedor externo no garantizada.',
+        'R-06': 'Clon remoto cronometrado y backup/restauración ejecutados; consultar límites de caché y comparación de tablas en evidencia candidata. Aceptación humana pendiente.',
         'R-07': 'Originales oficiales recibidos y cotejo documental existente. Residual: vigilar cambios de versión; no afirmar revisión humana completa.',
         'R-08': 'Implementación adelantada por autorización del coordinador. Residual alto: no sustituye el gate previo exigido.',
         'R-09': 'Snapshot GitHub y reportes separan publicaciones y pruebas de tareas propuestas. Residual: validación humana de la contribución personal pendiente.',
-        'R-10': 'Cuatro E2E a 390/1366 pasaron en f33183a y la CI de 02ef410 es correcta. Residual: accesibilidad manual y carga/p95 pendientes.',
-        'R-11': 'Transacciones y rechazo parcial comprobados. Residual por evaluar: falta fallo inducido exhaustivo de auditoría antes de commit.',
+        'R-10': 'Cuatro E2E candidatos a 390/1366 y carga RNF03 ejecutados; inspección manual completa pendiente.',
+        'R-11': 'Fallo inducido de auditoría antes del commit revierte negocio e idempotencia en la suite de Edier; revisión independiente pendiente.',
         'R-12': 'Confirmación afirmativa reportada con captura de CL-16/17/18. No se mantiene la consulta como no enviada; conservar evidencia original y alcance concreto.'
     }
     for line in (ROOT / 'docs/risks/risk-register.md').read_text(encoding='utf-8').splitlines():
         if line.startswith('| R-'):
             c = [v.strip() for v in line.strip('|').split('|')]
+            if len(c) != 8 or c[0] not in risk_evidence:
+                continue
             heading(c[0] + ' · ' + c[1], 3)
             paragraph('Probabilidad: ' + c[3] + '. Impacto: ' + c[2] + '. Responsable en el registro: ' + c[5] + '.')
             paragraph('Control documentado: ' + c[4] + '. Evidencia en la fuente histórica: ' + c[6] + '. Residual registrado: ' + c[7] + '.')
             paragraph('Estado actual del control: ' + risk_evidence[c[0]])
-    paragraph('Actualización de lectura: hay evidencia parcial de reserva, aislamiento, idempotencia y ejecución; el material oficial ya está recibido y CL-16/17/18 cuentan con respuesta reportada. El registro fuente contiene textos históricos pendientes de armonización. Se mantiene alto el riesgo de proceso por cierre humano pendiente; IA, carga y recuperación siguen sin aceptación completa.')
+    paragraph('La candidata añade evidencia ejecutada de IA, concurrencia, carga, clon y recuperación. Se mantiene alto el riesgo de proceso por revisión previa incompleta; los resultados técnicos no sustituyen las decisiones humanas ni las variantes por criterio todavía pendientes.')
     source('docs/risks/risk-register.md', sha)
 
     heading('7. Ejecución reproducible y recuperación')
@@ -292,6 +317,22 @@ def content(sha):
                     add('link', ('Comentario original de Carolina', comment['url']))
     paragraph('Los enlaces a PR se consultan en el repositorio: #2/#8 (Edier), #3/#4 (Vega), #7/#10 (Carolina y consolidación), #12 (frontend/integración provisional). Las revisiones válidas requieren autor real, SHA y decisión. Las tareas propuestas no acreditan su realización.')
     source('docs/team/plan-colaboracion.md', sha)
+    heading('9.2 Decisiones humanas publicadas sobre los artefactos', 2)
+    for pr in github['pullRequests']:
+        if pr['number'] not in [10, 14]:
+            continue
+        for comment in pr['comments']:
+            if comment['author'] not in ['eblanquiceth13-cmyk', 'josevegalago2006-cpu']:
+                continue
+            heading(f"PR #{pr['number']} · comentario de {comment['author']}", 3)
+            paragraph('Publicación GitHub: ' + comment['date'] + '. Se reproduce la declaración con su alcance; no se amplía al candidato actual.')
+            for line in comment['body'].splitlines():
+                if line.strip():
+                    paragraph(line)
+            add('link', ('Evidencia original de la decisión', comment['url']))
+    paragraph('G1 global pendiente: revisión independiente SPEC-02/03 y correcciones documentales. G2 global pendiente: ADR-001 corregido, complemento ADR-003 y revisión independiente del modelo/ADR-002. Los registros por SHA no se convierten en aprobación de la candidata actual.')
+    source('docs/reviews/gate-review-G1.md', sha)
+    source('docs/reviews/gate-review-G2.md', sha)
     heading('Fuentes y control de edición', 2)
     paragraph('Esta edición transforma la presentación, sin sustituir las fuentes oficiales ni modificar las cinco SPECS. El Word es editable; si se cambia su contenido, el PDF debe regenerarse y cotejarse para que los cuatro integrantes entreguen el mismo archivo final. La portada no incluye institución, curso o docente no confirmados.')
 
@@ -341,13 +382,16 @@ def word(sha):
         t = OxmlElement('w:t'); t.text = label; r.append(t); h.append(r); p._p.append(h)
     for kind, value in blocks:
         if kind == 'cover':
-            d.add_paragraph('INGENIERÍA DE SOFTWARE · EXAMEN DE EQUIPO', 'Subtitle')
+            d.add_paragraph('EXAMEN DE EQUIPO · SDD CON IA', 'Subtitle')
             d.add_paragraph('EXAMEN · SPEC DRIVEN DEVELOPMENT CON IA', 'Subtitle')
             p = d.add_paragraph(); p.paragraph_format.space_before = Pt(45)
             r = p.add_run('NexoEntrega\n360'); r.bold = True; r.font.size = Pt(44); r.font.color.rgb = RGBColor.from_string(GREEN)
             d.add_paragraph('Informe técnico y evidencias', 'Title')
             d.add_paragraph('Especificaciones · Arquitectura · Validación · Equipo', 'Subtitle')
             d.add_paragraph('EDICIÓN PROVISIONAL PARA REVISIÓN — 14 DE OCTUBRE DE 2026')
+            d.add_paragraph('Equipo: NexoEntrega 360')
+            d.add_paragraph('Curso: nombre exacto pendiente de confirmar')
+            d.add_paragraph('Proyecto integrador de origen: pendiente de confirmar')
             t = d.add_table(rows=0, cols=2); t.style = 'Light Shading Accent 1'
             for a, b in [('Cantillo Carolina', '20231153656'), ('Castro Edier', '202311254074'), ('Conde José', '202321256268'), ('Vega José', '202321256198')]:
                 c = t.add_row().cells; c[0].text = a; c[1].text = b
@@ -417,7 +461,7 @@ def word(sha):
                 for r in p.runs: r.bold = True; r.font.color.rgb = RGBColor.from_string(GREEN)
     d.core_properties.title = 'NexoEntrega 360 — Informe técnico y evidencias'
     d.core_properties.author = 'Equipo NexoEntrega 360 · edición asistida por Codex'
-    d.save(OUT / 'Examen_SDD_IA_Equipo_NexoEntrega360.docx')
+    d.save(OUT / (DOC_STEM + '.docx'))
 
 
 class Report(BaseDocTemplate):
@@ -450,8 +494,9 @@ def pdf(sha):
     parts = []
     for kind, value in blocks:
         if kind == 'cover':
-            parts.append(p('INGENIERÍA DE SOFTWARE · EXAMEN DE EQUIPO'))
+            parts.append(p('EXAMEN DE EQUIPO · SDD CON IA'))
             parts += [Spacer(1, 35), p('EXAMEN · SDD CON IA'), Spacer(1, 35), Paragraph('NexoEntrega<br/>360', ParagraphStyle('Cover', fontName='NexoBold', fontSize=49, leading=56, textColor=colors.HexColor('#' + GREEN))), Spacer(1, 20), p('Informe técnico y evidencias', 'Subsection'), p('Especificaciones · Arquitectura · Validación · Equipo'), Spacer(1, 26), p('EDICIÓN PROVISIONAL PARA REVISIÓN', 'Callout'), p('14 de octubre de 2026'), Spacer(1, 18)]
+            parts += [p('Equipo: NexoEntrega 360'), p('Curso: nombre exacto pendiente de confirmar'), p('Proyecto integrador de origen: pendiente de confirmar'), Spacer(1, 10)]
             for name, code in [('Cantillo Carolina', '20231153656'), ('Castro Edier', '202311254074'), ('Conde José', '202321256268'), ('Vega José', '202321256198')]:
                 parts.append(p(name + '  ·  ' + code))
             parts += [Spacer(1, 20), p('Código de referencia'), p(sha, 'Cell'), p('Sin aceptación final ni aprobación humana implícita.'), PageBreak()]
@@ -495,18 +540,27 @@ def pdf(sha):
         canvas.setFont('Nexo', 7.5); canvas.setFillColor(colors.HexColor('#52685D'))
         canvas.drawString(50, 812, 'NEXOENTREGA 360  /  INFORME TÉCNICO')
         canvas.drawString(50, 28, 'PROVISIONAL · 14 OCT 2026 · ' + sha[:12]); canvas.drawRightString(545, 28, str(doc.page)); canvas.restoreState()
-    doc = Report(str(OUT / 'Examen_SDD_IA_Equipo_NexoEntrega360.pdf'), pagesize=A4, leftMargin=50, rightMargin=50, topMargin=56, bottomMargin=48, title='NexoEntrega 360 — Informe técnico y evidencias', author='Equipo NexoEntrega 360 · edición asistida por Codex')
+    doc = Report(str(OUT / (DOC_STEM + '.pdf')), pagesize=A4, leftMargin=50, rightMargin=50, topMargin=56, bottomMargin=48, title='NexoEntrega 360 — Informe técnico y evidencias', author='Equipo NexoEntrega 360 · edición asistida por Codex')
     frame = Frame(50, 48, 495, 738, leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
     doc.addPageTemplates(PageTemplate(id='report', frames=frame, onPage=decorate))
     doc.multiBuild(parts)
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__); parser.add_argument('--sha', required=True); args = parser.parse_args()
+    global OUT, DOC_STEM
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--sha', required=True)
+    parser.add_argument('--output-dir', default='deliverables/revision-editorial')
+    parser.add_argument('--file-name', default=DOC_STEM, help='nombre base, sin extensión')
+    args = parser.parse_args()
+    if not re.fullmatch(r'[A-Za-z0-9_-]+', args.file_name):
+        parser.error('El nombre debe contener solo letras ASCII, números, guiones o guiones bajos.')
+    DOC_STEM = args.file_name
+    OUT = ROOT / args.output_dir
     sha = subprocess.check_output(['git', 'rev-parse', args.sha], cwd=ROOT, text=True).strip()
     OUT.mkdir(parents=True, exist_ok=True)
     content(sha); word(sha); pdf(sha)
-    manifest = {'status': 'PROVISIONAL_NOT_ACCEPTED', 'sourceSha': sha, 'files': {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in OUT.glob('Examen*')}, 'note': 'Original provisional preserved; Word and PDF generated from same editorial content. No human approval recorded.'}
+    manifest = {'status': 'PROVISIONAL_NOT_ACCEPTED', 'sourceSha': sha, 'files': {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in [OUT / (DOC_STEM + '.docx'), OUT / (DOC_STEM + '.pdf')]}, 'note': 'Original provisional preserved; Word and PDF generated from same editorial content. No human approval recorded.'}
     (OUT / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
     print(json.dumps(manifest, indent=2))
 

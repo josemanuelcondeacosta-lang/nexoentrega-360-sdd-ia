@@ -1,9 +1,9 @@
 # ADR-001 Estructura y límites: Laravel y PostgreSQL
 
 - Estado: **propuesto; revisión G2 pendiente**. No autoriza implementación mientras G1 esté pendiente.
-- Fecha y versión: 2026-10-14, v0.1.
+- Fecha y versión: 2026-10-14, v0.2 propuesta; actualización técnica por R-E02, sin aprobación humana nueva.
 - Elaboración: Codex a solicitud de Conde José; no acredita trabajo o aprobación humana.
-- Fuentes: examen oficial §§2–6, 8–12; SPEC-01 a SPEC-05 0.3-draft; ADR-004 y contrato IA de la rama `docs/g2-vega-ia`, commit `a13aa17`.
+- Fuentes: examen oficial §§2–6, 8–12; versiones actuales de SPEC-01 a SPEC-05 y sus JSON en specs/generated; ADR-004 y contrato IA, conservando su procedencia inicial en `a13aa17`.
 
 ## Contexto y restricciones
 
@@ -24,7 +24,18 @@ Consistencia transaccional verificable, mínima complejidad operativa, límites 
 
 ## Decisión y justificación
 
-Diseñar un monolito modular Laravel, PostgreSQL único y UI Blade del mismo origen como propuesta de mínima complejidad, sin SPA adicional obligatoria. Docker Compose previsto con aplicación y PostgreSQL; versiones compatibles de PHP/Laravel/PostgreSQL se fijarán en G2 antes de implementación junto con `composer.lock` y lockfile de assets si aplica. No se inventan lockfiles sin resolver dependencias.
+Monolito modular Laravel, PostgreSQL único y UI Blade del mismo origen, sin SPA adicional. La implementación provisional conserva esa elección; las versiones reales se registran para corregir R-E02, sin presentar la fijación tardía como revisión previa.
+
+| Componente | Versión reproducible | Fuente comprobable |
+|---|---|---|
+| PHP | 8.5.0, imagen php:8.5.0-cli-bookworm; requisito ~8.5.0 | apps/nexo/Dockerfile, composer.json y composer.lock |
+| Laravel | framework 12.70.0, familia 12 | apps/nexo/composer.lock |
+| PostgreSQL | 17.6, imagen postgres:17.6-bookworm | compose.yaml |
+| Composer | 2.8.12 | apps/nexo/Dockerfile |
+| Node | 22.22.2 | .github/workflows/aplicacion-provisional.yml |
+| Playwright | 1.56.1 | package-lock.json |
+
+PHP ^8.2 era más permisivo que las dependencias del lockfile (requieren al menos 8.4.1). El requisito pasa a ~8.5.0 para coincidir con el runtime fijado. Regenerar metadatos del lock sin actualizar paquetes y comprobar composer validate/check-platform-reqs; el objetivo no es actualizar dependencias silenciosamente.
 
 | Módulo previsto | Responsabilidad y dueño de datos | Dependencias permitidas |
 |---|---|---|
@@ -37,7 +48,7 @@ Diseñar un monolito modular Laravel, PostgreSQL único y UI Blade del mismo ori
 | AI | Selección, whitelist, adaptador, validación, fallback y aprobación | Identity, lectura Requests, Audit; ADR-004 |
 | Operations | Health, readiness y logs estructurados sanitizados | Readiness comprueba PostgreSQL; no depende del proveedor IA |
 
-Ubicación propuesta: `app/Modules/<Module>/{Application,Domain,Infrastructure,Http}`; `routes/api.php` y vistas Blade. Controladores delgados llaman casos de uso. No importar controladores de otro módulo ni mutar datos ajenos mediante modelos desde la UI. Queries usa proyecciones; AI no obtiene una interfaz de mutación de solicitudes/inventario. Evitar repositorios genéricos innecesarios; solo introducir interfaces en fronteras que deben sustituirse/probarse, como proveedor IA.
+Ubicación real del paquete provisional: apps/nexo/app/Modules/<Module> con clases de aplicación y controladores por módulo; apps/nexo/routes/web.php para la API con sesiones/CSRF y vistas Blade del mismo origen. Las capas Application/Domain/Infrastructure/Http y routes/api.php del diseño inicial no se materializaron; esta versión registra la diferencia para revisión, sin fingir que se implementaron. Queries usa proyecciones; AI no obtiene una interfaz de mutación de solicitudes/inventario. Solo introducir interfaces en fronteras que deben sustituirse/probarse, como proveedor IA.
 
 Una única transacción PostgreSQL confirma estado, inventario, auditoría y resultado idempotente. Bloquear solicitud y filas de stock en orden estable; ADR-002 debe concretar aislamiento, deadlocks, hash y retención. No invocar al proveedor IA dentro de una transacción de inventario. Aprobar resumen usa su propia transacción de resumen+evento sin escribir stock.
 
@@ -45,7 +56,7 @@ Una única transacción PostgreSQL confirma estado, inventario, auditoría y res
 
 Navegador y observaciones no confiables; API resuelve identidad y filtra organización antes de exponer datos. PostgreSQL no es accesible al navegador. Credencial del proveedor solo en backend, sin nombres/secretos/datos ajenos en payload. Respuesta IA se valida y se presenta escapada. Sesión revocable/cookie y controles CSRF son provisionales hasta ADR-003; contrato IA conserva su esquema original.
 
-Fuera de alcance: usuarios masivos, recuperación de contraseña, GPS/rutas, devoluciones, ajustes de stock por API y decisiones automáticas de IA. El coordinador reporta respuesta afirmativa de la profesora a CL-16/17/18: Coordinador también lee inventario e historial de su organización; Solicitante lee historial y tablero de sus propias solicitudes sin inventario. Bodega no recibe acceso a auditoría. Fecha/canal y evidencia original pendientes; la decisión se registra como reportada y las SPEC afectadas requieren nueva revisión.
+Fuera de alcance: usuarios masivos, recuperación de contraseña, GPS/rutas, devoluciones, ajustes de stock por API y decisiones automáticas de IA. El coordinador aportó una captura con respuesta afirmativa de la profesora a CL-16/17/18: Coordinador también lee inventario e historial de su organización; Solicitante lee historial y tablero propios sin inventario. Bodega no recibe acceso a auditoría. La procedencia y los límites se conservan en clarification-log; no equivale a aprobación del paquete completo.
 
 ## Consecuencias y riesgos
 
@@ -53,13 +64,13 @@ Un único despliegue simplifica evaluación; el mismo motor de base se usa en de
 
 ## RF y AC afectados
 
-RF01–RF12, RNF01–RNF06; todos los AC de SPEC-01–05 según matriz. Contrato `contracts/openapi.yaml`; diagramas `docs/architecture/contexto.md` y `componentes.md`. ADR-002/003 aún pendientes; ADR-004 existente no se aprueba por referencia.
+RF01–RF12, RNF01–RNF06; todos los AC de SPEC-01–05 según matriz. Contrato `contracts/openapi.yaml`; diagramas `docs/architecture/contexto.md` y `componentes.md`. Los cuatro ADR existen y requieren decisiones por alcance/SHA; la existencia de un ADR no acredita aprobación por referencia.
 
 ## Verificación de la decisión
 
-Pruebas previstas, **no ejecutadas**: aislamiento 2 lecturas/2 escrituras; reserva parcial rechazada y rollback real; dos reservas competidoras PostgreSQL; replay/conflicto/TTL; evento atómico; fallo IA sin impedir transiciones; clon limpio ≤15min (descargas medidas aparte); carga RNF03 y UI RNF05. Revisar dependencias entre módulos y permisos por ruta en G2.
+El plan incluye aislamiento, rollback, reservas competidoras, replay/conflicto/TTL, evento atómico, fallo IA, clon limpio, carga y UI. Los resultados ejecutados del candidato se conservan en `docs/evidence/runtime/candidate/verification.md`, con SHA, informes y límites por AC. No todos los escenarios previstos están verificados ni aceptados.
 
-Apoyo técnico: [transacciones Laravel](https://laravel.com/framework/docs/database/config), [bloqueos pesimistas](https://laravel.com/framework/docs/13.x/queries). Consultados 2026-10-14; versión del producto aún por fijar. La decisión sigue siendo del equipo.
+La versión ejecutada está fijada por composer.lock a Laravel 12.70.0; revisar sus métodos de transacción y bloqueo contra el código instalado. No usar documentación de Laravel 13 como justificación de una API distinta. La decisión sigue siendo del equipo.
 
 ## Autor y revisión humana
 

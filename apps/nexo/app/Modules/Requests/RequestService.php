@@ -12,6 +12,7 @@ class RequestService
 {
     public static function find($user, string $id, bool $lock = false)
     {
+        abort_unless(Str::isUuid($id), 404, 'Solicitud no encontrada.');
         $q = DB::table('requests')->where('organization_id', $user->organization_id)->where('id', $id);
         $row = ($lock ? $q->lockForUpdate() : $q)->first();
         abort_unless($row, 404, 'Solicitud no encontrada.');

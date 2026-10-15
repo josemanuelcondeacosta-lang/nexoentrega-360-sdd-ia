@@ -27,7 +27,7 @@ Archivo generado por `python scripts/build_coverage.py`; no editar a mano. Estad
 
 ## Plan de verificación por criterio
 
-El resultado esperado se fija antes de ejecutar. Los identificadores T-AC nombran pruebas **planificadas**, no archivos existentes. Módulos y tareas son propuestas para G2. No hay PR de implementación, SHA probado ni evidencia de producto.
+El resultado esperado se fija antes de ejecutar. Los identificadores T-AC nombran pruebas **planificadas**, no archivos existentes. Módulos y tareas conservan el plan de G2. Los resultados ejecutados se registran separadamente en docs/evidence/runtime; esta tabla no acredita su ejecución.
 
 | AC | Requisitos | Tipo | Escenario (dado / cuando) | Resultado esperado | Módulo y prueba prevista | Observado | PR / SHA / evidencia |
 |---|---|---|---|---|---|---|---|
@@ -109,11 +109,19 @@ El resultado esperado se fija antes de ejecutar. Los identificadores T-AC nombra
 
 | Tarea | Dependencias obligatorias | Responsable principal propuesto |
 |---|---|---|
-| TASK-01 Identidad | SPEC-01 aprobada + G2 revisado | José Conde; revisión de otro integrante |
-| TASK-02 Solicitudes/UI | TASK-01 + SPEC-02 aprobada | José Conde; Carolina revisa trazabilidad |
-| TASK-03 Inventario | TASK-01/02 + SPEC-03 aprobada | Edier; revisión de otro integrante |
-| TASK-04 Consultas/auditoría | SPEC-04 aprobada; auditoría integrada en TASK-02/03 | Edier; revisión de otro integrante |
-| TASK-05 IA | TASK-01/02/04 + SPEC-05 aprobada | José Vega; revisión de otro integrante |
-| Validación y CI | Contratos G2 y módulos revisados | José Vega; todos aportan pruebas reales |
+| TSK-01 | TSK-07/08; SPEC-01 y ADR-003 revisados | Edier; Carolina aporta/revisa tests |
+| TSK-02 | TSK-01/08/11; SPEC-02 revisada | Edier; Carolina tests de aceptación |
+| TSK-03 | TSK-01/02/11; SPEC-03 y ADR-002 revisados | Edier |
+| TSK-04 | TSK-01/02/11; SPEC-04 revisada | Edier; José integra UI |
+| TSK-05 | TSK-01/02/11; SPEC-05 y ADR-004 revisados | Vega José |
+| TSK-06 | TSK-01..05 por slice y contrato revisado | Conde José |
+| TSK-07 | TSK-10; esquema/ADR-002 revisados | Edier |
+| TSK-08 | TSK-07 | Edier; Carolina verifica oráculos |
+| TSK-09 | TSK-10 para base; TSK-01..05 para pipeline completo | Vega José |
+| TSK-10 | Diseño G2 revisado; funcionalidad solo con SPEC aprobada | Conde José; Edier revisa DB |
+| TSK-11 | TSK-07; SPEC-04 revisada | Edier |
+| TSK-12 | TSK-04/06/08/10; SPEC-04 revisada | Vega José; Conde José UI |
+| TSK-13 | TSK-09/12/14; versión probada | Conde José; Carolina revisión documental |
+| TSK-14 | Artefactos preparados y hallazgos atendidos | Todos |
 
 Carolina coordina el cotejo de requisitos y SPEC. Ninguna fila acredita autoría, trabajo o revisión ya realizada.

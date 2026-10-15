@@ -1,6 +1,6 @@
-# Tareas G2 alineadas — propuesta, ninguna ejecutada
+# Tareas G2 alineadas — plan y dependencias
 
-Origen: tabla de Carolina en `7637056`; alineación preparada por Codex a solicitud de Conde José. Todos los archivos y PR de producto son futuros. No sustituye revisión humana ni la matriz por AC.
+Origen: tabla de Carolina en `7637056`; alineación preparada por Codex a solicitud de Conde José. Esta tabla conserva el plan original y los nombres de pruebas previstos; los archivos ejecutados pueden tener otros nombres. Los aportes de producto existen en PR #12–15 y sus resultados se registran en `evidence/runtime`. Existencia de código o pruebas no significa tarea aceptada ni revisión previa cumplida. No sustituye revisión humana ni la matriz por AC.
 
 | ID | RF/RNF y AC | Resultado / módulos y archivos previstos | Dependencias | Prueba y condición de término | Responsable propuesto |
 |---|---|---|---|---|---|
@@ -21,7 +21,7 @@ Origen: tabla de Carolina en `7637056`; alineación preparada por Codex a solici
 
 ## Reglas de ejecución y evidencia
 
-- Estado de **todas** las tareas: pendiente. PR: crear por slice y enlazar número real al existir; nunca inventarlo.
+- Estado de cierre de las tareas: pendiente de la verificación completa por criterio y las revisiones correspondientes. Consultar los PR reales y la evidencia del corte candidato; nunca interpretar el plan como resultado ejecutado.
 - Toda funcionalidad requiere su SPEC aprobada y diseño revisado aunque la fila no repita el gate. TSK-14 se aplica antes de implementar y antes de integrar; no es un paso aplazable hasta entrega.
 - Auditoría TSK-11 debe estar disponible desde la primera transición. La base TSK-07 y seed TSK-08 preceden autenticación y pruebas de dominio persistido.
 - Para cerrar: comando, entorno, UTC, SHA, esperado/observado, snapshots de base cuando corresponda, reporte y revisión ajena. Tests previstos no son resultados ejecutados.

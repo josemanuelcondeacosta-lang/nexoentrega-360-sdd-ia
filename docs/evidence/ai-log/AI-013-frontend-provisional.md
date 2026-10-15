@@ -1,4 +1,6 @@
-# AI-007 — Frontend e integración provisional
+# AI-013 — Frontend e integración provisional
+
+Identificador corregido desde AI-007 para no colisionar con el registro de revisión de Vega. Se conserva el contenido y su procedencia; no se modifica la fecha histórica ni se inventa una aprobación.
 
 Fecha: 2026-10-14. Herramienta: Codex. Solicitante: coordinador del proyecto; instrucción «haz esto con lo que hay después corrijo», frontend/API y verificación real. No se atribuye revisión humana a una persona distinta del solicitante.
 

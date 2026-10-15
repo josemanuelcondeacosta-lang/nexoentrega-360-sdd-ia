@@ -1,0 +1,113 @@
+﻿{
+    "sourceSha":  "6a751d477e2e10939f0081050fb9bb996ede3d05",
+    "result":  "passed",
+    "restoredDatabase":  "nexo_restore_candidate",
+    "sourceDatabase":  "nexo",
+    "project":  "nexo-candidate",
+    "tables":  [
+                   {
+                       "equal":  true,
+                       "table":  "ai_attempts",
+                       "restored":  "0|d41d8cd98f00b204e9800998ecf8427e",
+                       "original":  "0|d41d8cd98f00b204e9800998ecf8427e"
+                   },
+                   {
+                       "equal":  true,
+                       "table":  "ai_summaries",
+                       "restored":  "0|d41d8cd98f00b204e9800998ecf8427e",
+                       "original":  "0|d41d8cd98f00b204e9800998ecf8427e"
+                   },
+                   {
+                       "equal":  true,
+                       "table":  "audit_events",
+                       "restored":  "10|e995beb6eefb5173ba77caf38b6d7101",
+                       "original":  "10|e995beb6eefb5173ba77caf38b6d7101"
+                   },
+                   {
+                       "equal":  true,
+                       "table":  "cache",
+                       "restored":  "0|d41d8cd98f00b204e9800998ecf8427e",
+                       "original":  "0|d41d8cd98f00b204e9800998ecf8427e"
+                   },
+                   {
+                       "equal":  true,
+                       "table":  "cache_locks",
+                       "restored":  "0|d41d8cd98f00b204e9800998ecf8427e",
+                       "original":  "0|d41d8cd98f00b204e9800998ecf8427e"
+                   },
+                   {
+                       "equal":  true,
+                       "table":  "failed_jobs",
+                       "restored":  "0|d41d8cd98f00b204e9800998ecf8427e",
+                       "original":  "0|d41d8cd98f00b204e9800998ecf8427e"
+                   },
+                   {
+                       "equal":  true,
+                       "table":  "idempotency_records",
+                       "restored":  "4|35411a96a183da7752a9296ba0d44513",
+                       "original":  "4|35411a96a183da7752a9296ba0d44513"
+                   },
+                   {
+                       "equal":  true,
+                       "table":  "inventory_items",
+                       "restored":  "6|a027f29ba11b766bbc7c29212ecf8a90",
+                       "original":  "6|a027f29ba11b766bbc7c29212ecf8a90"
+                   },
+                   {
+                       "equal":  true,
+                       "table":  "job_batches",
+                       "restored":  "0|d41d8cd98f00b204e9800998ecf8427e",
+                       "original":  "0|d41d8cd98f00b204e9800998ecf8427e"
+                   },
+                   {
+                       "equal":  true,
+                       "table":  "jobs",
+                       "restored":  "0|d41d8cd98f00b204e9800998ecf8427e",
+                       "original":  "0|d41d8cd98f00b204e9800998ecf8427e"
+                   },
+                   {
+                       "equal":  true,
+                       "table":  "migrations",
+                       "restored":  "5|36e9bdaff2adae168055d79ad557c4b2",
+                       "original":  "5|36e9bdaff2adae168055d79ad557c4b2"
+                   },
+                   {
+                       "equal":  true,
+                       "table":  "organizations",
+                       "restored":  "2|1c71e26bbd65ed53451cf97e75a831c5",
+                       "original":  "2|1c71e26bbd65ed53451cf97e75a831c5"
+                   },
+                   {
+                       "equal":  true,
+                       "table":  "password_reset_tokens",
+                       "restored":  "0|d41d8cd98f00b204e9800998ecf8427e",
+                       "original":  "0|d41d8cd98f00b204e9800998ecf8427e"
+                   },
+                   {
+                       "equal":  true,
+                       "table":  "request_lines",
+                       "restored":  "4|b6203b8995b5a88928144095525dea03",
+                       "original":  "4|b6203b8995b5a88928144095525dea03"
+                   },
+                   {
+                       "equal":  true,
+                       "table":  "requests",
+                       "restored":  "4|d0c01a4fcd1e9056b4ab4741b49e92f4",
+                       "original":  "4|d0c01a4fcd1e9056b4ab4741b49e92f4"
+                   },
+                   {
+                       "equal":  true,
+                       "table":  "sessions",
+                       "restored":  "0|d41d8cd98f00b204e9800998ecf8427e",
+                       "original":  "0|d41d8cd98f00b204e9800998ecf8427e"
+                   },
+                   {
+                       "equal":  true,
+                       "table":  "users",
+                       "restored":  "8|e8d35d1a826e5524a8ef1be321c79152",
+                       "original":  "8|e8d35d1a826e5524a8ef1be321c79152"
+                   }
+               ],
+    "backupSha256":  "8CE6AED58C93AEDA4C071148144E7EFA0FF8AD94C2ECF4FD1AFBA8E13FA2A4AB",
+    "utc":  "2026-10-15T02:51:30.1007868Z"
+}

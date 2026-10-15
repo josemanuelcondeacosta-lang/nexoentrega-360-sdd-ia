@@ -1,0 +1,89 @@
+Cloning into 'C:\Users\josem\Downloads\NexoEntrega360_G1_inicio\test-results\clean-clone-final-check'...
+ Image nexo-cleanclone-final-check-app Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 689B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 521B 0.0s done
+#2 DONE 0.1s
+
+#3 [internal] load metadata for docker.io/library/php:8.5.0-cli-bookworm
+#3 DONE 0.7s
+
+#4 [internal] load metadata for docker.io/library/composer:2.8.12
+#4 DONE 0.7s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 208B 0.0s done
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 DONE 0.0s
+
+#7 [stage-0 1/8] FROM docker.io/library/php:8.5.0-cli-bookworm@sha256:4ff93cd1b053c4d5ff468ced40962092a350a8c86798fee96e807bc9b383ec75
+#7 resolve docker.io/library/php:8.5.0-cli-bookworm@sha256:4ff93cd1b053c4d5ff468ced40962092a350a8c86798fee96e807bc9b383ec75 0.0s done
+#7 DONE 0.1s
+
+#8 FROM docker.io/library/composer:2.8.12@sha256:5248900ab8b5f7f880c2d62180e40960cd87f60149ec9a1abfd62ac72a02577c
+#8 resolve docker.io/library/composer:2.8.12@sha256:5248900ab8b5f7f880c2d62180e40960cd87f60149ec9a1abfd62ac72a02577c
+#8 resolve docker.io/library/composer:2.8.12@sha256:5248900ab8b5f7f880c2d62180e40960cd87f60149ec9a1abfd62ac72a02577c 0.1s done
+#8 DONE 0.1s
+
+#6 [internal] load build context
+#6 transferring context: 609.21kB 0.4s done
+#6 DONE 0.4s
+
+#9 [stage-0 3/8] COPY --from=composer:2.8.12 /usr/bin/composer /usr/bin/composer
+#9 CACHED
+
+#10 [stage-0 4/8] WORKDIR /app
+#10 CACHED
+
+#11 [stage-0 5/8] COPY composer.json composer.lock ./
+#11 CACHED
+
+#12 [stage-0 7/8] COPY . .
+#12 CACHED
+
+#13 [stage-0 2/8] RUN apt-get update && apt-get install -y --no-install-recommends libpq-dev libonig-dev unzip git && docker-php-ext-install pdo_pgsql mbstring && rm -rf /var/lib/apt/lists/*
+#13 CACHED
+
+#14 [stage-0 6/8] RUN composer install --prefer-dist --no-interaction --no-scripts
+#14 CACHED
+
+#15 [stage-0 8/8] RUN composer dump-autoload --optimize && chmod +x start.sh
+#15 CACHED
+
+#16 exporting to image
+#16 exporting layers 0.0s done
+#16 exporting manifest sha256:4426c687697c2c879f515a07836e7ad7063b553d04f4cdba9156c3215096c5cd 0.0s done
+#16 exporting config sha256:341030d85e8ff5660d854becd0556f0904111fb12b409128f2d41a316dc10eb0
+#16 exporting config sha256:341030d85e8ff5660d854becd0556f0904111fb12b409128f2d41a316dc10eb0 0.0s done
+#16 exporting attestation manifest sha256:8d554682d6138f7f7598f03e80afd49b4b6264c28cf3d7f2b0d25a75d387732d 0.0s done
+#16 exporting manifest list sha256:9f6126d33b4ba4f26b7401bf2be214a925d6f351ac8c5f541f43747007f91147 0.0s done
+#16 naming to docker.io/library/nexo-cleanclone-final-check-app:latest done
+#16 unpacking to docker.io/library/nexo-cleanclone-final-check-app:latest 0.0s done
+#16 DONE 0.2s
+
+#17 resolving provenance for metadata file
+#17 DONE 0.0s
+ Image nexo-cleanclone-final-check-app Built 
+ Network nexo-cleanclone-final-check_default Creating 
+ Volume nexo-cleanclone-final-check_nexo_data Creating 
+ Volume nexo-cleanclone-final-check_nexo_data Creating 
+ Network nexo-cleanclone-final-check_default Creating 
+ Volume nexo-cleanclone-final-check_nexo_data Created 
+ Volume nexo-cleanclone-final-check_nexo_data Created 
+ Network nexo-cleanclone-final-check_default Created 
+ Network nexo-cleanclone-final-check_default Created 
+ Container nexo-cleanclone-final-check-database-1 Creating 
+ Container nexo-cleanclone-final-check-database-1 Created 
+ Container nexo-cleanclone-final-check-app-1 Creating 
+ Container nexo-cleanclone-final-check-app-1 Created 
+ Container nexo-cleanclone-final-check-database-1 Starting 
+ Container nexo-cleanclone-final-check-database-1 Started 
+ Container nexo-cleanclone-final-check-database-1 Waiting 
+ Container nexo-cleanclone-final-check-database-1 Healthy 
+ Container nexo-cleanclone-final-check-app-1 Starting 
+ Container nexo-cleanclone-final-check-app-1 Started 

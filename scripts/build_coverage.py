@@ -38,6 +38,20 @@ def cell(value):
     return value.replace('|', '\\|').replace('\n', ' ')
 
 
+def task_rows():
+    """La asignación se mantiene exclusivamente en docs/tasks.md."""
+    rows = []
+    for line in (ROOT / 'docs' / 'tasks.md').read_text(encoding='utf-8').splitlines():
+        if line.startswith('| TSK-'):
+            columns = [column.strip() for column in line.strip('|').split('|')]
+            if len(columns) != 6:
+                raise ValueError('Fila de tareas inválida: ' + line)
+            rows.append(f'| {columns[0]} | {columns[3]} | {columns[5]} |')
+    if len(rows) != 14:
+        raise ValueError('Se requieren las catorce tareas de docs/tasks.md')
+    return rows
+
+
 def build(objects):
     by_requirement = {r: [] for r in ALL_REQUIREMENTS}
     for obj in objects:
@@ -73,7 +87,7 @@ def build(objects):
         '## Plan de verificación por criterio',
         '',
         'El resultado esperado se fija antes de ejecutar. Los identificadores T-AC nombran pruebas **planificadas**, no archivos existentes. '
-        'Módulos y tareas son propuestas para G2. No hay PR de implementación, SHA probado ni evidencia de producto.',
+        'Módulos y tareas conservan el plan de G2. Los resultados ejecutados se registran separadamente en docs/evidence/runtime; esta tabla no acredita su ejecución.',
         '',
         '| AC | Requisitos | Tipo | Escenario (dado / cuando) | Resultado esperado | Módulo y prueba prevista | Observado | PR / SHA / evidencia |',
         '|---|---|---|---|---|---|---|---|',
@@ -91,12 +105,7 @@ def build(objects):
         '',
         '| Tarea | Dependencias obligatorias | Responsable principal propuesto |',
         '|---|---|---|',
-        '| TASK-01 Identidad | SPEC-01 aprobada + G2 revisado | José Conde; revisión de otro integrante |',
-        '| TASK-02 Solicitudes/UI | TASK-01 + SPEC-02 aprobada | José Conde; Carolina revisa trazabilidad |',
-        '| TASK-03 Inventario | TASK-01/02 + SPEC-03 aprobada | Edier; revisión de otro integrante |',
-        '| TASK-04 Consultas/auditoría | SPEC-04 aprobada; auditoría integrada en TASK-02/03 | Edier; revisión de otro integrante |',
-        '| TASK-05 IA | TASK-01/02/04 + SPEC-05 aprobada | José Vega; revisión de otro integrante |',
-        '| Validación y CI | Contratos G2 y módulos revisados | José Vega; todos aportan pruebas reales |',
+        *task_rows(),
         '',
         'Carolina coordina el cotejo de requisitos y SPEC. Ninguna fila acredita autoría, trabajo o revisión ya realizada.',
         '',
