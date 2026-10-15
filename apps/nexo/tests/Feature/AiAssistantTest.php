@@ -6,9 +6,11 @@ use App\Models\User;
 use App\Modules\AI\AiInvalidOutputException;
 use App\Modules\AI\AiOutputValidator;
 use App\Modules\AI\AiProvider;
+use App\Modules\AI\GeminiProvider;
 use App\Modules\AI\ReplayProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -288,6 +290,19 @@ class AiAssistantTest extends TestCase
                 DB::table('requests')->where('id', $id)->update(['codigo' => $code.'-'.substr($id, 0, 8)]);
             }
         }
+    }
+
+    /** El adaptador de Gemini envía la clave en el encabezado, pide JSON y desactiva el pensamiento en 2.5 Flash para cumplir el plazo. */
+    public function test_gemini_pide_json_sin_pensamiento_y_clave_en_encabezado(): void
+    {
+        Http::fake(['*' => Http::response(['candidates' => [['content' => ['parts' => [['text' => '{"summary":"ok","recommendations":[]}']]]]]])]);
+        $raw = (new GeminiProvider('clave-de-prueba', 'gemini-2.5-flash', 'https://gemini.invalid'))->complete('instrucciones', 'datos', 5000);
+
+        $this->assertSame('{"summary":"ok","recommendations":[]}', $raw);
+        Http::assertSent(fn ($request) => $request->url() === 'https://gemini.invalid/v1beta/models/gemini-2.5-flash:generateContent'
+            && $request->hasHeader('x-goog-api-key', 'clave-de-prueba') && ! str_contains($request->url(), 'clave')
+            && $request['generationConfig']['responseMimeType'] === 'application/json'
+            && $request['generationConfig']['thinkingConfig']['thinkingBudget'] === 0);
     }
 
     public static function rejectedOutputs(): array

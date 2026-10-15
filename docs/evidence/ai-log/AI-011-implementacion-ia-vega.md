@@ -33,6 +33,7 @@ Decisiones tomadas por Vega con el selector de preguntas: tiene Docker Desktop y
   - `public/app.js`: muestra origen, mensaje, resumen y recomendaciones escapados.
 - **Pruebas** en `apps/nexo/tests/Feature/AiAssistantTest.php` (AC-05-01, 02, 03, 05, 06, 07, 08, 09, 12, 13, 14 y 17).
 - ADR-004 pasa a v0.2 con la ubicación real de las piezas y la tolerancia fijada.
+- Ajuste tras la primera captura real: con `gemini-2.5-flash` y `gemini-flash-lite-latest` la llamada superó los 5 s (`gemini_timeout`) y `gemini-2.5-flash-lite` respondió 404. Una medición con `curl` desde el contenedor dio 0,52 s de red, así que la demora era del modelo. `GeminiProvider` desactiva el «pensamiento» en los modelos 2.5 Flash (`thinkingBudget: 0`) y admite `AI_FORCE_IPV4` como opción de red, desactivada por defecto.
 
 ## Decisión humana
 

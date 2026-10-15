@@ -3,6 +3,7 @@
 namespace App\Modules\AI;
 
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
 /**
@@ -25,13 +26,16 @@ class GeminiProvider implements AiProvider
         }
         $seconds = $timeoutMs / 1000;
         try {
-            $response = Http::timeout($seconds)->connectTimeout($seconds)->acceptJson()
-                ->withHeaders(['x-goog-api-key' => $this->key])
-                ->post(rtrim($this->baseUrl, '/').'/v1beta/models/'.rawurlencode($this->model).':generateContent', [
-                    'systemInstruction' => ['parts' => [['text' => $instructions]]],
-                    'contents' => [['role' => 'user', 'parts' => [['text' => $data]]]],
-                    'generationConfig' => ['responseMimeType' => 'application/json', 'temperature' => 0],
-                ]);
+            $generation = ['responseMimeType' => 'application/json', 'temperature' => 0];
+            // Los modelos 2.5 Flash «piensan» por defecto y pueden pasar del plazo; un resumen corto no lo necesita.
+            if (str_starts_with($this->model, 'gemini-2.5-flash')) {
+                $generation['thinkingConfig'] = ['thinkingBudget' => 0];
+            }
+            $response = $this->http($seconds)->post(rtrim($this->baseUrl, '/').'/v1beta/models/'.rawurlencode($this->model).':generateContent', [
+                'systemInstruction' => ['parts' => [['text' => $instructions]]],
+                'contents' => [['role' => 'user', 'parts' => [['text' => $data]]]],
+                'generationConfig' => $generation,
+            ]);
         } catch (ConnectionException $e) {
             throw str_contains(strtolower($e->getMessage()), 'timed out') || str_contains($e->getMessage(), 'cURL error 28')
                 ? new AiTimeoutException('gemini_timeout')
@@ -48,6 +52,14 @@ class GeminiProvider implements AiProvider
         return $text;
     }
 
+    private function http(float $seconds): PendingRequest
+    {
+        $request = Http::timeout($seconds)->connectTimeout($seconds)->acceptJson()->withHeaders(['x-goog-api-key' => $this->key]);
+
+        // Docker Desktop puede intentar IPv6 sin ruta y gastar el plazo en conectar; AI_FORCE_IPV4=true lo evita.
+        return config('ai.force_ipv4') ? $request->withOptions(['force_ip_resolve' => 'v4']) : $request;
+    }
+
     public function origin(): array
     {
         return ['type' => 'provider', 'provider' => 'gemini', 'model' => $this->model, 'fixtureId' => null];
@@ -56,8 +68,7 @@ class GeminiProvider implements AiProvider
     /** Modelos Flash de la clave que admiten generateContent (para ai:capture). */
     public function flashModels(): array
     {
-        $response = Http::timeout(10)->acceptJson()->withHeaders(['x-goog-api-key' => $this->key])
-            ->get(rtrim($this->baseUrl, '/').'/v1beta/models', ['pageSize' => 200]);
+        $response = $this->http(10)->get(rtrim($this->baseUrl, '/').'/v1beta/models', ['pageSize' => 200]);
         if (! $response->successful()) {
             throw new AiProviderException('gemini_http_'.$response->status());
         }
