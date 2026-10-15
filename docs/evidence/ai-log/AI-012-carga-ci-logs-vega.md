@@ -32,8 +32,8 @@ Preparar la prueba de carga RNF03, integrar el CI documental en la rama de la ap
 
 | Cambio | Decisión de Vega (aceptada / corregida / descartada) | Motivo | Fecha UTC |
 |---|---|---|---|
-| Prueba de carga RNF03 (seed, script k6 y servicio) | PENDIENTE | | |
-| CI documental integrado y prueba de logs | PENDIENTE | | |
+| Prueba de carga RNF03 (seed, script k6 y servicio) | Aceptada | La ejecuté en mi PC con Docker: listado p95 61,7 ms, tablero p95 36,2 ms, 0 % de errores; umbrales cumplidos | 2026-10-15T02:11Z |
+| CI documental integrado y prueba de logs | Aceptada | Integra integridad y gitleaks en la rama de la app (R-E03); las pruebas, incluida la de logs, pasaron en mi PC | 2026-10-15T02:15Z |
 
 ## Verificación
 
@@ -42,6 +42,8 @@ Ejecutada por el asistente en su espacio de trabajo el 2026-10-15 (UTC), con PHP
 - `nexo:seed-carga`: 2.000 solicitudes (ORG-A 1.080 BORRADOR y 720 ENVIADA; ORG-B 120 y 80), 800 eventos SEND; una segunda ejecución no repite.
 - k6 1.8.2, ejecución completa de 65 s: listado p95 197,8 ms y mediana 80,4 ms; tablero p95 202,5 ms y mediana 69,1 ms; errores 0,00 %; umbrales cumplidos.
 - `LogsSanitizedTest`: correcta (15 aserciones). `actionlint` sobre los dos workflows: sin errores.
+
+Ejecución de Vega, 2026-10-15T02:11Z, Windows con Docker Desktop y k6 1.8.2 (grafana/k6:1.8.2): listado p95 61,7 ms y mediana 38,9 ms; tablero p95 36,2 ms y mediana 24,9 ms; errores 0,00 %; 1.238 iteraciones; umbrales cumplidos. Salida en `docs/evidence/runtime/carga-rnf03.json` y hardware en `docs/evidence/runtime/carga-rnf03-hardware.txt`.
 
 La medición válida para la entrega es la de Vega en su equipo, con su hardware reportado, y queda en `carga-rnf03.json`.
 
