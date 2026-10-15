@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\AI\CaptureReplay;
+use App\Modules\Operations\LoadSeed;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -11,3 +12,7 @@ Artisan::command('inspire', function () {
 Artisan::command('ai:capture {--model= : modelo de Gemini; vacío elige el primer Flash disponible} {--timeout= : plazo de la captura en ms (por defecto 5000, máximo 60000)} {--thinking= : nivel de pensamiento para modelos 3.x: minimal, low, medium o high}', function () {
     return (new CaptureReplay)->run($this, $this->option('model'), $this->option('timeout') ? (int) $this->option('timeout') : null, $this->option('thinking'));
 })->purpose('Captura una respuesta real de Gemini como reproducción declarada (AC-05-13)');
+
+Artisan::command('nexo:seed-carga {--count=2000 : solicitudes ficticias para RNF03}', function () {
+    return (new LoadSeed)->run($this, (int) $this->option('count'));
+})->purpose('Siembra 2.000 solicitudes ficticias para la prueba de carga RNF03 (AC-04-09)');

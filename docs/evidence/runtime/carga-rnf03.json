@@ -1,0 +1,54 @@
+{
+  "requisito": "RNF03 / AC-04-09",
+  "herramienta": "k6 1.8.2",
+  "baseUrl": "http://app:8000",
+  "usuariosVirtuales": 20,
+  "calentamientoS": 5,
+  "medicionS": 60,
+  "pausaPorIteracionS": 1,
+  "listado": {
+    "duracionMs": {
+      "avg": 45.168371781753095,
+      "min": 22.83397,
+      "med": 38.9326495,
+      "p(90)": 51.7395249,
+      "p(95)": 61.70933519999995,
+      "max": 731.848028
+    },
+    "errores": {
+      "rate": 0,
+      "passes": 0,
+      "fails": 1118
+    }
+  },
+  "tablero": {
+    "duracionMs": {
+      "p(90)": 30.706358700000003,
+      "p(95)": 36.22143449999998,
+      "max": 193.586819,
+      "avg": 29.005953806797905,
+      "min": 21.191111,
+      "med": 24.864670500000003
+    },
+    "errores": {
+      "rate": 0,
+      "passes": 0,
+      "fails": 1118
+    }
+  },
+  "umbrales": {
+    "http_req_duration{fase:medicion,endpoint:tablero}": {
+      "p(95)<=700": true
+    },
+    "http_req_failed{fase:medicion,endpoint:tablero}": {
+      "rate<0.01": true
+    },
+    "http_req_duration{fase:medicion,endpoint:listado}": {
+      "p(95)<=700": true
+    },
+    "http_req_failed{fase:medicion,endpoint:listado}": {
+      "rate<0.01": true
+    }
+  },
+  "generadoUtc": "2026-10-15T02:11:26.838Z"
+}
