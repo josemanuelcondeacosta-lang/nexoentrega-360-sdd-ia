@@ -58,3 +58,12 @@ La ejecución válida para el proyecto es la de Edier con Docker y la del CI de 
 ## Límites
 
 Las carreras usan peticiones simultáneas (`Promise.all`) y no una barrera dentro del servidor; el orden lo decide el sistema. `races.mjs` exige una base recién sembrada y consume existencias de KIT-AGUA de ORG-A. No cubre carga ni la prueba de restauración de respaldo. `composer.json` declara `php ^8.2`, pero el lockfile requiere PHP ≥ 8.4.1 (relacionado con R-E02). Sin datos reales ni secretos.
+
+## Continuación (2026-10-15, misma sesión)
+
+Prompts: «soy edier, que debo hacer?». Salida: comprobaciones y plantilla para revisar el PR #14 de Vega, y procedimiento de respaldo y restauración con comparación md5 por tabla (`docs/evidence/runtime/respaldo-restauracion.md`).
+
+| Cambio | Decisión de Edier | Motivo | Fecha UTC |
+|---|---|---|---|
+| Revisión del PR #14 (aprobado con O-E1) | Aceptada | Comprobé tablas que escribe la IA, orden 403/422/404/409, captura sin clave y CI en verde | 2026-10-15T02:35Z |
+| Prueba de respaldo y restauración | Aceptada | La ejecuté en mi PC: 6 tablas idénticas (filas y md5), restricción y trigger restaurados, 4 migraciones Ran | 2026-10-15T02:42Z |
