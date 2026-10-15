@@ -16,7 +16,7 @@ Route::get('/health', fn () => response()->json(['status' => 'ok']));
 Route::get('/ready', function () {
     try {
         DB::select('SELECT 1');
-        if (! Schema::hasTable('ai_attempts')) {
+        if (! Schema::hasColumn('ai_attempts', 'reason')) {
             return response()->json(['status' => 'not_ready', 'database' => 'up'], 503);
         }
 
