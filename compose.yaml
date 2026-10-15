@@ -34,5 +34,20 @@ services:
     depends_on:
       database:
         condition: service_healthy
+  # Prueba de carga RNF03 (AC-04-09); solo se levanta con: docker compose --profile carga run --rm k6
+  k6:
+    image: grafana/k6:1.8.2
+    profiles: [carga]
+    depends_on:
+      app:
+        condition: service_started
+    environment:
+      BASE_URL: http://app:8000
+      RESULTS_DIR: /results
+      K6_VERSION: "1.8.2"
+    volumes:
+      - ./tests/load:/scripts:ro
+      - ./docs/evidence/runtime:/results
+    command: run /scripts/rnf03.js
 volumes:
   nexo_data:
