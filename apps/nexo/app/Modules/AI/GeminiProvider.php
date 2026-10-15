@@ -30,6 +30,9 @@ class GeminiProvider implements AiProvider
             // Los modelos 2.5 Flash «piensan» por defecto y pueden pasar del plazo; un resumen corto no lo necesita.
             if (str_starts_with($this->model, 'gemini-2.5-flash')) {
                 $generation['thinkingConfig'] = ['thinkingBudget' => 0];
+            } elseif (config('ai.thinking_level')) {
+                // Modelos 3.x: nivel de pensamiento (por ejemplo minimal o low) para responder dentro del plazo.
+                $generation['thinkingConfig'] = ['thinkingLevel' => config('ai.thinking_level')];
             }
             $response = $this->http($seconds)->post(rtrim($this->baseUrl, '/').'/v1beta/models/'.rawurlencode($this->model).':generateContent', [
                 'systemInstruction' => ['parts' => [['text' => $instructions]]],
@@ -42,7 +45,9 @@ class GeminiProvider implements AiProvider
                 : new AiProviderException('gemini_conexion');
         }
         if (! $response->successful()) {
-            throw new AiProviderException('gemini_http_'.$response->status());
+            $error = new AiProviderException('gemini_http_'.$response->status());
+            $error->detail = mb_substr((string) $response->json('error.message', ''), 0, 300);
+            throw $error;
         }
         $text = $response->json('candidates.0.content.parts.0.text');
         if (! is_string($text)) {

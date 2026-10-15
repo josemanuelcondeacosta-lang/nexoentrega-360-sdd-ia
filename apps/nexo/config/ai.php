@@ -9,6 +9,8 @@ return [
     'model' => env('AI_MODEL'),
     'gemini_base_url' => env('AI_GEMINI_BASE_URL', 'https://generativelanguage.googleapis.com'),
     'force_ipv4' => (bool) env('AI_FORCE_IPV4', false),
+    // Solo modelos 3.x: minimal | low | medium | high. Vacío: el valor por defecto del modelo.
+    'thinking_level' => env('AI_THINKING_LEVEL'),
     // Plazo del proveedor (RF12): 5 s.
     'timeout_ms' => 5000,
     'fixtures_file' => resource_path('ai/ai-provider-fixtures.json'),

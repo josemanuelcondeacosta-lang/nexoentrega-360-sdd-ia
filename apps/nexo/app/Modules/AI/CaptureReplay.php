@@ -16,8 +16,13 @@ class CaptureReplay
         ['requestId' => 'A-002', 'zona' => 'SUR', 'prioridad' => 'NORMAL', 'fechaRequerida' => '2030-01-12T15:00:00+00:00', 'estado' => 'ENVIADA', 'observaciones' => 'Reposición mensual de un comedor comunitario.'],
     ];
 
-    public function run(Command $cmd, ?string $model): int
+    public function run(Command $cmd, ?string $model, ?int $timeoutMs = null, ?string $thinking = null): int
     {
+        $productTimeout = config('ai.timeout_ms');
+        $timeoutMs = max(1000, min($timeoutMs ?: $productTimeout, 60000));
+        if ($thinking) {
+            config(['ai.thinking_level' => $thinking]);
+        }
         if (! config('ai.key')) {
             $cmd->error('Falta AI_API_KEY. Pásala solo al ejecutar: docker compose exec -e AI_API_KEY=... app php artisan ai:capture');
 
@@ -34,15 +39,15 @@ class CaptureReplay
             $cmd->info('Modelos Flash disponibles: '.implode(', ', $models));
             $model = $models[0];
         }
-        $cmd->info('Modelo: '.$model);
+        $cmd->info('Modelo: '.$model.($thinking ? ", pensamiento: $thinking" : '').", plazo de la captura: $timeoutMs ms");
 
         $prompt = new PromptBuilder;
         $provider = new GeminiProvider(model: $model);
         $start = hrtime(true);
         try {
-            $raw = $provider->complete($prompt->instructions(), $prompt->data(self::DATA), config('ai.timeout_ms'));
+            $raw = $provider->complete($prompt->instructions(), $prompt->data(self::DATA), $timeoutMs);
         } catch (AiProviderException $e) {
-            $cmd->error('La llamada falló: '.$e->getMessage().'. No se guardó captura.');
+            $cmd->error('La llamada falló: '.$e->getMessage().($e->detail ? ' — '.$e->detail : '').'. No se guardó captura.');
 
             return 1;
         }
@@ -62,6 +67,10 @@ class CaptureReplay
             'provider' => 'gemini',
             'model' => $model,
             'latencyMs' => $latency,
+            'captureTimeoutMs' => $timeoutMs,
+            // El producto corta a los 5 s; si la captura tardó más, en vivo se habría usado el resumen alternativo.
+            'withinProductDeadline' => $latency <= $productTimeout,
+            'thinkingLevel' => config('ai.thinking_level'),
             'input' => ['instructions' => $prompt->instructions(), 'data' => self::DATA],
             'rawOutput' => $raw,
             'validation' => $validation,
@@ -70,6 +79,9 @@ class CaptureReplay
         file_put_contents($path, json_encode($capture, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n");
 
         $cmd->info("Captura guardada: resources/ai/replay/$name ($latency ms, validación: $validation)");
+        if ($latency > $productTimeout) {
+            $cmd->warn("Tardó más que el plazo del producto ($productTimeout ms): en vivo se habría usado el resumen alternativo. Queda registrado en la captura.");
+        }
         $cmd->line('Salida del modelo:');
         $cmd->line($raw);
         $cmd->line('Cópiala a tu carpeta con:');
