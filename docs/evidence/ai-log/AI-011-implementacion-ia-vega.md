@@ -40,9 +40,9 @@ Decisiones tomadas por Vega con el selector de preguntas: tiene Docker Desktop y
 
 | Cambio | Decisión de Vega (aceptada / corregida / descartada) | Motivo | Fecha UTC |
 |---|---|---|---|
-| Revisión del PR #10 (comentario `#issuecomment-6181833055`) | PENDIENTE | | |
-| Implementación del asistente y pruebas | PENDIENTE | | |
-| Captura real con Gemini (`ai:capture`) | PENDIENTE | | |
+| Revisión del PR #10 (comentario `#issuecomment-6181833055`) | Aceptada | Comprobé H-V01 a H-V07 y R-V02 en el diff de 0886219; aprobé SPEC-01 y SPEC-05 0.4 | 2026-10-15T00:52Z |
+| Implementación del asistente y pruebas | Aceptada | Revisé el validador y el servicio; las pruebas pasaron en mi PC con Docker (PHP 8.5, PostgreSQL 17.6) | 2026-10-15T01:37Z |
+| Captura real con Gemini (`ai:capture`) | Aceptada | gemini-3.5-flash-lite, pensamiento low, 18 915 ms, validación valid; superó el plazo de 5 s y se usa como reproducción declarada | 2026-10-15T01:36Z |
 
 ## Verificación
 
@@ -54,8 +54,10 @@ Ejecutada por el asistente en su espacio de trabajo el 2026-10-15 (UTC), sobre `
 - Prueba en navegador (Chromium, 1366 px) con el fixture AI-VALID: se ven el origen, el resumen y la recomendación de A-001; la aprobación funciona y `window.__unsafe` no existe.
 - `vendor/bin/pint --test` y `node --check public/app.js`: correctos.
 
+Ejecución de Vega, 2026-10-15T01:37Z (aprox.), Windows con Docker Desktop (PHP 8.5.0, PostgreSQL 17.6): `php artisan test` sobre `nexo_test` → AiAssistantTest y NexoFlowTest correctas, incluida AC-05-13 con la captura real; una omitida (copias de fixtures, sin repositorio completo dentro de Docker); AC-05-03 cortó en 5,09 s. Captura `apps/nexo/resources/ai/replay/gemini-20261015T013600Z.json`: gemini-3.5-flash-lite, pensamiento low, 18 915 ms, validación valid.
+
 La ejecución válida para el proyecto es la de Vega con Docker, la captura real con su clave y el CI del PR.
 
 ## Límites
 
-Sin la captura real, AC-05-13 queda omitido. El escape en pantalla se comprobó en navegador y con una verificación del código fuente, no con una prueba E2E automatizada. La clave no se guarda en Git ni en la captura; Gemini puede usar los datos enviados en el plan gratuito, por eso solo se envían datos ficticios.
+La captura real tardó 18,9 s: en vivo, con el plazo de 5 s, el producto habría usado el resumen alternativo; la salida real se demuestra con la reproducción declarada. El escape en pantalla se comprobó en navegador y con una verificación del código fuente, no con una prueba E2E automatizada. La clave no se guarda en Git ni en la captura; Gemini puede usar los datos enviados en el plan gratuito, por eso solo se envían datos ficticios.
