@@ -1,7 +1,7 @@
 # ADR-001 Estructura y límites: Laravel y PostgreSQL
 
 - Estado: **propuesto; revisión G2 pendiente**. No autoriza implementación mientras G1 esté pendiente.
-- Fecha y versión: 2026-10-14, v0.1.
+- Fecha y versión: 2026-10-14, v0.2 propuesta; actualización técnica por R-E02, sin aprobación humana nueva.
 - Elaboración: Codex a solicitud de Conde José; no acredita trabajo o aprobación humana.
 - Fuentes: examen oficial §§2–6, 8–12; SPEC-01 a SPEC-05 0.3-draft; ADR-004 y contrato IA de la rama `docs/g2-vega-ia`, commit `a13aa17`.
 
@@ -24,7 +24,18 @@ Consistencia transaccional verificable, mínima complejidad operativa, límites 
 
 ## Decisión y justificación
 
-Diseñar un monolito modular Laravel, PostgreSQL único y UI Blade del mismo origen como propuesta de mínima complejidad, sin SPA adicional obligatoria. Docker Compose previsto con aplicación y PostgreSQL; versiones compatibles de PHP/Laravel/PostgreSQL se fijarán en G2 antes de implementación junto con `composer.lock` y lockfile de assets si aplica. No se inventan lockfiles sin resolver dependencias.
+Monolito modular Laravel, PostgreSQL único y UI Blade del mismo origen, sin SPA adicional. La implementación provisional conserva esa elección; las versiones reales se registran para corregir R-E02, sin presentar la fijación tardía como revisión previa.
+
+| Componente | Versión reproducible | Fuente comprobable |
+|---|---|---|
+| PHP | 8.5.0, imagen php:8.5.0-cli-bookworm; requisito ~8.5.0 | apps/nexo/Dockerfile, composer.json y composer.lock |
+| Laravel | framework 12.70.0, familia 12 | apps/nexo/composer.lock |
+| PostgreSQL | 17.6, imagen postgres:17.6-bookworm | compose.yaml |
+| Composer | 2.8.12 | apps/nexo/Dockerfile |
+| Node | 22.22.2 | .github/workflows/aplicacion-provisional.yml |
+| Playwright | 1.56.1 | package-lock.json |
+
+PHP ^8.2 era más permisivo que las dependencias del lockfile (requieren al menos 8.4.1). El requisito pasa a ~8.5.0 para coincidir con el runtime fijado. Regenerar metadatos del lock sin actualizar paquetes y comprobar composer validate/check-platform-reqs; el objetivo no es actualizar dependencias silenciosamente.
 
 | Módulo previsto | Responsabilidad y dueño de datos | Dependencias permitidas |
 |---|---|---|
@@ -37,7 +48,7 @@ Diseñar un monolito modular Laravel, PostgreSQL único y UI Blade del mismo ori
 | AI | Selección, whitelist, adaptador, validación, fallback y aprobación | Identity, lectura Requests, Audit; ADR-004 |
 | Operations | Health, readiness y logs estructurados sanitizados | Readiness comprueba PostgreSQL; no depende del proveedor IA |
 
-Ubicación propuesta: `app/Modules/<Module>/{Application,Domain,Infrastructure,Http}`; `routes/api.php` y vistas Blade. Controladores delgados llaman casos de uso. No importar controladores de otro módulo ni mutar datos ajenos mediante modelos desde la UI. Queries usa proyecciones; AI no obtiene una interfaz de mutación de solicitudes/inventario. Evitar repositorios genéricos innecesarios; solo introducir interfaces en fronteras que deben sustituirse/probarse, como proveedor IA.
+Ubicación real del paquete provisional: apps/nexo/app/Modules/<Module> con clases de aplicación y controladores por módulo; apps/nexo/routes/web.php para la API con sesiones/CSRF y vistas Blade del mismo origen. Las capas Application/Domain/Infrastructure/Http y routes/api.php del diseño inicial no se materializaron; esta versión registra la diferencia para revisión, sin fingir que se implementaron. Queries usa proyecciones; AI no obtiene una interfaz de mutación de solicitudes/inventario. Solo introducir interfaces en fronteras que deben sustituirse/probarse, como proveedor IA.
 
 Una única transacción PostgreSQL confirma estado, inventario, auditoría y resultado idempotente. Bloquear solicitud y filas de stock en orden estable; ADR-002 debe concretar aislamiento, deadlocks, hash y retención. No invocar al proveedor IA dentro de una transacción de inventario. Aprobar resumen usa su propia transacción de resumen+evento sin escribir stock.
 

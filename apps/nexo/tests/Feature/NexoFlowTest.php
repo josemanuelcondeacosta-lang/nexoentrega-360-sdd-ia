@@ -129,6 +129,19 @@ class NexoFlowTest extends TestCase
         $this->actingAs($this->user('Solicitante', 'B'))->getJson('/api/audit')->assertOk()->assertJsonPath('total', 0);
     }
 
+    public function test_malformed_request_ids_are_not_found_without_internal_errors(): void
+    {
+        $this->actingAs($this->user('Coordinador'));
+        foreach (['abc', 'not-a-uuid', '123'] as $id) {
+            $this->getJson("/api/requests/$id")->assertNotFound();
+            $this->getJson("/api/requests/$id/audit")->assertNotFound();
+            $this->postJson("/api/requests/$id/reserve", [], ['Idempotency-Key' => 'malformed'])->assertNotFound();
+        }
+        $this->assertDatabaseCount('requests', 0);
+        $this->assertDatabaseCount('audit_events', 0);
+        $this->assertDatabaseCount('idempotency_records', 0);
+    }
+
     public function test_invalid_quantities_rejected_before_writes(): void
     {
         $this->actingAs($this->user('Solicitante'))->postJson('/api/requests', ['zona' => 'NORTE', 'prioridad' => 'NORMAL', 'fechaRequerida' => now()->addDay()->toIso8601String(), 'lineas' => [['sku' => 'KIT-ALIMENTO', 'cantidad' => 0]]])->assertUnprocessable();
