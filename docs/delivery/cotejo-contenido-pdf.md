@@ -14,7 +14,7 @@ Fuente: instrucciones de entrega aportadas en captura por el coordinador y anexo
 
 ## Entrega en el aula
 
-Cada integrante debe adjuntar **el mismo PDF consolidado del equipo**, dentro del plazo de la actividad. Nombre previsto: `Examen_SDD_IA_Equipo_NexoEntrega360.pdf`. Antes de enviarlo, los cuatro deben comprobar el mismo SHA-256 contra el manifest de la edición aceptada. El documento debe desarrollar el contenido; los enlaces solo lo complementan.
+Cada integrante debe adjuntar **el mismo PDF consolidado del equipo**, dentro del plazo de la actividad. Nombre indicado por el coordinador: `Examen_SDD_IA_Equipo_Jose_Conde_Jose_Vega_Carolina_Cantillo_Edier_Castro.pdf`. Antes de enviarlo, los cuatro deben comprobar el mismo SHA-256 contra el manifest de la edición aceptada. El documento debe desarrollar el contenido; los enlaces solo lo complementan.
 
 No se requiere sustentación ni video. Las notas del sitio interactivo no constituyen la entrega oficial. No se incorpora un cambio de requisitos del día 4. El plazo exacto no consta en la captura aportada: consultarlo en el aula, sin inventar una fecha.
 

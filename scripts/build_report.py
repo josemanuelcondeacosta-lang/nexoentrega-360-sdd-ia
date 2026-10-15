@@ -23,6 +23,7 @@ from reportlab.platypus.tableofcontents import TableOfContents
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'deliverables/revision-editorial'
+DOC_STEM = 'Examen_SDD_IA_Equipo_NexoEntrega360'
 REPO = 'https://github.com/josemanuelcondeacosta-lang/nexoentrega-360-sdd-ia'
 GREEN = '193E35'
 blocks = []
@@ -460,7 +461,7 @@ def word(sha):
                 for r in p.runs: r.bold = True; r.font.color.rgb = RGBColor.from_string(GREEN)
     d.core_properties.title = 'NexoEntrega 360 — Informe técnico y evidencias'
     d.core_properties.author = 'Equipo NexoEntrega 360 · edición asistida por Codex'
-    d.save(OUT / 'Examen_SDD_IA_Equipo_NexoEntrega360.docx')
+    d.save(OUT / (DOC_STEM + '.docx'))
 
 
 class Report(BaseDocTemplate):
@@ -539,23 +540,27 @@ def pdf(sha):
         canvas.setFont('Nexo', 7.5); canvas.setFillColor(colors.HexColor('#52685D'))
         canvas.drawString(50, 812, 'NEXOENTREGA 360  /  INFORME TÉCNICO')
         canvas.drawString(50, 28, 'PROVISIONAL · 14 OCT 2026 · ' + sha[:12]); canvas.drawRightString(545, 28, str(doc.page)); canvas.restoreState()
-    doc = Report(str(OUT / 'Examen_SDD_IA_Equipo_NexoEntrega360.pdf'), pagesize=A4, leftMargin=50, rightMargin=50, topMargin=56, bottomMargin=48, title='NexoEntrega 360 — Informe técnico y evidencias', author='Equipo NexoEntrega 360 · edición asistida por Codex')
+    doc = Report(str(OUT / (DOC_STEM + '.pdf')), pagesize=A4, leftMargin=50, rightMargin=50, topMargin=56, bottomMargin=48, title='NexoEntrega 360 — Informe técnico y evidencias', author='Equipo NexoEntrega 360 · edición asistida por Codex')
     frame = Frame(50, 48, 495, 738, leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
     doc.addPageTemplates(PageTemplate(id='report', frames=frame, onPage=decorate))
     doc.multiBuild(parts)
 
 
 def main():
-    global OUT
+    global OUT, DOC_STEM
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sha', required=True)
     parser.add_argument('--output-dir', default='deliverables/revision-editorial')
+    parser.add_argument('--file-name', default=DOC_STEM, help='nombre base, sin extensión')
     args = parser.parse_args()
+    if not re.fullmatch(r'[A-Za-z0-9_-]+', args.file_name):
+        parser.error('El nombre debe contener solo letras ASCII, números, guiones o guiones bajos.')
+    DOC_STEM = args.file_name
     OUT = ROOT / args.output_dir
     sha = subprocess.check_output(['git', 'rev-parse', args.sha], cwd=ROOT, text=True).strip()
     OUT.mkdir(parents=True, exist_ok=True)
     content(sha); word(sha); pdf(sha)
-    manifest = {'status': 'PROVISIONAL_NOT_ACCEPTED', 'sourceSha': sha, 'files': {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in OUT.glob('Examen*')}, 'note': 'Original provisional preserved; Word and PDF generated from same editorial content. No human approval recorded.'}
+    manifest = {'status': 'PROVISIONAL_NOT_ACCEPTED', 'sourceSha': sha, 'files': {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in [OUT / (DOC_STEM + '.docx'), OUT / (DOC_STEM + '.pdf')]}, 'note': 'Original provisional preserved; Word and PDF generated from same editorial content. No human approval recorded.'}
     (OUT / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
     print(json.dumps(manifest, indent=2))
 
