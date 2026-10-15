@@ -7,7 +7,6 @@ use App\Modules\Requests\RequestService as Requests;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class AiController
 {
@@ -15,7 +14,7 @@ class AiController
     {
         $u = $r->user();
         Requests::role($u, ['Coordinador']);
-        $data = $r->validate(['requestIds' => 'required|array|min:1|max:20', 'requestIds.*' => 'required|string|distinct']);
+        $data = $r->validate(['requestIds' => 'required|array|min:1|max:20', 'requestIds.*' => 'required|string|uuid|distinct']);
         abort_unless(count($r->all()) === 1, 422, 'Campos adicionales no permitidos.');
         $rows = [];
         foreach ($data['requestIds'] as $id) {
@@ -24,18 +23,9 @@ class AiController
         foreach ($rows as $row) {
             abort_unless($row->estado === 'ENVIADA', 409, 'Solo se resumen solicitudes ENVIADA.');
         }
-        // Provisional: proveedor no configurado. Nunca presentar este resumen como LLM real.
-        $high = count(array_filter($rows, fn ($row) => $row->prioridad === 'ALTA'));
-        $payload = ['origin' => ['type' => 'fallback'], 'aiAssisted' => true, 'message' => 'Proveedor no configurado; resumen determinista.',
-            'summary' => count($rows).' solicitudes enviadas; '.$high.' de prioridad ALTA. Revisa fecha y zona antes de reservar.',
-            'recommendations' => [], 'requestIds' => $data['requestIds']];
-        $id = (string) Str::uuid();
-        DB::transaction(function () use ($u, $id, $payload) {
-            DB::table('ai_summaries')->insert(['id' => $id, 'organization_id' => $u->organization_id, 'coordinador_id' => $u->id, 'payload' => json_encode($payload), 'created_at' => now()]);
-            DB::table('ai_attempts')->insert(['id' => (string) Str::uuid(), 'summary_id' => $id, 'result' => 'provider_unavailable', 'created_at' => now()]);
-        });
 
-        return response()->json($payload + ['id' => $id, 'status' => 'BORRADOR', 'createdAt' => now()->toIso8601String(), 'approvedBy' => null, 'approvedAt' => null]);
+        // Selección validada y autorizada: el proveedor nunca se invoca con 403, 422, 404 ni 409 (H-V02).
+        return response()->json((new AiSummaryService)->summarize($u, $rows, $data['requestIds']));
     }
 
     public function approve(Request $r, string $summaryId)
